@@ -1,0 +1,543 @@
+// High-Fidelity Data Models Matching Backend Investment Schemas
+// (models/investment.js, models/TransactionEntry.js, models/Company.js, services/calcEngine.js)
+
+export const PORTFOLIO_SUMMARY = {
+  totalInvested: 1250000,
+  currentPortfolioValue: 2840000,
+  totalROI: 127.2,
+  unrealizedGain: 1590000,
+  investmentCount: 8,
+  activeInvestments: 6,
+  exitedInvestments: 2,
+  pendingInvestments: 1,
+  cashDeployable: 750000,
+  avgCheckSize: 156250,
+  irr: 34.8,
+};
+
+export const INVESTMENTS_LIST = [
+  {
+    _id: "inv-001",
+    companyId: {
+      _id: "comp-teledu",
+      companyName: "Teledu Learning",
+      ticker: "TELEDU",
+      sector: "EdTech & Education",
+      logoUrl: "",
+    },
+    round: "Seed",
+    amount: 150000,
+    equity: 7.5,
+    investmentDate: "2024-03-15",
+    currentValue: 380000,
+    roi: 153.33,
+    status: "Active",
+    leadInvestor: "Nexus Global Ventures",
+    valuationCap: 5000000,
+  },
+  {
+    _id: "inv-002",
+    companyId: {
+      _id: "comp-zenith",
+      companyName: "Zenith Cloud AI",
+      ticker: "ZENITH",
+      sector: "Enterprise AI & Cloud",
+      logoUrl: "",
+    },
+    round: "Pre-Seed",
+    amount: 100000,
+    equity: 5.0,
+    investmentDate: "2023-11-20",
+    currentValue: 320000,
+    roi: 220.0,
+    status: "Active",
+    leadInvestor: "DeepMind Angels",
+    valuationCap: 6400000,
+  },
+  {
+    _id: "inv-003",
+    companyId: {
+      _id: "comp-pulse",
+      companyName: "Pulse HealthTech",
+      ticker: "PULSE",
+      sector: "HealthTech & Diagnostics",
+      logoUrl: "",
+    },
+    round: "Series A",
+    amount: 350000,
+    equity: 8.0,
+    investmentDate: "2024-01-10",
+    currentValue: 610000,
+    roi: 74.29,
+    status: "Active",
+    leadInvestor: "BioCapital Partners",
+    valuationCap: 7625000,
+  },
+  {
+    _id: "inv-004",
+    companyId: {
+      _id: "comp-flowpay",
+      companyName: "FlowPay Financial",
+      ticker: "FLOWPAY",
+      sector: "FinTech & Cross-Border",
+      logoUrl: "",
+    },
+    round: "Seed",
+    amount: 200000,
+    equity: 6.0,
+    investmentDate: "2023-08-14",
+    currentValue: 490000,
+    roi: 145.0,
+    status: "Active",
+    leadInvestor: "Horizon Seed Fund",
+    valuationCap: 8160000,
+  },
+  {
+    _id: "inv-005",
+    companyId: {
+      _id: "comp-solaris",
+      companyName: "Solaris CleanGrid",
+      ticker: "SOLAR",
+      sector: "CleanTech & Energy",
+      logoUrl: "",
+    },
+    round: "Seed",
+    amount: 250000,
+    equity: 10.0,
+    investmentDate: "2023-05-18",
+    currentValue: 640000,
+    roi: 156.0,
+    status: "Active",
+    leadInvestor: "GreenHorizon Ventures",
+    valuationCap: 6400000,
+  },
+  {
+    _id: "inv-006",
+    companyId: {
+      _id: "comp-nexus",
+      companyName: "Nexus Robotics",
+      ticker: "NEXUS",
+      sector: "Industrial Automation",
+      logoUrl: "",
+    },
+    round: "Series A",
+    amount: 200000,
+    equity: 4.0,
+    investmentDate: "2022-09-05",
+    currentValue: 400000,
+    roi: 100.0,
+    status: "Exited",
+    leadInvestor: "Apex Tech Capital",
+    valuationCap: 10000000,
+  }
+];
+
+export const DEAL_ROOM_COMPANIES = [
+  {
+    ticker: "TELEDU",
+    companyName: "Teledu Learning",
+    sector: "EdTech & Education",
+    stage: "Seed Round",
+    status: "INVESTMENT_READY",
+    fundingRequired: 500000,
+    minInvestment: 50000,
+    maxInvestment: 250000,
+    equityOffered: 10.0,
+    valuation: 5000000,
+    currentRevenue: 336000,
+    revenueGrowthRate: 68,
+    ebitdaMargin: 24,
+    healthScore: 84.5,
+    overallRiskScore: 28.0,
+    dcfEnterpriseValue: 5620000,
+    dcfEquityValue: 5850000,
+    currentSharePrice: 50.0,
+    fairSharePrice: 58.5,
+    priceUpsidePercent: 17.0,
+    recommendation: "BUY",
+    recommendationColorHex: "#34D399",
+    tagline: "AI-driven vertical learning management system for coaching institutes and academies.",
+    founderName: "Zeeshan Khan",
+    headcount: 14,
+    completeness: {
+      profile: 100,
+      kyc: 90,
+      team: 85,
+      business: 90,
+      financials: 95,
+      funding: 100,
+      documents: 80,
+      overall: 91
+    }
+  },
+  {
+    ticker: "ZENITH",
+    companyName: "Zenith Cloud AI",
+    sector: "Enterprise AI & Cloud",
+    stage: "Series A",
+    status: "INVESTMENT_READY",
+    fundingRequired: 1500000,
+    minInvestment: 100000,
+    maxInvestment: 750000,
+    equityOffered: 12.5,
+    valuation: 12000000,
+    currentRevenue: 1240000,
+    revenueGrowthRate: 145,
+    ebitdaMargin: 32,
+    healthScore: 92.0,
+    overallRiskScore: 22.5,
+    dcfEnterpriseValue: 15400000,
+    dcfEquityValue: 16100000,
+    currentSharePrice: 120.0,
+    fairSharePrice: 161.0,
+    priceUpsidePercent: 34.2,
+    recommendation: "STRONG BUY",
+    recommendationColorHex: "#10B981",
+    tagline: "Autonomous multi-agent orchestration cloud for high-throughput enterprise workflows.",
+    founderName: "Ayesha Noor",
+    headcount: 28,
+    completeness: {
+      profile: 100,
+      kyc: 95,
+      team: 90,
+      business: 95,
+      financials: 100,
+      funding: 100,
+      documents: 90,
+      overall: 96
+    }
+  },
+  {
+    ticker: "PULSE",
+    companyName: "Pulse HealthTech",
+    sector: "HealthTech & Diagnostics",
+    stage: "Seed",
+    status: "INVESTMENT_READY",
+    fundingRequired: 750000,
+    minInvestment: 50000,
+    maxInvestment: 300000,
+    equityOffered: 9.0,
+    valuation: 8300000,
+    currentRevenue: 480000,
+    revenueGrowthRate: 85,
+    ebitdaMargin: 18,
+    healthScore: 79.0,
+    overallRiskScore: 35.0,
+    dcfEnterpriseValue: 9100000,
+    dcfEquityValue: 9450000,
+    currentSharePrice: 83.0,
+    fairSharePrice: 94.5,
+    priceUpsidePercent: 13.8,
+    recommendation: "BUY",
+    recommendationColorHex: "#34D399",
+    tagline: "Real-time wearable sensor telemetry and algorithmic patient deterioration early warning.",
+    founderName: "Dr. Tariq Mahmood",
+    headcount: 19,
+    completeness: {
+      profile: 95,
+      kyc: 85,
+      team: 90,
+      business: 85,
+      financials: 85,
+      funding: 90,
+      documents: 75,
+      overall: 86
+    }
+  },
+  {
+    ticker: "LOGIX",
+    companyName: "Logix Autonomous",
+    sector: "Supply Chain & Logistics",
+    stage: "Pre-Seed",
+    status: "DOCUMENT_REVIEW",
+    fundingRequired: 300000,
+    minInvestment: 25000,
+    maxInvestment: 150000,
+    equityOffered: 15.0,
+    valuation: 2000000,
+    currentRevenue: 95000,
+    revenueGrowthRate: 42,
+    ebitdaMargin: 8,
+    healthScore: 61.0,
+    overallRiskScore: 48.0,
+    dcfEnterpriseValue: 2150000,
+    dcfEquityValue: 2200000,
+    currentSharePrice: 20.0,
+    fairSharePrice: 22.0,
+    priceUpsidePercent: 10.0,
+    recommendation: "HOLD",
+    recommendationColorHex: "#F2A93B",
+    tagline: "Micro-fulfillment robotic dispatch system for same-hour urban grocery delivery.",
+    founderName: "Bilal Ahmed",
+    headcount: 7,
+    completeness: {
+      profile: 85,
+      kyc: 70,
+      team: 75,
+      business: 80,
+      financials: 70,
+      funding: 80,
+      documents: 60,
+      overall: 74
+    }
+  }
+];
+
+export const CAP_TABLE_DATA = {
+  ticker: "TELEDU",
+  companyName: "Teledu Learning",
+  totalShares: 100000,
+  currentSharePrice: 50.0,
+  postMoneyValuation: 5000000,
+  authorizedCapital: 6000000,
+  fundingRequired: 500000,
+  equityOffered: 10.0,
+  minTicket: 50000,
+  maxTicket: 250000,
+  shareholders: [
+    {
+      id: "sh-1",
+      name: "Zeeshan Khan",
+      role: "Founder & CEO",
+      category: "Founders",
+      shares: 48000,
+      ownership: 48.0,
+      investmentRound: "Founding Equity",
+      votingRights: true
+    },
+    {
+      id: "sh-2",
+      name: "Maryam Akhtar",
+      role: "Co-Founder & CTO",
+      category: "Founders",
+      shares: 24000,
+      ownership: 24.0,
+      investmentRound: "Founding Equity",
+      votingRights: true
+    },
+    {
+      id: "sh-3",
+      name: "Employee Stock Pool (ESOP)",
+      role: "Incentive Pool",
+      category: "ESOP",
+      shares: 10500,
+      ownership: 10.5,
+      investmentRound: "Reserved Pool",
+      votingRights: false
+    },
+    {
+      id: "sh-4",
+      name: "Nexus Global Ventures",
+      role: "Lead Angel Syndicate",
+      category: "Investors",
+      shares: 7500,
+      ownership: 7.5,
+      investmentRound: "Seed Round",
+      votingRights: true
+    },
+    {
+      id: "sh-5",
+      name: "Acumen Seed Syndicate",
+      role: "Institutional Angel",
+      category: "Investors",
+      shares: 5000,
+      ownership: 5.0,
+      investmentRound: "Pre-Seed",
+      votingRights: false
+    },
+    {
+      id: "sh-6",
+      name: "Unallocated Round Allocation",
+      role: "Active Financing Round",
+      category: "Open Round",
+      shares: 5000,
+      ownership: 5.0,
+      investmentRound: "Seed Extension",
+      votingRights: false
+    }
+  ]
+};
+
+export const LEDGER_TRANSACTIONS = [
+  {
+    _id: "tx-101",
+    type: "Revenue",
+    category: "SaaS Subscriptions",
+    amount: 28500,
+    date: "2024-03-01",
+    periodicity: "Monthly",
+    expenseType: "Recurring",
+    notes: "Q1 Institutional tier seat subscriptions (42 coaching centres)"
+  },
+  {
+    _id: "tx-102",
+    type: "Revenue",
+    category: "Enterprise Setup Fees",
+    amount: 12000,
+    date: "2024-02-24",
+    periodicity: "One-time",
+    expenseType: "Variable",
+    notes: "Custom branding and legacy LMS data migration for Apex Academy"
+  },
+  {
+    _id: "tx-103",
+    type: "Expense",
+    category: "Engineering & R&D",
+    amount: 9800,
+    date: "2024-02-28",
+    periodicity: "Monthly",
+    expenseType: "Fixed",
+    notes: "Senior backend developer payroll & contractor retainers"
+  },
+  {
+    _id: "tx-104",
+    type: "Expense",
+    category: "Cloud Infrastructure",
+    amount: 3250,
+    date: "2024-02-26",
+    periodicity: "Monthly",
+    expenseType: "Variable",
+    notes: "AWS compute clusters, MongoDB Atlas multi-region cluster, Redis cache"
+  },
+  {
+    _id: "tx-105",
+    type: "Expense",
+    category: "Customer Acquisition (Paid Ads)",
+    amount: 4100,
+    date: "2024-02-20",
+    periodicity: "Monthly",
+    expenseType: "Variable",
+    notes: "Google Search Ads & Meta targeting private tutors and exam prep centres"
+  },
+  {
+    _id: "tx-106",
+    type: "Expense",
+    category: "Legal & Regulatory Compliance",
+    amount: 1800,
+    date: "2024-02-15",
+    periodicity: "One-time",
+    expenseType: "Variable",
+    notes: "Annual statutory audit and SEBI/RoC corporate filing retainer"
+  },
+  {
+    _id: "tx-107",
+    type: "Revenue",
+    category: "Marketplace Commission",
+    amount: 4500,
+    date: "2024-02-10",
+    periodicity: "Monthly",
+    expenseType: "Variable",
+    notes: "8% commission on premium mock-exam paper sales across platform"
+  }
+];
+
+export const WATCHLIST_ITEMS = [
+  {
+    _id: "w-1",
+    companyId: {
+      ticker: "ZENITH",
+      companyName: "Zenith Cloud AI",
+      sector: "Enterprise AI & Cloud",
+      valuation: 12000000,
+      healthScore: 92.0,
+      recommendation: "STRONG BUY"
+    },
+    targetRound: "Series A ($1.5M)",
+    note: "Met founder at AI Summit. Exceptional gross margins (82%) and 145% YoY growth. Reviewing technical diligence with CTO.",
+    priority: "HIGH",
+    addedAt: "2024-02-18"
+  },
+  {
+    _id: "w-2",
+    companyId: {
+      ticker: "PULSE",
+      companyName: "Pulse HealthTech",
+      sector: "HealthTech & Diagnostics",
+      valuation: 8300000,
+      healthScore: 79.0,
+      recommendation: "BUY"
+    },
+    targetRound: "Seed ($750K)",
+    note: "Pilot agreements active with 3 regional hospitals. FDA 510(k) pathway clear. Waiting for clinical trial metrics next month.",
+    priority: "MEDIUM",
+    addedAt: "2024-01-29"
+  },
+  {
+    _id: "w-3",
+    companyId: {
+      ticker: "LOGIX",
+      companyName: "Logix Autonomous",
+      sector: "Supply Chain & Logistics",
+      valuation: 2000000,
+      healthScore: 61.0,
+      recommendation: "HOLD"
+    },
+    targetRound: "Pre-Seed ($300K)",
+    note: "Promising hardware design, but high CAPEX burn. Revisit when unit economics show >35% contribution margin.",
+    priority: "LOW",
+    addedAt: "2024-03-02"
+  }
+];
+
+export const DATA_ROOM_DOCUMENTS = [
+  {
+    _id: "doc-1",
+    name: "Teledu_Seed_Pitch_Deck_2024.pdf",
+    category: "PITCH_DECK",
+    categoryLabel: "Pitch Deck Presentation",
+    size: "4.8 MB",
+    uploadedAt: "2024-02-14",
+    status: "VERIFIED",
+    verifiedBy: "Compliance Director",
+    downloadUrl: "#",
+    notes: "Approved for accredited investor review."
+  },
+  {
+    _id: "doc-2",
+    name: "Standard_SAFE_Agreement_Teledu_Seed.pdf",
+    category: "TERM_SHEET",
+    categoryLabel: "Term Sheet / SAFE Agreement",
+    size: "820 KB",
+    uploadedAt: "2024-02-18",
+    status: "VERIFIED",
+    verifiedBy: "Legal Counsel",
+    downloadUrl: "#",
+    notes: "Post-money valuation cap: $5,000,000. Discount: 20%."
+  },
+  {
+    _id: "doc-3",
+    name: "Audited_Financial_Statements_FY23.pdf",
+    category: "BALANCE_SHEET",
+    categoryLabel: "Audited Financials",
+    size: "3.2 MB",
+    uploadedAt: "2024-01-25",
+    status: "VERIFIED",
+    verifiedBy: "Chartered Accountant",
+    downloadUrl: "#",
+    notes: "Clean unqualified audit opinion issued."
+  },
+  {
+    _id: "doc-4",
+    name: "Articles_of_Association_and_Incorporation.pdf",
+    category: "CERTIFICATE_OF_INCORPORATION",
+    categoryLabel: "Statutory Incorporation Certificate",
+    size: "1.4 MB",
+    uploadedAt: "2024-01-20",
+    status: "VERIFIED",
+    verifiedBy: "Corporate Secretary",
+    downloadUrl: "#",
+    notes: "Certificate of Incorporation No. U72900KA2020PTC138890"
+  },
+  {
+    _id: "doc-5",
+    name: "Cap_Table_Dilution_Model_Projections.xlsx",
+    category: "BUSINESS_PLAN",
+    categoryLabel: "Cap Table & Dilution Model",
+    size: "940 KB",
+    uploadedAt: "2024-02-28",
+    status: "UNDER_REVIEW",
+    verifiedBy: "Pending Analyst Sign-off",
+    downloadUrl: "#",
+    notes: "Includes post-money round simulations and ESOP dilution schedules."
+  }
+];
