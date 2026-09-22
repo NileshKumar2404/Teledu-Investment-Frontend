@@ -370,5 +370,15 @@ export const api = {
   updateUserRole: (userId, payload) => apiRequest(`/users/${userId}/role`, {
     method: 'PATCH',
     body: JSON.stringify(payload)
-  })
+  }),
+
+  // Founder Competency Assessment
+  generateAssessmentTest: (ticker, mode = 'ai') => 
+    apiRequest(`/assessments/${ticker}/generate-test?mode=${mode}`, { method: 'POST', body: JSON.stringify({ mode }) }),
+
+  submitAssessmentTest: (ticker, payload) =>
+    apiRequest(`/assessments/${ticker}/submit-test`, { method: 'POST', body: JSON.stringify(payload) }),
+
+  getAssessmentHistory: (ticker) =>
+    apiRequest(`/assessments/${ticker}`),
 };

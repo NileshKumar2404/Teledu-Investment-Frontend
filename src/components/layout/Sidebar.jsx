@@ -5,7 +5,7 @@ import {
   CheckSquare, Calculator, Network, Activity, Wand2, 
   HelpCircle, X, Compass, ChevronRight, Briefcase, 
   TrendingUp, PieChart, FileSpreadsheet, Bookmark, FolderLock, 
-  Layers, ShieldCheck, Zap
+  Layers, ShieldCheck, Zap, Award
 } from 'lucide-react';
 
 export default function Sidebar({ 
@@ -29,6 +29,7 @@ export default function Sidebar({
     {
       title: 'STRATEGY & VALIDATION',
       items: [
+        { id: 'founder-assessment', label: 'Founder Assessment', icon: Award, badge: 'AI Test' },
         { id: 'idea-analyzer', label: 'Idea Assessment', icon: Target, badge: 'AI' },
         { id: 'idea-testing', label: 'Lean Idea Testing', icon: FlaskConical, badge: '6 Stages' },
         { id: 'gtm', label: 'GTM Roadmap', icon: Map, badge: 'Planner' },

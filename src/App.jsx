@@ -10,6 +10,8 @@ import PricingModal from './components/common/PricingModal';
 import FeaturePaywall from './components/common/FeaturePaywall';
 
 // Founder OS (StartupIQ) Modules
+import FounderAssessmentModule from './components/modules/FounderAssessmentModule';
+import PortalGatewayModule from './components/modules/PortalGatewayModule';
 import OverviewModule from './components/modules/OverviewModule';
 import LearningModule from './components/modules/LearningModule';
 import TermsLibraryModule from './components/modules/TermsLibraryModule';
@@ -43,7 +45,7 @@ import { api, getStoredUser, getAuthToken, clearAuth } from './api/client';
 
 export default function App() {
   const [engineMode, setEngineMode] = useState('founder'); // 'founder' | 'investor'
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('portal');
   const [company, setCompany] = useState(DEFAULT_COMPANY);
   const [selectedTicker, setSelectedTicker] = useState('TELEDU');
   const [companiesList, setCompaniesList] = useState(() => {
@@ -121,7 +123,7 @@ export default function App() {
   useEffect(() => {
     if (currentUser?.role) {
       const r = currentUser.role.toLowerCase();
-      if (['founder', 'investor', 'analyst', 'advisor', 'admin', 'super_admin'].includes(r)) {
+      if (['founder', 'investor', 'analyst', 'advisor', 'admin', 'super_admin'].includes(r) && activeTab !== 'portal') {
         setEngineMode(r);
         if (r === 'founder') setActiveTab('overview');
         else if (r === 'investor') setActiveTab('investor-portfolio');
@@ -194,6 +196,28 @@ export default function App() {
 
   const renderModule = () => {
     switch (activeTab) {
+            // --- 4-OPTION INITIAL GATEWAY PORTAL ---
+      case 'portal':
+      case 'gateway':
+        return (
+          <PortalGatewayModule
+            onSelectRole={(role, defaultTab, user) => {
+              if (user) {
+                setCurrentUser(user);
+                setApiConnected(true);
+              }
+              setEngineMode(role);
+              setActiveTab(defaultTab);
+            }}
+            onEnterGuest={() => {
+              setEngineMode('founder');
+              setActiveTab('overview');
+            }}
+            currentUser={currentUser}
+            company={company}
+          />
+        );
+
       // --- FOUNDER OS (STARTUPIQ) ---
       case 'overview':
         return <OverviewModule onNavigate={setActiveTab} company={company} healthScore={healthScore} />;
@@ -202,6 +226,16 @@ export default function App() {
         return <LearningModule company={company} />;
       case 'terms':
         return <TermsLibraryModule onNavigateToPrompt={() => setActiveTab('prompt-builder')} />;
+      case 'founder-assessment':
+      case 'founderAssessment':
+        return (
+          <FounderAssessmentModule
+            company={company}
+            onStatusUpdated={(newStatus) => {
+              setCompany(prev => ({ ...prev, status: newStatus }));
+            }}
+          />
+        );
       case 'idea-analyzer':
       case 'ideaAnalyzer':
         return <IdeaAnalyzerModule company={company} />;
@@ -317,6 +351,7 @@ export default function App() {
         onOpenAuth={() => setIsAuthOpen(true)}
         onLogout={handleLogout}
         onOpenPricing={() => setIsPricingOpen(true)}
+        onOpenPortal={() => setActiveTab('portal')}
       />
 
       {/* Full-Width Canvas */}

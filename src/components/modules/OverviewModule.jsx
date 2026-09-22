@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  TrendingUp, Activity, DollarSign, Compass, ShieldCheck, 
+  Award, TrendingUp, Activity, DollarSign, Compass, ShieldCheck, 
   ArrowUpRight, ArrowRight, Zap, Target, BookOpen, Library, 
   FlaskConical, Map, CheckSquare, Calculator, Network, 
   Wand2, HelpCircle, Briefcase, FileSpreadsheet, Bookmark, 
@@ -23,6 +23,7 @@ export default function OverviewModule({ onNavigate, company, healthScore }) {
       domain: 'Venture Strategy & Lean Testing',
       color: '#6366F1',
       tools: [
+        { id: 'founder-assessment', title: 'Founder Competency Assessment', desc: 'AI-generated 30-question diagnostic across 6 venture domains.', icon: Award, badge: 'AI Test' },
         { id: 'idea-analyzer', title: 'Idea Assessment Lab', desc: '0-100 score on problem urgency and market size.', icon: Target, badge: 'TAM / SAM' },
         { id: 'idea-testing', title: 'Lean Hypothesis Lab', desc: 'Formulate Riskiest Assumptions (RAT) & validation tests.', icon: FlaskConical, badge: '6 Stages' },
         { id: 'gtm', title: 'GTM Roadmap Gantt', desc: 'Persona targeting, channel priority scoring & timeline.', icon: Map, badge: '12 Weeks' },

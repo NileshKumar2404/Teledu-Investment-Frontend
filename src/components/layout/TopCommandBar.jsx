@@ -6,7 +6,7 @@ import {
   Library, Target, FlaskConical, Map, TrendingUp, Activity, 
   PieChart, FileSpreadsheet, Bookmark, FolderLock, Zap, ChevronDown,
   User, Lock, LogOut, ShieldCheck, Crown, CreditCard, Plus, X, AlertCircle,
-  BarChart3, Shield, Users
+  BarChart3, Shield, Users, Layers
 } from 'lucide-react';
 import { SAMPLE_COMPANIES } from '../../data/mockCompany';
 
@@ -23,7 +23,8 @@ export default function TopCommandBar({
   currentUser,
   onOpenAuth,
   onLogout,
-  onOpenPricing
+  onOpenPricing,
+  onOpenPortal
 }) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isAddCompanyOpen, setIsAddCompanyOpen] = useState(false);
@@ -181,7 +182,8 @@ export default function TopCommandBar({
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
           <div 
             onClick={() => {
-              if (currentRole === 'founder') setActiveTab('overview');
+              if (onOpenPortal) onOpenPortal();
+              else if (currentRole === 'founder') setActiveTab('overview');
               else if (currentRole === 'investor') setActiveTab('investor-portfolio');
               else if (currentRole === 'analyst') setActiveTab('analyst-workspace');
               else if (currentRole === 'advisor') setActiveTab('advisor-workspace');
@@ -233,7 +235,7 @@ export default function TopCommandBar({
 
           <div style={{ width: '1px', height: '22px', background: 'rgba(255, 255, 255, 0.1)' }} />
 
-          {/* 2 Core Platform Sections: Founder OS & Investor OS Switcher */}
+          {/* 4 Core Stakeholder Portals Switcher + Role Gateway */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -241,8 +243,31 @@ export default function TopCommandBar({
             border: '1px solid var(--border-subtle)',
             borderRadius: 'var(--radius-pill)',
             padding: '3px',
-            position: 'relative'
+            position: 'relative',
+            gap: '2px'
           }}>
+            <button
+              onClick={() => onOpenPortal && onOpenPortal()}
+              title="Return to 4-Option Role Gateway"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '0.4rem 0.85rem',
+                borderRadius: 'var(--radius-pill)',
+                border: 'none',
+                background: activeTab === 'portal' ? 'linear-gradient(135deg, #6366F1, #EC4899)' : 'rgba(255, 255, 255, 0.05)',
+                color: activeTab === 'portal' ? '#fff' : 'var(--text-muted)',
+                fontSize: '0.78rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                boxShadow: activeTab === 'portal' ? '0 2px 10px rgba(99, 102, 241, 0.4)' : 'none'
+              }}
+            >
+              <Layers size={13} /> 4-Role Portal
+            </button>
+
             <button
               onClick={() => {
                 setEngineMode('founder');
@@ -252,19 +277,19 @@ export default function TopCommandBar({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '5px',
-                padding: '0.4rem 0.95rem',
+                padding: '0.4rem 0.85rem',
                 borderRadius: 'var(--radius-pill)',
                 border: 'none',
-                background: engineMode === 'founder' ? 'linear-gradient(135deg, #6366F1, #8B5CF6)' : 'transparent',
-                color: engineMode === 'founder' ? '#fff' : 'var(--text-muted)',
+                background: engineMode === 'founder' && activeTab !== 'portal' ? 'linear-gradient(135deg, #6366F1, #8B5CF6)' : 'transparent',
+                color: engineMode === 'founder' && activeTab !== 'portal' ? '#fff' : 'var(--text-muted)',
                 fontSize: '0.78rem',
                 fontWeight: 800,
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
-                boxShadow: engineMode === 'founder' ? '0 2px 10px rgba(99, 102, 241, 0.35)' : 'none'
+                boxShadow: engineMode === 'founder' && activeTab !== 'portal' ? '0 2px 10px rgba(99, 102, 241, 0.35)' : 'none'
               }}
             >
-              <Sparkles size={13} /> Founder OS
+              <Sparkles size={13} /> Founder + Academic
             </button>
 
             <button
@@ -276,19 +301,67 @@ export default function TopCommandBar({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '5px',
-                padding: '0.4rem 0.95rem',
+                padding: '0.4rem 0.85rem',
                 borderRadius: 'var(--radius-pill)',
                 border: 'none',
-                background: engineMode === 'investor' ? 'linear-gradient(135deg, #10B981, #059669)' : 'transparent',
-                color: engineMode === 'investor' ? '#fff' : 'var(--text-muted)',
+                background: engineMode === 'investor' && activeTab !== 'portal' ? 'linear-gradient(135deg, #10B981, #059669)' : 'transparent',
+                color: engineMode === 'investor' && activeTab !== 'portal' ? '#fff' : 'var(--text-muted)',
                 fontSize: '0.78rem',
                 fontWeight: 800,
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
-                boxShadow: engineMode === 'investor' ? '0 2px 10px rgba(16, 185, 129, 0.35)' : 'none'
+                boxShadow: engineMode === 'investor' && activeTab !== 'portal' ? '0 2px 10px rgba(16, 185, 129, 0.35)' : 'none'
               }}
             >
-              <Briefcase size={13} /> Investor OS
+              <Briefcase size={13} /> Investor
+            </button>
+
+            <button
+              onClick={() => {
+                setEngineMode('advisor');
+                setActiveTab('advisor-workspace');
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '0.4rem 0.85rem',
+                borderRadius: 'var(--radius-pill)',
+                border: 'none',
+                background: engineMode === 'advisor' && activeTab !== 'portal' ? 'linear-gradient(135deg, #F59E0B, #D97706)' : 'transparent',
+                color: engineMode === 'advisor' && activeTab !== 'portal' ? '#fff' : 'var(--text-muted)',
+                fontSize: '0.78rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                boxShadow: engineMode === 'advisor' && activeTab !== 'portal' ? '0 2px 10px rgba(245, 158, 11, 0.35)' : 'none'
+              }}
+            >
+              <Compass size={13} /> Advisor
+            </button>
+
+            <button
+              onClick={() => {
+                setEngineMode('analyst');
+                setActiveTab('analyst-workspace');
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '0.4rem 0.85rem',
+                borderRadius: 'var(--radius-pill)',
+                border: 'none',
+                background: engineMode === 'analyst' && activeTab !== 'portal' ? 'linear-gradient(135deg, #06B6D4, #4F46E5)' : 'transparent',
+                color: engineMode === 'analyst' && activeTab !== 'portal' ? '#fff' : 'var(--text-muted)',
+                fontSize: '0.78rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                boxShadow: engineMode === 'analyst' && activeTab !== 'portal' ? '0 2px 10px rgba(6, 182, 212, 0.35)' : 'none'
+              }}
+            >
+              <BarChart3 size={13} /> Analyst
             </button>
 
             {/* If user is Admin/SuperAdmin, allow clicking into Admin Center */}
