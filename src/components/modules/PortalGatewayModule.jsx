@@ -227,30 +227,31 @@ export default function PortalGatewayModule({ onSelectRole, currentUser, company
 
   return (
     <div style={{
-      minHeight: '100vh',
-      width: '100vw',
       position: 'fixed',
-      top: 0,
-      left: 0,
+      inset: 0,
+      width: '100vw',
+      height: '100vh',
       zIndex: 9999,
       display: 'flex',
       background: '#070A13',
       color: '#F8FAFC',
       fontFamily: 'var(--font-sans, system-ui, -apple-system, sans-serif)',
-      overflowY: 'auto'
+      overflow: 'hidden'
     }}>
       {/* ================= LEFT SIDE: STARTUPIQ VENTURE SHOWCASE ================= */}
       <div style={{
         flex: '1 1 50%',
         minWidth: '340px',
-        padding: '3.5rem 4.5rem',
+        height: '100%',
+        padding: '3rem 4rem',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
         position: 'relative',
         background: 'radial-gradient(ellipse at 20% 30%, rgba(99, 102, 241, 0.12) 0%, rgba(7, 10, 19, 0.98) 70%)',
         borderRight: '1px solid rgba(255, 255, 255, 0.08)',
-        overflow: 'hidden'
+        overflowY: 'auto',
+        overflowX: 'hidden'
       }}>
         {/* Subtle dynamic glow matching active role */}
         <div style={{
@@ -450,23 +451,25 @@ export default function PortalGatewayModule({ onSelectRole, currentUser, company
       <div style={{
         flex: '1 1 50%',
         minWidth: '340px',
-        padding: '3.5rem 4.5rem',
+        height: '100%',
+        padding: '2.5rem 3.5rem 4rem 3.5rem',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
         alignItems: 'center',
         background: '#070A13',
-        position: 'relative'
+        position: 'relative',
+        overflowY: 'auto',
+        overflowX: 'hidden'
       }}>
         {/* Top Controls: Return to platform */}
         <div style={{
-          position: 'absolute',
-          top: '2.5rem',
-          left: '4.5rem',
-          right: '4.5rem',
+          width: '100%',
+          maxWidth: '480px',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
+          marginBottom: '1.5rem',
+          flexShrink: 0
         }}>
           <button
             type="button"
@@ -481,7 +484,8 @@ export default function PortalGatewayModule({ onSelectRole, currentUser, company
               fontSize: '0.88rem',
               fontWeight: 500,
               cursor: 'pointer',
-              transition: 'color 0.2s ease'
+              transition: 'color 0.2s ease',
+              padding: 0
             }}
             onMouseEnter={(e) => e.currentTarget.style.color = '#FFFFFF'}
             onMouseLeave={(e) => e.currentTarget.style.color = '#94A3B8'}
@@ -506,8 +510,11 @@ export default function PortalGatewayModule({ onSelectRole, currentUser, company
         {/* Central Card */}
         <div style={{
           width: '100%',
-          maxWidth: '460px',
-          marginTop: '2.5rem'
+          maxWidth: '480px',
+          margin: '0 auto',
+          paddingBottom: '3rem',
+          display: 'flex',
+          flexDirection: 'column'
         }}>
           {/* Header */}
           <div style={{ marginBottom: '1.8rem' }}>
