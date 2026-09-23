@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Sparkles as SparklesIcon, X as XIcon } from 'lucide-react';
 
 // Layout & Common
 import TopCommandBar from './components/layout/TopCommandBar';
@@ -115,6 +116,7 @@ export default function App() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isPricingOpen, setIsPricingOpen] = useState(false);
+  const [welcomeToast, setWelcomeToast] = useState(null);
   const [currentUser, setCurrentUser] = useState(getStoredUser());
   const [apiConnected, setApiConnected] = useState(false);
   const [healthScore, setHealthScore] = useState(78);
@@ -142,10 +144,24 @@ export default function App() {
       const token = getAuthToken();
       if (!token) return;
       try {
-        const meRes = await api.auth.getMe();
-        if (meRes && meRes.user) {
-          setCurrentUser(meRes.user);
+        const user = await api.auth.getMe();
+        if (user && user.role) {
+          setCurrentUser(user);
           setApiConnected(true);
+
+          // If user already completed onboarding, resume their configured workspace & tab!
+          if (user.onboarding && user.onboarding.completed && user.onboarding.assignedTab) {
+            const role = user.onboarding.assignedWorkspace || user.role;
+            setEngineMode(role);
+            setActiveTab(user.onboarding.assignedTab);
+            if (user.onboarding.routingReason) {
+              setWelcomeToast({
+                text: user.onboarding.routingReason,
+                role,
+                tab: user.onboarding.assignedTab
+              });
+            }
+          }
         }
       } catch (err) {
         console.warn('Session expired or invalid token:', err.message);
@@ -160,7 +176,8 @@ export default function App() {
   useEffect(() => {
     async function fetchCompanyData() {
       try {
-        const profile = await api.getProfile(selectedTicker).catch(() => null);
+        const profileRes = await api.getProfile(selectedTicker).catch(() => null);
+        const profile = profileRes && profileRes.company ? profileRes.company : profileRes;
         if (profile && (profile.companyName || profile.name)) {
           setCompany(prev => ({ ...prev, ...profile }));
           setApiConnected(true);
@@ -201,13 +218,16 @@ export default function App() {
       case 'gateway':
         return (
           <PortalGatewayModule
-            onSelectRole={(role, defaultTab, user) => {
+            onSelectRole={(role, defaultTab, user, routingReason) => {
               if (user) {
                 setCurrentUser(user);
                 setApiConnected(true);
               }
               setEngineMode(role);
               setActiveTab(defaultTab);
+              if (routingReason) {
+                setWelcomeToast({ text: routingReason, role, tab: defaultTab });
+              }
             }}
             onEnterGuest={() => {
               setEngineMode('founder');
@@ -356,6 +376,67 @@ export default function App() {
 
       {/* Full-Width Canvas */}
       <main className="command-canvas">
+        {welcomeToast && activeTab !== 'portal' && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            style={{
+              margin: '0 0 1.25rem 0',
+              padding: '0.9rem 1.25rem',
+              borderRadius: '12px',
+              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(16, 185, 129, 0.12) 100%)',
+              border: '1px solid rgba(129, 140, 248, 0.35)',
+              backdropFilter: 'blur(16px)',
+              boxShadow: '0 8px 30px rgba(0, 0, 0, 0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '1rem',
+              zIndex: 40
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+              <div style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '8px',
+                background: 'rgba(99, 102, 241, 0.25)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#818CF8',
+                flexShrink: 0
+              }}>
+                <SparklesIcon size={16} />
+              </div>
+              <div>
+                <div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#A5B4FC', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  Smart Routing Activated
+                </div>
+                <div style={{ fontSize: '0.88rem', color: '#E2E8F0', fontWeight: 500 }}>
+                  {welcomeToast.text}
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setWelcomeToast(null)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#94A3B8',
+                cursor: 'pointer',
+                padding: '4px',
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              <XIcon size={16} />
+            </button>
+          </motion.div>
+        )}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}

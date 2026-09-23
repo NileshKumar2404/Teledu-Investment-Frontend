@@ -133,10 +133,11 @@ export const api = {
 
     getMe: async () => {
       const data = await apiRequest('/auth/me');
-      if (data && data.user) {
-        setStoredUser(data.user);
+      const user = data && (data.user || data);
+      if (user && user.role) {
+        setStoredUser(user);
       }
-      return data;
+      return user;
     },
 
     logout: async () => {
@@ -186,7 +187,18 @@ export const api = {
     getSessions: () => apiRequest('/auth/sessions'),
     revokeSession: (sessionId) => apiRequest(`/auth/sessions/${sessionId}`, {
       method: 'DELETE'
-    })
+    }),
+
+    saveOnboarding: async (payload) => {
+      const data = await apiRequest('/auth/onboarding', {
+        method: 'PATCH',
+        body: JSON.stringify(payload)
+      });
+      if (data) {
+        setStoredUser(data);
+      }
+      return data;
+    }
   },
 
   // ========================================================

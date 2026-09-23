@@ -161,91 +161,22 @@ export default function Sidebar({
           )}
         </div>
 
-        {/* Fluid Sliding Dual-Engine Switcher */}
+        {/* Dedicated Isolated Role Indicator (Role-Isolation Enforced) */}
         <div style={{ padding: '0.9rem 1rem 0.5rem' }}>
           <div style={{
-            position: 'relative',
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            background: 'rgba(15, 23, 42, 0.75)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '0.55rem 0.85rem',
             borderRadius: 'var(--radius-md)',
-            padding: '3px',
-            border: '1px solid var(--border-subtle)'
+            background: 'rgba(255, 255, 255, 0.03)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            fontSize: '0.78rem',
+            fontWeight: 800,
+            color: isInvestor ? '#34D399' : (engineMode === 'advisor' ? '#FBBF24' : (engineMode === 'analyst' ? '#A5B4FC' : '#818CF8'))
           }}>
-            {/* Sliding Pill Indicator */}
-            <motion.div
-              layoutId="engine-mode-pill"
-              transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-              style={{
-                position: 'absolute',
-                top: '3px',
-                bottom: '3px',
-                left: isInvestor ? '50%' : '3px',
-                right: isInvestor ? '3px' : '50%',
-                background: isInvestor
-                  ? 'linear-gradient(135deg, #10B981, #059669)'
-                  : 'linear-gradient(135deg, #6366F1, #8B5CF6)',
-                borderRadius: 'var(--radius-sm)',
-                boxShadow: isInvestor 
-                  ? '0 2px 10px rgba(16, 185, 129, 0.4)' 
-                  : '0 2px 10px rgba(99, 102, 241, 0.4)',
-                zIndex: 1
-              }}
-            />
-
-            <button
-              onClick={() => {
-                setEngineMode('founder');
-                if (activeTab.startsWith('investor-') || activeTab === 'deal-room' || activeTab === 'cap-table' || activeTab === 'ledger' || activeTab === 'watchlist' || activeTab === 'data-room') {
-                  setActiveTab('overview');
-                }
-              }}
-              style={{
-                position: 'relative',
-                zIndex: 2,
-                padding: '0.5rem 0.6rem',
-                border: 'none',
-                background: 'transparent',
-                color: !isInvestor ? '#FFFFFF' : 'var(--text-muted)',
-                fontSize: '0.74rem',
-                fontWeight: 800,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '5px',
-                transition: 'color 0.2s ease'
-              }}
-            >
-              <Sparkles size={13} /> Founder
-            </button>
-
-            <button
-              onClick={() => {
-                setEngineMode('investor');
-                if (!activeTab.startsWith('investor-') && activeTab !== 'deal-room' && activeTab !== 'cap-table' && activeTab !== 'ledger' && activeTab !== 'watchlist' && activeTab !== 'data-room') {
-                  setActiveTab('investor-portfolio');
-                }
-              }}
-              style={{
-                position: 'relative',
-                zIndex: 2,
-                padding: '0.5rem 0.6rem',
-                border: 'none',
-                background: 'transparent',
-                color: isInvestor ? '#FFFFFF' : 'var(--text-muted)',
-                fontSize: '0.74rem',
-                fontWeight: 800,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '5px',
-                transition: 'color 0.2s ease'
-              }}
-            >
-              <Briefcase size={13} /> Investor
-            </button>
+            {isInvestor ? <Briefcase size={14} /> : (engineMode === 'advisor' ? <Compass size={14} /> : (engineMode === 'analyst' ? <BarChart3 size={14} /> : <Sparkles size={14} />))}
+            <span>{isInvestor ? 'Investor Workspace' : (engineMode === 'advisor' ? 'Advisor Workspace' : (engineMode === 'analyst' ? 'Analyst Workspace' : 'Founder Workspace'))}</span>
           </div>
         </div>
 

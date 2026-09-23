@@ -6,6 +6,7 @@ import {
   FileSpreadsheet, Lock, Mail, Eye, EyeOff, Wand2, ChevronRight, Moon
 } from 'lucide-react';
 import { api, setAuthToken, setStoredUser } from '../../api/client';
+import OnboardingModal from '../common/OnboardingModal';
 
 export default function PortalGatewayModule({ onSelectRole, currentUser, company, onEnterGuest }) {
   const [selectedRole, setSelectedRole] = useState('founder');
@@ -17,6 +18,8 @@ export default function PortalGatewayModule({ onSelectRole, currentUser, company
   const [fullName, setFullName] = useState('Alex Chen');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
+  const [pendingAuthUser, setPendingAuthUser] = useState(null);
 
   const roles = [
     {
@@ -141,47 +144,80 @@ export default function PortalGatewayModule({ onSelectRole, currentUser, company
 
     try {
       let authUser = null;
-      if (authMode === 'email') {
+
+      if (authMode === 'quick') {
+        // Authenticate directly with the seeded demo credentials for the selected role
         try {
-          if (isSignUp) {
-            const regRes = await api.auth.register({
-              fullName: fullName.trim() || currentRoleConfig.demoUser.name,
-              email: email.trim(),
-              password: password.trim(),
-              role: selectedRole
-            });
-            if (regRes && regRes.user) authUser = regRes.user;
-          } else {
-            const loginRes = await api.auth.login({
-              email: email.trim(),
-              password: password.trim()
-            });
-            if (loginRes && loginRes.user) authUser = loginRes.user;
+          const loginRes = await api.auth.login({
+            email: currentRoleConfig.demoUser.email,
+            password: 'StartupIQ@2026'
+          });
+          if (loginRes && loginRes.user) {
+            authUser = loginRes.user;
           }
         } catch (apiErr) {
-          console.warn('API authentication fallback to demo session:', apiErr.message);
+          console.warn('Demo login API fallback:', apiErr.message);
+        }
+      } else {
+        // Custom Email Form Authentication
+        if (isSignUp) {
+          const regRes = await api.auth.register({
+            fullName: fullName.trim() || currentRoleConfig.demoUser.name,
+            email: email.trim(),
+            password: password.trim(),
+            role: selectedRole
+          });
+          if (regRes && regRes.user) {
+            authUser = regRes.user;
+          }
+        } else {
+          const loginRes = await api.auth.login({
+            email: email.trim(),
+            password: password.trim()
+          });
+          if (loginRes && loginRes.user) {
+            authUser = loginRes.user;
+          }
         }
       }
 
-      // Default demo session if quick launch or offline
+      // Default demo session if offline
       if (!authUser) {
         authUser = {
           _id: `user-${selectedRole}-demo`,
           fullName: currentRoleConfig.demoUser.name,
           email: currentRoleConfig.demoUser.email,
           role: selectedRole,
-          subscription: { plan: 'founder_pro', status: 'active' }
+          subscription: { plan: 'founder_pro', status: 'active' },
+          onboarding: { completed: false }
         };
         setAuthToken(`demo-token-${selectedRole}`);
         setStoredUser(authUser);
       }
 
-      onSelectRole(selectedRole, currentRoleConfig.defaultTab, authUser);
+      setPendingAuthUser(authUser);
+
+      // If user already completed onboarding, route directly into their saved workspace & tab!
+      if (authUser.onboarding && authUser.onboarding.completed && authUser.onboarding.assignedTab) {
+        onSelectRole(
+          authUser.onboarding.assignedWorkspace || authUser.role || selectedRole,
+          authUser.onboarding.assignedTab,
+          authUser,
+          authUser.onboarding.routingReason || `Welcome back, ${authUser.fullName || 'User'}!`
+        );
+      } else {
+        setIsOnboardingOpen(true);
+      }
     } catch (err) {
       setErrorMsg(err.message || 'Failed to enter workspace');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCompleteOnboarding = (route, updatedUser) => {
+    setIsOnboardingOpen(false);
+    onSelectRole(route.role, route.tab, updatedUser || pendingAuthUser, route.reason);
   };
 
   const handleGuest = () => {
@@ -755,6 +791,30 @@ export default function PortalGatewayModule({ onSelectRole, currentUser, company
                     </button>
                   </div>
                 </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 0.2rem' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsSignUp(!isSignUp);
+                      setErrorMsg('');
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: currentRoleConfig.accentColor,
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      padding: 0
+                    }}
+                  >
+                    {isSignUp ? 'Already have an account? Sign In' : 'Need an account? Sign Up'}
+                  </button>
+                  <span style={{ fontSize: '0.74rem', color: '#64748B' }}>
+                    Role: {currentRoleConfig.title}
+                  </span>
+                </div>
               </motion.div>
             )}
 
@@ -851,6 +911,13 @@ export default function PortalGatewayModule({ onSelectRole, currentUser, company
             </button>
           </div>
         </div>
+        <OnboardingModal
+          isOpen={isOnboardingOpen}
+          onClose={() => setIsOnboardingOpen(false)}
+          initialRole={selectedRole}
+          currentUser={pendingAuthUser || currentUser}
+          onCompleteRouting={handleCompleteOnboarding}
+        />
       </div>
     </div>
   );
