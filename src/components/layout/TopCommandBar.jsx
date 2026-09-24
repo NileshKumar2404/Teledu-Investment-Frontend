@@ -51,7 +51,6 @@ export default function TopCommandBar({
   // Founder OS primary navigation tabs
   const founderTabs = [
     { id: 'overview', label: 'Cockpit', icon: Compass },
-    { id: 'prompt-builder', label: 'AI Copilot', icon: Sparkles },
     { id: 'learning', label: 'Academy', icon: BookOpen },
     { id: 'terms', label: 'Terms & Formulas', icon: Library },
     { id: 'idea-analyzer', label: 'Idea Lab', icon: Target },
@@ -70,7 +69,6 @@ export default function TopCommandBar({
     { id: 'ledger', label: 'Ledger Journal', icon: FileSpreadsheet },
     { id: 'watchlist', label: 'Watchlist', icon: Bookmark },
     { id: 'data-room', label: 'Data Room', icon: FolderLock, isPro: true },
-    { id: 'prompt-builder', label: 'AI Copilot', icon: Sparkles },
   ];
 
   const analystTabs = [
@@ -78,7 +76,6 @@ export default function TopCommandBar({
     { id: 'financial-model', label: 'DCF & Sensitivity', icon: TrendingUp },
     { id: 'cap-table', label: 'Cap Table Waterfall', icon: PieChart },
     { id: 'data-room', label: 'Diligence Data Room', icon: FolderLock },
-    { id: 'prompt-builder', label: 'AI Copilot', icon: Sparkles },
   ];
 
   const advisorTabs = [
@@ -87,14 +84,12 @@ export default function TopCommandBar({
     { id: 'health-score', label: 'Venture Health', icon: Activity },
     { id: 'action-plan', label: 'Strategic OKRs', icon: Target },
     { id: 'learning', label: 'Knowledge Academy', icon: BookOpen },
-    { id: 'prompt-builder', label: 'AI Copilot', icon: Sparkles },
   ];
 
   const adminTabs = [
     { id: 'admin-workspace', label: 'User & Role Management', icon: Users },
     { id: 'admin-audit', label: 'Audit Trail', icon: Activity },
     { id: 'admin-security', label: 'Security & Access', icon: Lock },
-    { id: 'prompt-builder', label: 'AI Copilot', icon: Sparkles },
   ];
 
   // Select active navigation tabs dynamically based on active engine mode
@@ -164,11 +159,11 @@ export default function TopCommandBar({
       top: 0,
       zIndex: 50,
       width: '100%',
-      background: 'rgba(6, 10, 20, 0.94)',
-      backdropFilter: 'blur(24px)',
-      WebkitBackdropFilter: 'blur(24px)',
-      borderBottom: '1px solid var(--border-subtle)',
-      boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.5)'
+      background: 'rgba(10, 14, 23, 0.95)',
+      backdropFilter: 'blur(28px)',
+      WebkitBackdropFilter: 'blur(28px)',
+      borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+      boxShadow: '0 10px 35px -10px rgba(0, 0, 0, 0.7)'
     }}>
       {/* Top Tier: Brand, Mode/Role Badge, Workspace Selector & Controls */}
       <div style={{
@@ -176,7 +171,7 @@ export default function TopCommandBar({
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: '0.65rem 1.5rem',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.05)'
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
       }}>
         {/* Left: Brand + Role Badge */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
@@ -261,12 +256,13 @@ export default function TopCommandBar({
             display: 'flex',
             alignItems: 'center',
             gap: '4px',
-            background: 'rgba(255, 255, 255, 0.04)',
-            border: '1px solid var(--border-subtle)',
+            background: 'rgba(255, 255, 255, 0.06)',
+            border: '1px solid rgba(255, 255, 255, 0.16)',
             borderRadius: 'var(--radius-lg)',
-            padding: '2px 4px 2px 8px'
+            padding: '2px 4px 2px 8px',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
           }}>
-            <Building2 size={13} style={{ color: 'var(--text-muted)' }} />
+            <Building2 size={13} style={{ color: '#CBD5E1' }} />
             <select
               value={selectedCompany}
               onChange={(e) => {
@@ -281,7 +277,7 @@ export default function TopCommandBar({
                 border: 'none',
                 color: '#fff',
                 fontSize: '0.8rem',
-                fontWeight: 600,
+                fontWeight: 700,
                 fontFamily: 'var(--font-mono)',
                 outline: 'none',
                 cursor: 'pointer',
@@ -308,10 +304,11 @@ export default function TopCommandBar({
                 width: '24px',
                 height: '24px',
                 borderRadius: 'var(--radius-md)',
-                background: 'rgba(99, 102, 241, 0.25)',
-                border: '1px solid rgba(129, 140, 248, 0.4)',
-                color: '#A5B4FC',
+                background: 'linear-gradient(135deg, #4F46E5, #6366F1)',
+                border: '1px solid rgba(255, 255, 255, 0.25)',
+                color: '#FFFFFF',
                 cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(99, 102, 241, 0.5)',
                 transition: 'all 0.2s ease'
               }}
             >
@@ -326,12 +323,13 @@ export default function TopCommandBar({
               display: 'flex',
               alignItems: 'center',
               gap: '0.45rem',
-              padding: '0.38rem 0.75rem',
+              padding: '0.42rem 0.85rem',
               borderRadius: 'var(--radius-lg)',
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid var(--border-subtle)',
-              color: 'var(--text-secondary)',
+              background: 'rgba(255, 255, 255, 0.06)',
+              border: '1px solid rgba(255, 255, 255, 0.16)',
+              color: '#CBD5E1',
               fontSize: '0.78rem',
+              fontWeight: 600,
               cursor: 'pointer',
               transition: 'all 0.2s ease'
             }}
@@ -340,10 +338,11 @@ export default function TopCommandBar({
             <span>Search</span>
             <kbd style={{
               fontSize: '0.65rem',
-              background: 'rgba(255, 255, 255, 0.08)',
+              background: 'rgba(255, 255, 255, 0.12)',
+              border: '1px solid rgba(255, 255, 255, 0.18)',
               padding: '1px 5px',
               borderRadius: '4px',
-              color: 'var(--text-muted)'
+              color: '#FFFFFF'
             }}>Ctrl+K</kbd>
           </button>
 
@@ -499,20 +498,33 @@ export default function TopCommandBar({
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.45rem',
-                padding: '0.75rem 0.95rem',
+                gap: '0.5rem',
+                padding: '0.8rem 1rem',
                 border: 'none',
-                background: 'transparent',
-                color: isActive ? '#fff' : 'var(--text-secondary)',
-                fontSize: '0.82rem',
-                fontWeight: isActive ? 700 : 500,
+                borderRadius: '8px 8px 0 0',
+                background: isActive ? 'rgba(255, 255, 255, 0.05)' : 'transparent',
+                color: isActive ? '#FFFFFF' : '#CBD5E1',
+                fontSize: '0.84rem',
+                fontWeight: isActive ? 800 : 600,
                 cursor: 'pointer',
                 position: 'relative',
                 whiteSpace: 'nowrap',
-                transition: 'color 0.2s ease'
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.color = '#FFFFFF';
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.color = '#CBD5E1';
+                  e.currentTarget.style.background = 'transparent';
+                }
               }}
             >
-              <Icon size={14} color={isActive ? activeThemeColor : 'currentColor'} />
+              <Icon size={15} color={isActive ? activeThemeColor : 'currentColor'} />
               <span>{tab.label}</span>
               {isActive && (
                 <motion.div
@@ -522,9 +534,9 @@ export default function TopCommandBar({
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    height: '2px',
+                    height: '3px',
                     background: activeThemeColor,
-                    boxShadow: `0 0 10px ${activeThemeColor}`
+                    boxShadow: `0 0 12px ${activeThemeColor}, 0 0 4px #FFFFFF`
                   }}
                 />
               )}

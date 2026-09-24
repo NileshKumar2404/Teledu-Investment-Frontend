@@ -27,6 +27,7 @@ import MetricExplorerModule from './components/modules/MetricExplorerModule';
 import ActionPlanModule from './components/modules/ActionPlanModule';
 import PromptBuilderModule from './components/modules/PromptBuilderModule';
 import MyStartupModule from './components/modules/MyStartupModule';
+import FloatingAICopilot from './components/ai/FloatingAICopilot';
 
 // Actual Investment Module & Deal Room Components
 import InvestorPortfolioModule from './components/modules/InvestorPortfolioModule';
@@ -116,10 +117,19 @@ export default function App() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isPricingOpen, setIsPricingOpen] = useState(false);
+  const [isAIOpen, setIsAIOpen] = useState(false);
   const [welcomeToast, setWelcomeToast] = useState(null);
   const [currentUser, setCurrentUser] = useState(getStoredUser());
   const [apiConnected, setApiConnected] = useState(false);
   const [healthScore, setHealthScore] = useState(78);
+
+  // If a legacy link or state requests 'prompt-builder', open floating AI and default to overview
+  useEffect(() => {
+    if (activeTab === 'prompt-builder' || activeTab === 'promptBuilder') {
+      setIsAIOpen(true);
+      setActiveTab('overview');
+    }
+  }, [activeTab]);
 
   // Synchronize active workspace with authenticated user role (Role-Isolation Enforcement)
   useEffect(() => {
@@ -240,12 +250,12 @@ export default function App() {
 
       // --- FOUNDER OS (STARTUPIQ) ---
       case 'overview':
-        return <OverviewModule onNavigate={setActiveTab} company={company} healthScore={healthScore} />;
+        return <OverviewModule onNavigate={setActiveTab} company={company} healthScore={healthScore} onOpenAI={() => setIsAIOpen(true)} />;
       case 'learning':
       case 'curriculum':
         return <LearningModule company={company} currentUser={currentUser} onOpenPricing={() => setIsPricingOpen(true)} />;
       case 'terms':
-        return <TermsLibraryModule onNavigateToPrompt={() => setActiveTab('prompt-builder')} />;
+        return <TermsLibraryModule onNavigateToPrompt={() => setIsAIOpen(true)} />;
       case 'founder-assessment':
       case 'founderAssessment':
         return (
@@ -294,7 +304,7 @@ export default function App() {
         return <HealthScoreModule company={company} />;
       case 'prompt-builder':
       case 'promptBuilder':
-        return <PromptBuilderModule company={company} />;
+        return <OverviewModule onNavigate={setActiveTab} company={company} healthScore={healthScore} onOpenAI={() => setIsAIOpen(true)} />;
       case 'formulas':
       case 'financeFormulas':
         return <FinanceFormulasModule />;
@@ -478,6 +488,13 @@ export default function App() {
         onUpgradeSuccess={(user) => {
           setCurrentUser(user);
         }}
+      />
+
+      {/* Global Floating AI Copilot (Accessible from anywhere) */}
+      <FloatingAICopilot
+        isOpen={isAIOpen}
+        setIsOpen={setIsAIOpen}
+        company={company}
       />
     </div>
   );

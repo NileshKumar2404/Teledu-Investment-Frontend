@@ -42,7 +42,6 @@ export default function Sidebar({
         { id: 'financial-model', label: 'Financial Model', icon: Calculator, badge: '5-Yr DCF' },
         { id: 'metrics', label: 'Metric Explorer', icon: Network, badge: 'Drivers' },
         { id: 'health-score', label: 'Startup Health Score', icon: Activity, badge: 'Score' },
-        { id: 'prompt-builder', label: 'AI Prompt Builder', icon: Wand2, badge: 'Generator' },
         { id: 'formulas', label: 'Finance Formulas', icon: HelpCircle, badge: '13 Cards' },
       ]
     }

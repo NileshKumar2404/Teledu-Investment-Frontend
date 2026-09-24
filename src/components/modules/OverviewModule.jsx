@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import GaugeRing from '../common/GaugeRing';
 
-export default function OverviewModule({ onNavigate, company, healthScore }) {
+export default function OverviewModule({ onNavigate, company, healthScore, onOpenAI }) {
   const [activeSubTab, setActiveSubTab] = useState('projections'); // 'projections' | 'unit-economics' | 'experiments'
 
   const subTabs = [
@@ -47,7 +47,7 @@ export default function OverviewModule({ onNavigate, company, healthScore }) {
         { id: 'learning', title: '30 Core Curriculum Lessons', desc: 'Structured frameworks from Idea stage to IPO governance.', icon: BookOpen, badge: '5 Tracks' },
         { id: 'terms', title: '50 Startup Terms Library', desc: 'Exact formulas, real examples & AI prompt presets.', icon: Library, badge: '50 Terms' },
         { id: 'marketing', title: 'Marketing Index (25 KPIs)', desc: 'Formulas for ROAS, CTR, Payback & blended acquisition.', icon: BarChart3, badge: '25 KPIs' },
-        { id: 'prompt-builder', title: 'AI Prompt Builder Studio', desc: 'Generate metrics-aware pitch prompts for Claude & ChatGPT.', icon: Wand2, badge: 'Generator' }
+        { id: 'prompt-builder', title: 'AI Copilot & Playbooks', desc: 'Ask questions, run strategic playbooks & prompt templates.', icon: Wand2, badge: 'Copilot' }
       ]
     },
     {
@@ -407,7 +407,13 @@ export default function OverviewModule({ onNavigate, company, healthScore }) {
                   return (
                     <div
                       key={tool.id}
-                      onClick={() => onNavigate(tool.id)}
+                      onClick={() => {
+                        if (tool.id === 'prompt-builder') {
+                          if (onOpenAI) onOpenAI();
+                        } else {
+                          onNavigate(tool.id);
+                        }
+                      }}
                       style={{
                         display: 'flex',
                         alignItems: 'center',
