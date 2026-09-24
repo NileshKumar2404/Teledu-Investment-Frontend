@@ -341,7 +341,7 @@ export default function App() {
       case 'data-room':
         return (
           <FeaturePaywall
-            requiredPlan="investor_pro"
+            requiredPlan={['founder_pro', 'investor_pro']}
             featureName="Virtual Data Room (VDR) & Confidential Vault"
             featureDescription="Institutional repository storing audited financial statements, historical cap tables, KYC filings, and proprietary IP agreements."
             benefits={[

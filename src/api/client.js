@@ -357,6 +357,32 @@ export const api = {
 
   // Due Diligence Documents / VDR (/api/v1/upload)
   getCompanyDocuments: (ticker) => apiRequest(`/upload/${ticker}/documents`, {}, DATA_ROOM_DOCUMENTS),
+  uploadCompanyDocument: async (ticker, formData) => {
+    const token = getAuthToken();
+    const headers = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const res = await fetch(`${API_BASE}/upload/${ticker}/documents`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || `Upload failed with status ${res.status}`);
+    }
+    const json = await res.json();
+    return json.data !== undefined ? json.data : json;
+  },
+  downloadDocument: (documentId) => apiRequest(`/upload/documents/${documentId}/download`),
+  updateDocumentStatus: (documentId, status, reviewNotes) => apiRequest(`/upload/documents/${documentId}/status`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status, reviewNotes })
+  }),
+  deleteDocument: (documentId) => apiRequest(`/upload/documents/${documentId}`, {
+    method: 'PATCH'
+  }),
 
   // AI Venture Copilot & Advisory Engine (/api/v1/ai)
   getAIStatus: () => apiRequest('/ai/status'),

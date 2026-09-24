@@ -59,6 +59,7 @@ export default function TopCommandBar({
     { id: 'financial-model', label: '5-Yr DCF', icon: TrendingUp, isPro: true },
     { id: 'health-score', label: 'Health Score', icon: Activity },
     { id: 'action-plan', label: 'Action Plan', icon: Target, isPro: true },
+    { id: 'data-room', label: 'Data Room', icon: FolderLock, isPro: true },
   ];
 
   // Investor OS primary navigation tabs (Section 2)
