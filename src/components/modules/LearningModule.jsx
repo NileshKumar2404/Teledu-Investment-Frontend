@@ -4,7 +4,7 @@ import { api } from '../../api/client';
 import { ACADEMY_LESSONS, ACADEMY_PHASES, getLessonById } from '../../data/academyLessonsData';
 import LessonReaderModal from './LessonReaderModal';
 
-export default function LearningModule({ company }) {
+export default function LearningModule({ company, currentUser, onOpenPricing }) {
   const [lessons, setLessons] = useState(ACADEMY_LESSONS);
   const [categories, setCategories] = useState([
     "FOUNDATIONS", "CUSTOMER", "BUSINESS_MODEL", "GTM", "FINANCE", "OPERATIONS", "CAPSTONE"
@@ -629,6 +629,8 @@ export default function LearningModule({ company }) {
           isCompleted={progress[activeLesson.id]?.status === 'COMPLETED'}
           onToggleComplete={(id) => toggleComplete(id)}
           onNavigateLesson={(newLesson) => setActiveLesson(newLesson)}
+          currentUser={currentUser}
+          onOpenPricing={onOpenPricing}
         />
       )}
     </div>

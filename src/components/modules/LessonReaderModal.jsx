@@ -4,9 +4,10 @@ import {
   X, Check, CheckCircle2, ChevronRight, ChevronLeft, BookOpen,
   Briefcase, FileText, HelpCircle, Sparkles, Clock, Award,
   AlertTriangle, ArrowRight, Copy, CheckCheck, Target, Shield,
-  Zap, Lightbulb, TrendingUp, Compass, Play
+  Zap, Lightbulb, TrendingUp, Compass, Play, Video, FileDown, Lock
 } from 'lucide-react';
 import { getNextLesson, getPreviousLesson } from '../../data/academyLessonsData';
+import { getStoredUser } from '../../api/client';
 
 export default function LessonReaderModal({
   lesson,
@@ -14,14 +15,26 @@ export default function LessonReaderModal({
   onClose,
   onToggleComplete,
   isCompleted,
-  onNavigateLesson
+  onNavigateLesson,
+  currentUser,
+  onOpenPricing
 }) {
-  const [activeTab, setActiveTab] = useState('guide'); // 'guide' | 'cases' | 'worksheet' | 'quiz'
+  const [activeTab, setActiveTab] = useState('guide'); // 'guide' | 'cases' | 'worksheet' | 'videos' | 'pdfs' | 'quiz'
   const [worksheetAnswers, setWorksheetAnswers] = useState({});
   const [savedStatus, setSavedStatus] = useState(false);
   const [quizAnswers, setQuizAnswers] = useState({});
   const [quizSubmitted, setQuizSubmitted] = useState({});
   const [copiedNote, setCopiedNote] = useState(false);
+
+  // Check subscription entitlement
+  const user = currentUser || getStoredUser();
+  const userPlan = user?.subscription?.plan || 'free';
+  const userStatus = user?.subscription?.status || 'inactive';
+  const isAdmin = ['admin', 'super_admin'].includes(user?.role);
+  const isSubscribed = isAdmin || (
+    ['founder_pro', 'investor_pro', 'all_access_pro'].includes(userPlan) &&
+    ['active', 'trialing'].includes(userStatus)
+  );
 
   // Load saved worksheet responses from localStorage whenever lesson changes
   useEffect(() => {
@@ -354,6 +367,104 @@ export default function LessonReaderModal({
                 <span>Founder Worksheet</span>
                 {Object.keys(worksheetAnswers).length > 0 && (
                   <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10B981' }} />
+                )}
+              </button>
+
+              {/* TAB 4: VIDEOS (PREMIUM) */}
+              <button
+                onClick={() => setActiveTab('videos')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '0.55rem 1rem',
+                  borderRadius: '10px',
+                  border: 'none',
+                  background: activeTab === 'videos' ? 'linear-gradient(135deg, #6366F1, #8B5CF6)' : 'rgba(255, 255, 255, 0.05)',
+                  color: activeTab === 'videos' ? '#fff' : 'var(--text-secondary)',
+                  fontSize: '0.82rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <Video size={14} />
+                <span>Videos</span>
+                {!isSubscribed ? (
+                  <span style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '2px',
+                    padding: '0.15rem 0.4rem',
+                    borderRadius: '6px',
+                    background: 'rgba(245, 158, 11, 0.15)',
+                    border: '1px solid rgba(245, 158, 11, 0.35)',
+                    color: '#F59E0B',
+                    fontSize: '0.65rem',
+                    fontWeight: 800
+                  }}>
+                    <Lock size={10} /> PRO
+                  </span>
+                ) : (
+                  <span style={{
+                    padding: '0.15rem 0.4rem',
+                    borderRadius: '6px',
+                    background: 'rgba(99, 102, 241, 0.2)',
+                    color: '#818CF8',
+                    fontSize: '0.65rem',
+                    fontWeight: 700
+                  }}>
+                    Masterclass
+                  </span>
+                )}
+              </button>
+
+              {/* TAB 5: PDFS (PREMIUM) */}
+              <button
+                onClick={() => setActiveTab('pdfs')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '0.55rem 1rem',
+                  borderRadius: '10px',
+                  border: 'none',
+                  background: activeTab === 'pdfs' ? 'linear-gradient(135deg, #6366F1, #8B5CF6)' : 'rgba(255, 255, 255, 0.05)',
+                  color: activeTab === 'pdfs' ? '#fff' : 'var(--text-secondary)',
+                  fontSize: '0.82rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <FileDown size={14} />
+                <span>PDFs</span>
+                {!isSubscribed ? (
+                  <span style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '2px',
+                    padding: '0.15rem 0.4rem',
+                    borderRadius: '6px',
+                    background: 'rgba(245, 158, 11, 0.15)',
+                    border: '1px solid rgba(245, 158, 11, 0.35)',
+                    color: '#F59E0B',
+                    fontSize: '0.65rem',
+                    fontWeight: 800
+                  }}>
+                    <Lock size={10} /> PRO
+                  </span>
+                ) : (
+                  <span style={{
+                    padding: '0.15rem 0.4rem',
+                    borderRadius: '6px',
+                    background: 'rgba(16, 185, 129, 0.2)',
+                    color: '#34D399',
+                    fontSize: '0.65rem',
+                    fontWeight: 700
+                  }}>
+                    Guides
+                  </span>
                 )}
               </button>
 
@@ -769,7 +880,583 @@ export default function LessonReaderModal({
               </div>
             )}
 
-            {/* TAB 4: KNOWLEDGE CHECK QUIZ */}
+            {/* TAB 4: VIDEOS (PREMIUM FEATURE) */}
+            {activeTab === 'videos' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', maxWidth: '920px' }}>
+                {!isSubscribed ? (
+                  /* LOCKED PAYWALL STATE FOR UNSUBSCRIBED USERS */
+                  <div style={{
+                    background: 'radial-gradient(ellipse at 50% 30%, rgba(99, 102, 241, 0.14) 0%, rgba(15, 23, 42, 0.95) 75%)',
+                    border: '1px solid rgba(99, 102, 241, 0.35)',
+                    borderRadius: '20px',
+                    padding: '3rem 2rem',
+                    textAlign: 'center',
+                    boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(99, 102, 241, 0.2)'
+                  }}>
+                    <div style={{
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25))',
+                      border: '1px solid rgba(99, 102, 241, 0.4)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      margin: '0 auto 1.25rem',
+                      boxShadow: '0 0 25px rgba(99, 102, 241, 0.35)'
+                    }}>
+                      <Lock size={26} color="#818CF8" />
+                    </div>
+
+                    <div style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '0.3rem 0.85rem',
+                      borderRadius: '9999px',
+                      background: 'rgba(99, 102, 241, 0.15)',
+                      border: '1px solid rgba(99, 102, 241, 0.3)',
+                      color: '#818CF8',
+                      fontSize: '0.75rem',
+                      fontWeight: 800,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.04em',
+                      marginBottom: '1rem'
+                    }}>
+                      <Sparkles size={12} /> Premium Feature • Founder Pro
+                    </div>
+
+                    <h3 style={{ fontSize: '1.65rem', fontWeight: 900, color: '#fff', margin: '0 0 0.6rem', letterSpacing: '-0.02em' }}>
+                      Unlock Video Masterclasses for {lesson.title}
+                    </h3>
+                    <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', maxWidth: '540px', margin: '0 auto 1.8rem', lineHeight: 1.6 }}>
+                      High-definition video teardowns, venture breakdowns, and founder case study sessions are premium features locked to active subscribers.
+                    </p>
+
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                      gap: '0.85rem',
+                      maxWidth: '680px',
+                      margin: '0 auto 2rem',
+                      textAlign: 'left'
+                    }}>
+                      {[
+                        '4K video breakdowns of each strategic lesson framework',
+                        'Step-by-step financial model teardowns by serial founders',
+                        'Real-world deal room and cap table simulations'
+                      ].map((benefit, bIdx) => (
+                        <div key={bIdx} style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.65rem',
+                          padding: '0.75rem 1rem',
+                          borderRadius: '10px',
+                          background: 'rgba(255, 255, 255, 0.03)',
+                          border: '1px solid rgba(255, 255, 255, 0.07)',
+                          fontSize: '0.82rem',
+                          color: '#E2E8F0'
+                        }}>
+                          <Check size={14} color="#10B981" style={{ flexShrink: 0 }} />
+                          <span>{benefit}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <button
+                      onClick={onOpenPricing}
+                      style={{
+                        padding: '0.85rem 2rem',
+                        borderRadius: '12px',
+                        border: 'none',
+                        background: 'linear-gradient(135deg, #6366F1, #8B5CF6)',
+                        color: '#fff',
+                        fontSize: '0.92rem',
+                        fontWeight: 800,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        boxShadow: '0 4px 20px rgba(99, 102, 241, 0.45)',
+                        transition: 'transform 0.15s ease'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-1px)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}
+                    >
+                      <Sparkles size={16} />
+                      <span>Upgrade to Unlock Video Masterclasses</span>
+                      <ArrowRight size={16} />
+                    </button>
+                  </div>
+                ) : (
+                  /* COMING SOON SECTION FOR SUBSCRIBED USERS */
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem' }}>
+                    {/* Header */}
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                      paddingBottom: '1.2rem'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div style={{
+                          width: '38px',
+                          height: '38px',
+                          borderRadius: '10px',
+                          background: 'rgba(99, 102, 241, 0.15)',
+                          border: '1px solid rgba(99, 102, 241, 0.3)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#818CF8'
+                        }}>
+                          <Video size={18} />
+                        </div>
+                        <div>
+                          <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff', margin: 0 }}>
+                            Video Masterclasses • {lesson.title}
+                          </h3>
+                          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '2px 0 0' }}>
+                            Interactive visual teardowns and tactical case study walkthroughs
+                          </p>
+                        </div>
+                      </div>
+
+                      <div style={{
+                        padding: '0.35rem 0.9rem',
+                        borderRadius: '9999px',
+                        background: 'rgba(245, 158, 11, 0.15)',
+                        border: '1px solid rgba(245, 158, 11, 0.35)',
+                        color: '#F59E0B',
+                        fontSize: '0.78rem',
+                        fontWeight: 800,
+                        letterSpacing: '0.04em'
+                      }}>
+                        Coming Soon.....
+                      </div>
+                    </div>
+
+                    {/* Hero Coming Soon Notice Card */}
+                    <div style={{
+                      background: 'radial-gradient(ellipse at 50% 20%, rgba(99, 102, 241, 0.12) 0%, rgba(15, 23, 42, 0.8) 80%)',
+                      border: '1px solid rgba(99, 102, 241, 0.25)',
+                      borderRadius: '18px',
+                      padding: '2.5rem 2rem',
+                      textAlign: 'center',
+                      position: 'relative',
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{
+                        width: '52px',
+                        height: '52px',
+                        borderRadius: '50%',
+                        background: 'rgba(99, 102, 241, 0.2)',
+                        border: '1px solid rgba(99, 102, 241, 0.4)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        margin: '0 auto 1.2rem',
+                        color: '#818CF8'
+                      }}>
+                        <Play size={22} style={{ marginLeft: '3px' }} />
+                      </div>
+
+                      <h4 style={{
+                        fontSize: '1.8rem',
+                        fontWeight: 900,
+                        color: '#FFFFFF',
+                        margin: '0 0 0.5rem',
+                        letterSpacing: '0.02em',
+                        background: 'linear-gradient(135deg, #FFFFFF 0%, #A5B4FC 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent'
+                      }}>
+                        Coming Soon.....
+                      </h4>
+
+                      <p style={{
+                        fontSize: '0.92rem',
+                        color: '#94A3B8',
+                        maxWidth: '560px',
+                        margin: '0 auto 1.8rem',
+                        lineHeight: 1.6
+                      }}>
+                        High-definition video masterclasses, framework breakdown screencasts, and founder live teardowns for "{lesson.title}" are currently in post-production by our venture studio partners.
+                      </p>
+
+                      <div style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '0.5rem 1.2rem',
+                        borderRadius: '9999px',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        fontSize: '0.8rem',
+                        color: '#CBD5E1'
+                      }}>
+                        <Clock size={14} color="#818CF8" />
+                        <span>Included in your active Founder Pro membership</span>
+                      </div>
+                    </div>
+
+                    {/* Syllabus Previews */}
+                    <div>
+                      <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.85rem' }}>
+                        Curriculum Modules in Production
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        {[
+                          { title: 'Core Framework Mechanics & Mathematical Proof', duration: '12 mins', tag: 'Mechanical Breakdown' },
+                          { title: 'Real-World Venture Case Study & Pivot Analysis', duration: '15 mins', tag: 'Case Teardown' },
+                          { title: 'Financial Modeling, Diligence & Dilution Scenarios', duration: '18 mins', tag: 'Diligence Lab' }
+                        ].map((mod, mIdx) => (
+                          <div key={mIdx} style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '1rem 1.25rem',
+                            borderRadius: '12px',
+                            background: 'rgba(255, 255, 255, 0.025)',
+                            border: '1px solid rgba(255, 255, 255, 0.07)',
+                            gap: '1rem'
+                          }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                              <div style={{
+                                width: '32px',
+                                height: '32px',
+                                borderRadius: '8px',
+                                background: 'rgba(99, 102, 241, 0.1)',
+                                border: '1px solid rgba(99, 102, 241, 0.2)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: '#818CF8',
+                                flexShrink: 0
+                              }}>
+                                <Play size={14} style={{ marginLeft: '2px' }} />
+                              </div>
+                              <div>
+                                <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#E2E8F0', marginBottom: '2px' }}>
+                                  Module {mIdx + 1}: {mod.title}
+                                </div>
+                                <div style={{ fontSize: '0.74rem', color: '#64748B' }}>
+                                  {mod.tag} • Estimated duration: {mod.duration}
+                                </div>
+                              </div>
+                            </div>
+
+                            <span style={{
+                              padding: '0.25rem 0.65rem',
+                              borderRadius: '6px',
+                              background: 'rgba(255, 255, 255, 0.04)',
+                              border: '1px solid rgba(255, 255, 255, 0.08)',
+                              color: '#94A3B8',
+                              fontSize: '0.72rem',
+                              fontWeight: 700,
+                              flexShrink: 0
+                            }}>
+                              Coming Soon.....
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TAB 5: PDFS (PREMIUM FEATURE) */}
+            {activeTab === 'pdfs' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', maxWidth: '920px' }}>
+                {!isSubscribed ? (
+                  /* LOCKED PAYWALL STATE FOR UNSUBSCRIBED USERS */
+                  <div style={{
+                    background: 'radial-gradient(ellipse at 50% 30%, rgba(16, 185, 129, 0.14) 0%, rgba(15, 23, 42, 0.95) 75%)',
+                    border: '1px solid rgba(16, 185, 129, 0.35)',
+                    borderRadius: '20px',
+                    padding: '3rem 2rem',
+                    textAlign: 'center',
+                    boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(16, 185, 129, 0.2)'
+                  }}>
+                    <div style={{
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(6, 182, 212, 0.25))',
+                      border: '1px solid rgba(16, 185, 129, 0.4)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      margin: '0 auto 1.25rem',
+                      boxShadow: '0 0 25px rgba(16, 185, 129, 0.35)'
+                    }}>
+                      <Lock size={26} color="#34D399" />
+                    </div>
+
+                    <div style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '0.3rem 0.85rem',
+                      borderRadius: '9999px',
+                      background: 'rgba(16, 185, 129, 0.15)',
+                      border: '1px solid rgba(16, 185, 129, 0.3)',
+                      color: '#34D399',
+                      fontSize: '0.75rem',
+                      fontWeight: 800,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.04em',
+                      marginBottom: '1rem'
+                    }}>
+                      <Sparkles size={12} /> Premium Feature • Founder Pro
+                    </div>
+
+                    <h3 style={{ fontSize: '1.65rem', fontWeight: 900, color: '#fff', margin: '0 0 0.6rem', letterSpacing: '-0.02em' }}>
+                      Unlock Executive PDF Summaries for {lesson.title}
+                    </h3>
+                    <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', maxWidth: '540px', margin: '0 auto 1.8rem', lineHeight: 1.6 }}>
+                      Downloadable executive briefs, printable due diligence checklists, and formula sheets are premium features locked to active subscribers.
+                    </p>
+
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                      gap: '0.85rem',
+                      maxWidth: '680px',
+                      margin: '0 auto 2rem',
+                      textAlign: 'left'
+                    }}>
+                      {[
+                        'High-resolution executive summary one-pagers for offline review',
+                        'Printable due diligence verification checklists & scorecards',
+                        'Slide deck companion notes & financial formula cheat sheets'
+                      ].map((benefit, bIdx) => (
+                        <div key={bIdx} style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.65rem',
+                          padding: '0.75rem 1rem',
+                          borderRadius: '10px',
+                          background: 'rgba(255, 255, 255, 0.03)',
+                          border: '1px solid rgba(255, 255, 255, 0.07)',
+                          fontSize: '0.82rem',
+                          color: '#E2E8F0'
+                        }}>
+                          <Check size={14} color="#10B981" style={{ flexShrink: 0 }} />
+                          <span>{benefit}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <button
+                      onClick={onOpenPricing}
+                      style={{
+                        padding: '0.85rem 2rem',
+                        borderRadius: '12px',
+                        border: 'none',
+                        background: 'linear-gradient(135deg, #10B981, #059669)',
+                        color: '#fff',
+                        fontSize: '0.92rem',
+                        fontWeight: 800,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        boxShadow: '0 4px 20px rgba(16, 185, 129, 0.45)',
+                        transition: 'transform 0.15s ease'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-1px)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}
+                    >
+                      <Sparkles size={16} />
+                      <span>Upgrade to Unlock Executive PDFs</span>
+                      <ArrowRight size={16} />
+                    </button>
+                  </div>
+                ) : (
+                  /* COMING SOON SECTION FOR SUBSCRIBED USERS */
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem' }}>
+                    {/* Header */}
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                      paddingBottom: '1.2rem'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div style={{
+                          width: '38px',
+                          height: '38px',
+                          borderRadius: '10px',
+                          background: 'rgba(16, 185, 129, 0.15)',
+                          border: '1px solid rgba(16, 185, 129, 0.3)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#34D399'
+                        }}>
+                          <FileDown size={18} />
+                        </div>
+                        <div>
+                          <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff', margin: 0 }}>
+                            Executive PDF Guides • {lesson.title}
+                          </h3>
+                          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '2px 0 0' }}>
+                            Printable executive briefs, due diligence checklists, and formula sheets
+                          </p>
+                        </div>
+                      </div>
+
+                      <div style={{
+                        padding: '0.35rem 0.9rem',
+                        borderRadius: '9999px',
+                        background: 'rgba(245, 158, 11, 0.15)',
+                        border: '1px solid rgba(245, 158, 11, 0.35)',
+                        color: '#F59E0B',
+                        fontSize: '0.78rem',
+                        fontWeight: 800,
+                        letterSpacing: '0.04em'
+                      }}>
+                        Coming Soon.....
+                      </div>
+                    </div>
+
+                    {/* Hero Coming Soon Notice Card */}
+                    <div style={{
+                      background: 'radial-gradient(ellipse at 50% 20%, rgba(16, 185, 129, 0.12) 0%, rgba(15, 23, 42, 0.8) 80%)',
+                      border: '1px solid rgba(16, 185, 129, 0.25)',
+                      borderRadius: '18px',
+                      padding: '2.5rem 2rem',
+                      textAlign: 'center',
+                      position: 'relative',
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{
+                        width: '52px',
+                        height: '52px',
+                        borderRadius: '50%',
+                        background: 'rgba(16, 185, 129, 0.2)',
+                        border: '1px solid rgba(16, 185, 129, 0.4)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        margin: '0 auto 1.2rem',
+                        color: '#34D399'
+                      }}>
+                        <FileDown size={22} />
+                      </div>
+
+                      <h4 style={{
+                        fontSize: '1.8rem',
+                        fontWeight: 900,
+                        color: '#FFFFFF',
+                        margin: '0 0 0.5rem',
+                        letterSpacing: '0.02em',
+                        background: 'linear-gradient(135deg, #FFFFFF 0%, #A7F3D0 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent'
+                      }}>
+                        Coming Soon.....
+                      </h4>
+
+                      <p style={{
+                        fontSize: '0.92rem',
+                        color: '#94A3B8',
+                        maxWidth: '560px',
+                        margin: '0 auto 1.8rem',
+                        lineHeight: 1.6
+                      }}>
+                        Downloadable PDF summaries, printable due diligence rubrics, and formula companion decks for "{lesson.title}" are currently being finalized and formatted for high-resolution vector export.
+                      </p>
+
+                      <div style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '0.5rem 1.2rem',
+                        borderRadius: '9999px',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        fontSize: '0.8rem',
+                        color: '#CBD5E1'
+                      }}>
+                        <Clock size={14} color="#34D399" />
+                        <span>Included in your active Founder Pro membership</span>
+                      </div>
+                    </div>
+
+                    {/* Document Previews */}
+                    <div>
+                      <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.85rem' }}>
+                        Executive PDF Documents in Preparation
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        {[
+                          { title: 'Executive Summary & Framework Cheat Sheet', format: 'Vector PDF • 2 Pages', tag: 'Summary Brief' },
+                          { title: 'Due Diligence Checklist & Verification Rubric', format: 'Printable PDF • 4 Pages', tag: 'Diligence Rubric' },
+                          { title: 'Unit Economics & Financial Formula Companion', format: 'Spreadsheet Companion • 3 Pages', tag: 'Formulas Deck' }
+                        ].map((doc, dIdx) => (
+                          <div key={dIdx} style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '1rem 1.25rem',
+                            borderRadius: '12px',
+                            background: 'rgba(255, 255, 255, 0.025)',
+                            border: '1px solid rgba(255, 255, 255, 0.07)',
+                            gap: '1rem'
+                          }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                              <div style={{
+                                width: '32px',
+                                height: '32px',
+                                borderRadius: '8px',
+                                background: 'rgba(16, 185, 129, 0.1)',
+                                border: '1px solid rgba(16, 185, 129, 0.2)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: '#34D399',
+                                flexShrink: 0
+                              }}>
+                                <FileDown size={14} />
+                              </div>
+                              <div>
+                                <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#E2E8F0', marginBottom: '2px' }}>
+                                  {doc.title}
+                                </div>
+                                <div style={{ fontSize: '0.74rem', color: '#64748B' }}>
+                                  {doc.tag} • {doc.format}
+                                </div>
+                              </div>
+                            </div>
+
+                            <span style={{
+                              padding: '0.25rem 0.65rem',
+                              borderRadius: '6px',
+                              background: 'rgba(255, 255, 255, 0.04)',
+                              border: '1px solid rgba(255, 255, 255, 0.08)',
+                              color: '#94A3B8',
+                              fontSize: '0.72rem',
+                              fontWeight: 700,
+                              flexShrink: 0
+                            }}>
+                              Coming Soon.....
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TAB 6: KNOWLEDGE CHECK QUIZ */}
             {activeTab === 'quiz' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.6rem', maxWidth: '860px' }}>
                 <div>

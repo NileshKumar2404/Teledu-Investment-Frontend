@@ -243,7 +243,7 @@ export default function App() {
         return <OverviewModule onNavigate={setActiveTab} company={company} healthScore={healthScore} />;
       case 'learning':
       case 'curriculum':
-        return <LearningModule company={company} />;
+        return <LearningModule company={company} currentUser={currentUser} onOpenPricing={() => setIsPricingOpen(true)} />;
       case 'terms':
         return <TermsLibraryModule onNavigateToPrompt={() => setActiveTab('prompt-builder')} />;
       case 'founder-assessment':
