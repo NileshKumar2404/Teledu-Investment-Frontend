@@ -52,14 +52,17 @@ export default function App() {
   const [selectedTicker, setSelectedTicker] = useState('TELEDU');
   const [companiesList, setCompaniesList] = useState(() => {
     try {
+      const map = new Map();
+      SAMPLE_COMPANIES.forEach(c => map.set(c.ticker.toUpperCase(), { ...DEFAULT_COMPANY, ...c }));
       const saved = localStorage.getItem('startupi_custom_companies');
       if (saved) {
         const parsed = JSON.parse(saved);
-        const map = new Map();
-        SAMPLE_COMPANIES.forEach(c => map.set(c.ticker.toUpperCase(), c));
-        parsed.forEach(c => map.set(c.ticker.toUpperCase(), c));
-        return Array.from(map.values());
+        parsed.forEach(c => {
+          const base = map.get(c.ticker.toUpperCase()) || DEFAULT_COMPANY;
+          map.set(c.ticker.toUpperCase(), { ...base, ...c });
+        });
       }
+      return Array.from(map.values());
     } catch (e) {}
     return SAMPLE_COMPANIES;
   });
@@ -69,6 +72,8 @@ export default function App() {
     const cleanName = (newComp.companyName || newComp.name || cleanTicker).trim();
 
     const formatted = {
+      ...DEFAULT_COMPANY,
+      ...newComp,
       ticker: cleanTicker,
       name: cleanName,
       companyName: cleanName,
@@ -112,7 +117,47 @@ export default function App() {
     } catch (e) {}
 
     setSelectedTicker(cleanTicker);
-    setCompany(prev => ({ ...prev, ...formatted }));
+    setCompany(formatted);
+  };
+
+  const handleUpdateCompany = async (updates) => {
+    // 1. Immediately update active company state
+    setCompany(prev => ({
+      ...prev,
+      ...updates,
+      monthlyRevenue: Number(updates.monthlyRevenue ?? prev.monthlyRevenue),
+      mrr: Number(updates.mrr ?? updates.monthlyRevenue ?? prev.mrr),
+      monthlyBurn: Number(updates.monthlyBurn ?? prev.monthlyBurn),
+      cashAvailable: Number(updates.cashAvailable ?? prev.cashAvailable),
+      growthRate: Number(updates.growthRate ?? prev.growthRate),
+      grossMargin: Number(updates.grossMargin ?? prev.grossMargin),
+      customers: Number(updates.customers ?? prev.customers),
+      cac: Number(updates.cac ?? prev.cac),
+      ltv: Number(updates.ltv ?? prev.ltv)
+    }));
+
+    // 2. Persist in companiesList and localStorage
+    setCompaniesList(list => {
+      const targetTicker = selectedTicker.toUpperCase();
+      let found = false;
+      const updated = list.map(c => {
+        if (c.ticker.toUpperCase() === targetTicker) {
+          found = true;
+          return { ...c, ...updates };
+        }
+        return c;
+      });
+      const finalList = found ? updated : [...updated, { ticker: targetTicker, ...updates }];
+      try {
+        localStorage.setItem('startupi_custom_companies', JSON.stringify(finalList));
+      } catch (e) {}
+      return finalList;
+    });
+
+    // 3. Persist to backend API (if authenticated / company exists)
+    try {
+      await api.updateProfile(selectedTicker, updates).catch(() => null);
+    } catch (e) {}
   };
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -182,20 +227,85 @@ export default function App() {
     restoreSession();
   }, []);
 
+  // Fetch available companies from backend API
+  useEffect(() => {
+    async function loadBackendCompanies() {
+      try {
+        const data = await api.getCompanies().catch(() => null);
+        if (Array.isArray(data) && data.length > 0) {
+          setCompaniesList(prev => {
+            const map = new Map();
+            prev.forEach(c => map.set(c.ticker.toUpperCase(), c));
+            data.forEach(c => {
+              if (c.ticker) {
+                const existing = map.get(c.ticker.toUpperCase()) || DEFAULT_COMPANY;
+                map.set(c.ticker.toUpperCase(), {
+                  ...existing,
+                  ...c,
+                  ticker: c.ticker.toUpperCase(),
+                  companyName: c.companyName || c.name || existing.companyName,
+                  name: c.companyName || c.name || existing.name,
+                  monthlyRevenue: Number(c.monthlyRevenue ?? c.currentRevenue ?? existing.monthlyRevenue),
+                  mrr: Number(c.mrr ?? c.monthlyRevenue ?? c.currentRevenue ?? existing.mrr),
+                  monthlyBurn: Number(c.monthlyBurn ?? c.monthlyExpenses ?? existing.monthlyBurn),
+                  cashAvailable: Number(c.cashAvailable ?? c.cashBalance ?? existing.cashAvailable),
+                  growthRate: Number(c.growthRate ?? c.revenueGrowthRate ?? existing.growthRate),
+                  grossMargin: Number(c.grossMargin ?? existing.grossMargin),
+                  stage: c.stage || existing.stage || 'Seed',
+                  industry: c.industry || existing.industry || 'Technology & Growth'
+                });
+              }
+            });
+            return Array.from(map.values());
+          });
+        }
+      } catch (e) {
+        console.warn('Backend companies load fallback:', e.message);
+      }
+    }
+    loadBackendCompanies();
+  }, [currentUser]);
+
   // Fetch live company profile and health score
   useEffect(() => {
     async function fetchCompanyData() {
       try {
+        const localTarget = companiesList.find(c => c.ticker.toUpperCase() === selectedTicker.toUpperCase())
+          || SAMPLE_COMPANIES.find(c => c.ticker.toUpperCase() === selectedTicker.toUpperCase())
+          || DEFAULT_COMPANY;
+
         const profileRes = await api.getProfile(selectedTicker).catch(() => null);
         const profile = profileRes && profileRes.company ? profileRes.company : profileRes;
+
         if (profile && (profile.companyName || profile.name)) {
-          setCompany(prev => ({ ...prev, ...profile }));
+          const normalized = {
+            ...DEFAULT_COMPANY,
+            ...localTarget,
+            ...profile,
+            ticker: (profile.ticker || selectedTicker).toUpperCase(),
+            name: profile.companyName || profile.name || localTarget.name,
+            companyName: profile.companyName || profile.name || localTarget.companyName,
+            monthlyRevenue: Number(profile.monthlyRevenue ?? profile.currentRevenue ?? localTarget.monthlyRevenue ?? 28000),
+            mrr: Number(profile.mrr ?? profile.monthlyRevenue ?? profile.currentRevenue ?? localTarget.mrr ?? 28000),
+            monthlyBurn: Number(profile.monthlyBurn ?? profile.monthlyExpenses ?? localTarget.monthlyBurn ?? 18000),
+            cashAvailable: Number(profile.cashAvailable ?? profile.cashBalance ?? localTarget.cashAvailable ?? 165000),
+            growthRate: Number(profile.growthRate ?? profile.revenueGrowthRate ?? localTarget.growthRate ?? 14),
+            grossMargin: Number(profile.grossMargin ?? localTarget.grossMargin ?? 72),
+            customers: Number(profile.customers ?? localTarget.customers ?? 240),
+            cac: Number(profile.cac ?? localTarget.cac ?? 120),
+            ltv: Number(profile.ltv ?? localTarget.ltv ?? 560),
+            churnRate: Number(profile.churnRate ?? profile.customerChurnRate ?? localTarget.churnRate ?? 3.2),
+            stage: profile.stage || localTarget.stage || 'Seed',
+            industry: profile.industry || localTarget.industry || 'Technology & Growth'
+          };
+          setCompany(normalized);
           setApiConnected(true);
         } else {
-          const custom = companiesList.find(c => c.ticker.toUpperCase() === selectedTicker.toUpperCase());
-          if (custom) {
-            setCompany(prev => ({ ...prev, ...custom }));
-          }
+          // When fallback/mock or unauthenticated, replace company state completely with local target
+          setCompany({
+            ...DEFAULT_COMPANY,
+            ...localTarget
+          });
         }
 
         const healthRes = await api.getHealthScore(selectedTicker).catch(() => null);
@@ -357,7 +467,15 @@ export default function App() {
         );
 
       default:
-        return <OverviewModule onNavigate={setActiveTab} company={company} healthScore={healthScore} />;
+        return (
+          <OverviewModule 
+            onNavigate={setActiveTab} 
+            company={company} 
+            healthScore={healthScore} 
+            onOpenAI={() => setIsAIOpen(true)} 
+            onUpdateCompany={handleUpdateCompany} 
+          />
+        );
     }
   };
 
