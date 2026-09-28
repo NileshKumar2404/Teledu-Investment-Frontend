@@ -83,6 +83,9 @@
 
 html {
   scroll-behavior: smooth;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 body {
@@ -90,7 +93,10 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.6;
+  width: 100%;
+  max-width: 100vw;
   overflow-x: hidden;
+  position: relative;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
@@ -538,6 +544,8 @@ textarea.input-field {
   margin: 0 auto;
   padding: 2rem 2.5rem 6rem;
   box-sizing: border-box;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 @media (max-width: 1200px) {
@@ -635,6 +643,43 @@ textarea.input-field {
    TOP COMMAND BAR RESPONSIVE CLASSES
    ========================================================================== */
 
+.top-bar-tier-1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  width: 100%;
+}
+
+.top-bar-brand-group {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.top-bar-brand-subtitle {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.top-bar-divider {
+  width: 1px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.top-bar-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius-pill);
+}
+
 .top-bar-desktop-only {
   display: flex !important;
 }
@@ -658,29 +703,91 @@ textarea.input-field {
 }
 
 @media (max-width: 640px) {
+  .top-bar-tier-1 {
+    padding: 0.5rem 0.75rem !important;
+  }
+
+  .top-bar-brand-group {
+    gap: 0.5rem !important;
+  }
+
+  .top-bar-brand-subtitle {
+    display: none !important;
+  }
+
+  .top-bar-divider {
+    display: none !important;
+  }
+
+  .top-bar-role-badge {
+    padding: 0.25rem 0.55rem !important;
+    gap: 4px !important;
+  }
+
   .top-bar-role-badge-text {
-    display: none;
+    display: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .top-bar-tier-1 {
+    padding: 0.4rem 0.5rem !important;
+  }
+
+  .top-bar-brand-group {
+    gap: 0.35rem !important;
+  }
+
+  .top-bar-role-badge {
+    padding: 0.2rem 0.45rem !important;
+  }
+}
+
+/* Horizontal Sub-nav Tabs on Mobile */
+.top-bar-tier-nav {
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  gap: 0.35rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  width: 100%;
+}
+
+.top-bar-tier-nav::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .top-bar-tier-nav {
+    padding: 0 0.5rem !important;
+    gap: 0.2rem !important;
+  }
+  .top-bar-tier-nav button {
+    padding: 0.55rem 0.65rem !important;
+    font-size: 0.76rem !important;
   }
 }
 
 /* Mobile Slide-Over Drawer */
 .mobile-nav-drawer {
   position: fixed;
-  top: 56px;
+  top: 54px;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(9, 13, 22, 0.98);
+  background: #070A13 !important;
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
-  z-index: 100;
+  z-index: 99999 !important;
   display: flex;
   flex-direction: column;
-  padding: 1.25rem 1rem 2rem;
+  padding: 1.25rem 1rem 2.5rem;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.95);
 }
 
 /* ==========================================================================
@@ -690,7 +797,8 @@ textarea.input-field {
 .portal-gateway-root {
   position: fixed;
   inset: 0;
-  width: 100vw;
+  width: 100%;
+  max-width: 100vw;
   height: 100vh;
   z-index: 9999;
   display: flex;
@@ -735,40 +843,108 @@ textarea.input-field {
   gap: 0.75rem;
 }
 
+.portal-mobile-brand {
+  display: none !important;
+}
+
 @media (max-width: 1024px) {
   .portal-gateway-root {
-    position: fixed;
-    flex-direction: column;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    height: 100%;
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    height: 100% !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    flex-direction: column !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
   }
 
-  .portal-gateway-left {
-    flex: none;
-    width: 100%;
-    min-width: 0;
-    height: auto;
-    padding: 2rem 1.25rem 1.5rem;
-    border-right: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    overflow-y: visible;
+  .portal-mobile-brand {
+    display: flex !important;
   }
 
+  /* Show Role Selector & Launch button FIRST on mobile */
   .portal-gateway-right {
-    flex: none;
-    width: 100%;
-    min-width: 0;
-    height: auto;
-    padding: 1.75rem 1.25rem 4rem;
-    overflow-y: visible;
+    order: 1 !important;
+    flex: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    padding: 1.25rem 1rem 2rem !important;
+    overflow-y: visible !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Show Venture Features & Stats below on mobile */
+  .portal-gateway-left {
+    order: 2 !important;
+    flex: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    padding: 1.75rem 1rem 3.5rem !important;
+    border-right: none !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    overflow-y: visible !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .portal-gateway-roles-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
   .portal-gateway-roles-grid {
-    grid-template-columns: 1fr;
-    gap: 0.65rem;
+    grid-template-columns: 1fr !important;
+    gap: 0.55rem !important;
+  }
+
+  .portal-role-button {
+    flex-direction: row !important;
+    align-items: center !important;
+    padding: 0.7rem 0.85rem !important;
+    gap: 0.75rem !important;
+  }
+
+  .portal-role-button .portal-role-header {
+    width: auto !important;
+    justify-content: flex-start !important;
+  }
+
+  .portal-role-button .portal-role-badge-indicator {
+    order: 3 !important;
+    margin-left: auto !important;
+  }
+
+  .portal-role-button .portal-role-content {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  .portal-role-button .portal-role-title {
+    font-size: 0.85rem !important;
+  }
+
+  .portal-role-button .portal-role-subtitle {
+    font-size: 0.68rem !important;
+  }
+
+  .portal-gateway-stats {
+    flex-wrap: wrap !important;
+    gap: 0.85rem !important;
+  }
+
+  .portal-gateway-stat-divider {
+    display: none !important;
   }
 }
 

@@ -159,7 +159,7 @@ export default function TopCommandBar({
     <header style={{
       position: 'sticky',
       top: 0,
-      zIndex: 50,
+      zIndex: isMobileDrawerOpen ? 99999 : 50,
       width: '100%',
       background: 'rgba(10, 14, 23, 0.95)',
       backdropFilter: 'blur(28px)',
@@ -168,7 +168,7 @@ export default function TopCommandBar({
       boxShadow: '0 10px 35px -10px rgba(0, 0, 0, 0.7)'
     }}>
       {/* Top Tier: Brand, Mode/Role Badge, Workspace Selector & Controls */}
-      <div style={{
+      <div className="top-bar-tier-1" style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -176,7 +176,7 @@ export default function TopCommandBar({
         borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
       }}>
         {/* Left: Brand + Role Badge */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+        <div className="top-bar-brand-group" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
           <div 
             onClick={() => {
               if (currentRole === 'founder') setActiveTab('overview');
@@ -217,7 +217,7 @@ export default function TopCommandBar({
               }}>
                 Startup<span style={{ color: '#818CF8' }}>IQ</span>
               </div>
-              <div style={{ 
+              <div className="top-bar-brand-subtitle" style={{ 
                 fontSize: '0.62rem', 
                 color: 'var(--text-muted)', 
                 letterSpacing: '0.08em', 
@@ -229,10 +229,10 @@ export default function TopCommandBar({
             </div>
           </div>
 
-          <div style={{ width: '1px', height: '22px', background: 'rgba(255, 255, 255, 0.1)' }} />
+          <div className="top-bar-divider" style={{ width: '1px', height: '22px', background: 'rgba(255, 255, 255, 0.1)' }} />
 
           {/* Isolated Stakeholder Role Badge (Role-Isolation Enforced) */}
-          <div style={{
+          <div className="top-bar-role-badge" style={{
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
@@ -567,8 +567,9 @@ export default function TopCommandBar({
       </div>
 
       {/* MOBILE FULL-SCREEN NAVIGATION DRAWER */}
-      <AnimatePresence>
-        {isMobileDrawerOpen && (
+      {typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {isMobileDrawerOpen && (
           <motion.div
             className="mobile-nav-drawer"
             initial={{ opacity: 0, y: -15 }}
@@ -764,10 +765,12 @@ export default function TopCommandBar({
             </button>
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence>,
+      document.body
+    )}
 
       {/* Bottom Tier: Role-Specific Navigation Tabs */}
-      <nav style={{
+      <nav className="top-bar-tier-nav" style={{
         display: 'flex',
         alignItems: 'center',
         padding: '0 1.5rem',

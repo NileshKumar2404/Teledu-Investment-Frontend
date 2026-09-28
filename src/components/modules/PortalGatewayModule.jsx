@@ -233,9 +233,10 @@ export default function PortalGatewayModule({ onSelectRole, currentUser, company
         <div style={{
           position: 'absolute',
           top: '30%',
-          left: '15%',
-          width: '450px',
-          height: '450px',
+          left: '0%',
+          width: 'min(450px, 90vw)',
+          height: 'min(450px, 90vw)',
+          maxWidth: '100%',
           borderRadius: '50%',
           background: `radial-gradient(circle, ${currentRoleConfig.accentColor}18 0%, transparent 70%)`,
           pointerEvents: 'none',
@@ -396,7 +397,7 @@ export default function PortalGatewayModule({ onSelectRole, currentUser, company
         </div>
 
         {/* Bottom Platform Stat Footer */}
-        <div style={{
+        <div className="portal-gateway-stats" style={{
           position: 'relative',
           zIndex: 1,
           marginTop: '3.5rem',
@@ -404,18 +405,19 @@ export default function PortalGatewayModule({ onSelectRole, currentUser, company
           alignItems: 'center',
           gap: '2rem',
           borderTop: '1px solid rgba(255, 255, 255, 0.06)',
-          paddingTop: '1.5rem'
+          paddingTop: '1.5rem',
+          flexWrap: 'wrap'
         }}>
           <div>
             <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#FFFFFF' }}>120+</div>
             <div style={{ fontSize: '0.72rem', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Vetted Scenarios</div>
           </div>
-          <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.1)' }} />
+          <div className="portal-gateway-stat-divider" style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.1)' }} />
           <div>
             <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#FFFFFF' }}>50+</div>
             <div style={{ fontSize: '0.72rem', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Venture Terms</div>
           </div>
-          <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.1)' }} />
+          <div className="portal-gateway-stat-divider" style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.1)' }} />
           <div>
             <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#FFFFFF' }}>Zero Latency</div>
             <div style={{ fontSize: '0.72rem', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em' }}>In-Memory Sync</div>
@@ -425,6 +427,50 @@ export default function PortalGatewayModule({ onSelectRole, currentUser, company
 
       {/* ================= RIGHT SIDE: CLEAN ROLE SELECTOR & ACCESS ================= */}
       <div className="portal-gateway-right">
+        {/* Mobile-only branding header */}
+        <div className="portal-mobile-brand" style={{
+          alignItems: 'center',
+          gap: '0.75rem',
+          marginBottom: '1rem',
+          width: '100%',
+          maxWidth: '480px'
+        }}>
+          <div style={{
+            width: '32px',
+            height: '32px',
+            borderRadius: '10px',
+            background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 0 15px rgba(99, 102, 241, 0.4)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            flexShrink: 0
+          }}>
+            <Zap size={18} color="#fff" />
+          </div>
+          <div>
+            <div style={{
+              fontSize: '1.15rem',
+              fontWeight: 900,
+              letterSpacing: '-0.03em',
+              color: '#FFFFFF',
+              lineHeight: 1.1
+            }}>
+              Startup<span style={{ color: '#818CF8' }}>IQ</span>
+            </div>
+            <div style={{
+              fontSize: '0.6rem',
+              color: 'var(--text-muted, #94A3B8)',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              fontWeight: 700
+            }}>
+              Project Alpha Core • Dual Engine
+            </div>
+          </div>
+        </div>
+
         {/* Top Controls: Return to platform */}
         <div style={{
           width: '100%',
@@ -523,6 +569,7 @@ export default function PortalGatewayModule({ onSelectRole, currentUser, company
                     key={r.id}
                     type="button"
                     onClick={() => handleRoleSelect(r.id)}
+                    className="portal-role-button"
                     style={{
                       display: 'flex',
                       flexDirection: 'column',
@@ -542,8 +589,8 @@ export default function PortalGatewayModule({ onSelectRole, currentUser, company
                       textAlign: 'left'
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                      <div style={{
+                    <div className="portal-role-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                      <div className="portal-role-icon-box" style={{
                         width: '32px',
                         height: '32px',
                         borderRadius: '8px',
@@ -558,7 +605,7 @@ export default function PortalGatewayModule({ onSelectRole, currentUser, company
                       </div>
 
                       {isSelected && (
-                        <div style={{
+                        <div className="portal-role-badge-indicator" style={{
                           width: '8px',
                           height: '8px',
                           borderRadius: '50%',
@@ -568,8 +615,8 @@ export default function PortalGatewayModule({ onSelectRole, currentUser, company
                       )}
                     </div>
 
-                    <div>
-                      <div style={{
+                    <div className="portal-role-content">
+                      <div className="portal-role-title" style={{
                         fontSize: '0.9rem',
                         fontWeight: 800,
                         color: isSelected ? '#FFFFFF' : '#CBD5E1',
@@ -577,7 +624,7 @@ export default function PortalGatewayModule({ onSelectRole, currentUser, company
                       }}>
                         {r.title}
                       </div>
-                      <div style={{
+                      <div className="portal-role-subtitle" style={{
                         fontSize: '0.72rem',
                         color: isSelected ? r.accentColor : '#64748B',
                         fontWeight: 600
@@ -824,12 +871,12 @@ export default function PortalGatewayModule({ onSelectRole, currentUser, company
               disabled={loading}
               style={{
                 width: '100%',
-                padding: '0.95rem 1.25rem',
+                padding: '0.85rem 1rem',
                 borderRadius: '0.85rem',
                 border: 'none',
                 background: `linear-gradient(135deg, ${currentRoleConfig.accentColor}, ${currentRoleConfig.secondaryColor})`,
                 color: '#FFFFFF',
-                fontSize: '0.96rem',
+                fontSize: 'clamp(0.85rem, 3.5vw, 0.96rem)',
                 fontWeight: 800,
                 display: 'flex',
                 alignItems: 'center',
