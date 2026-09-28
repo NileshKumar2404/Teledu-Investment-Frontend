@@ -3,10 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Compass, TrendingUp, DollarSign, ShieldAlert, Sparkles, 
   Bookmark, CheckCircle2, ChevronRight, Award, FileText, 
-  Users, Layers, ArrowUpRight, Search, SlidersHorizontal, Eye
+  Users, Layers, ArrowUpRight, Search, SlidersHorizontal, Eye,
+  MessageSquare, Video, Calendar, PhoneCall
 } from 'lucide-react';
 import { api } from '../../api/client';
 import { DEAL_ROOM_COMPANIES } from '../../data/investmentData';
+import FounderConnectModal from '../common/FounderConnectModal';
 
 export default function DealRoomModule({ onSelectCompany }) {
   const [companies, setCompanies] = useState(DEAL_ROOM_COMPANIES);
@@ -14,6 +16,26 @@ export default function DealRoomModule({ onSelectCompany }) {
   const [sectorFilter, setSectorFilter] = useState('ALL');
   const [selectedCompany, setSelectedCompany] = useState(DEAL_ROOM_COMPANIES[0]);
   const [watchlistToast, setWatchlistToast] = useState(null);
+
+  // Founder Connect Modal & Scheduled Meetings State
+  const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
+  const [connectModalTab, setConnectModalTab] = useState('chat'); // 'chat' | 'video' | 'schedule'
+  const [scheduledMeetings, setScheduledMeetings] = useState({});
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('siq_scheduled_meetings') || '{}');
+      setScheduledMeetings(saved);
+    } catch (e) {}
+  }, []);
+
+  const handleOpenConnect = (tab = 'chat', comp = null) => {
+    if (comp) {
+      setSelectedCompany(comp);
+    }
+    setConnectModalTab(tab);
+    setIsConnectModalOpen(true);
+  };
 
   useEffect(() => {
     async function loadDeals() {
@@ -285,26 +307,52 @@ export default function DealRoomModule({ onSelectCompany }) {
                     Health Score: <strong style={{ color: '#FBBF24' }}>{comp.healthScore}/100</strong>
                   </span>
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAddToWatchlist(comp);
-                    }}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      background: 'transparent',
-                      border: 'none',
-                      color: 'var(--accent)',
-                      fontSize: '0.75rem',
-                      fontWeight: 600,
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <Bookmark size={14} />
-                    Watchlist
-                  </button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenConnect('chat', comp);
+                      }}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        background: 'rgba(16, 185, 129, 0.12)',
+                        border: '1px solid rgba(16, 185, 129, 0.3)',
+                        color: '#34D399',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        padding: '0.3rem 0.6rem',
+                        borderRadius: 'var(--radius-sm)',
+                        cursor: 'pointer'
+                      }}
+                      title={`Talk with ${comp.founderName || 'Founder'}`}
+                    >
+                      <MessageSquare size={12} />
+                      Talk
+                    </button>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToWatchlist(comp);
+                      }}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'var(--accent)',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <Bookmark size={14} />
+                      Watchlist
+                    </button>
+                  </div>
                 </div>
               </div>
             );
@@ -347,14 +395,88 @@ export default function DealRoomModule({ onSelectCompany }) {
                 </h2>
               </div>
 
-              <div style={{ display: 'flex', gap: '0.6rem' }}>
+              <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+                <button
+                  id="connect-founder-btn"
+                  onClick={() => handleOpenConnect('chat')}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '7px',
+                    padding: '0.6rem 1rem',
+                    borderRadius: 'var(--radius-md)',
+                    background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(5, 150, 105, 0.35))',
+                    border: '1px solid #10B981',
+                    color: '#34D399',
+                    fontSize: '0.82rem',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    boxShadow: '0 0 16px rgba(16, 185, 129, 0.25)',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <span style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    background: '#10B981',
+                    boxShadow: '0 0 8px #10B981'
+                  }} />
+                  <MessageSquare size={15} />
+                  Connect with Founder
+                </button>
+
+                <button
+                  id="quick-video-btn"
+                  onClick={() => handleOpenConnect('video')}
+                  title="Instant 1-Click Video Call (Google Meet / Zoom)"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '0.6rem 0.9rem',
+                    borderRadius: 'var(--radius-md)',
+                    background: 'rgba(59, 130, 246, 0.14)',
+                    border: '1px solid rgba(59, 130, 246, 0.35)',
+                    color: '#60A5FA',
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  <Video size={15} />
+                  Video Call
+                </button>
+
+                <button
+                  id="schedule-call-btn"
+                  onClick={() => handleOpenConnect('schedule')}
+                  title="Schedule Diligence Deep-Dive or Term Sheet Meeting"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '0.6rem 0.9rem',
+                    borderRadius: 'var(--radius-md)',
+                    background: 'rgba(139, 92, 246, 0.14)',
+                    border: '1px solid rgba(139, 92, 246, 0.35)',
+                    color: '#A78BFA',
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  <Calendar size={15} />
+                  Schedule
+                </button>
+
                 <button
                   onClick={() => handleAddToWatchlist(selectedCompany)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '6px',
-                    padding: '0.6rem 1rem',
+                    padding: '0.6rem 0.9rem',
                     borderRadius: 'var(--radius-md)',
                     background: 'rgba(255, 255, 255, 0.06)',
                     border: '1px solid var(--border-subtle)',
@@ -364,9 +486,10 @@ export default function DealRoomModule({ onSelectCompany }) {
                     cursor: 'pointer'
                   }}
                 >
-                  <Bookmark size={16} />
-                  Save to Pipeline
+                  <Bookmark size={15} />
+                  Save
                 </button>
+
                 <button
                   onClick={() => {
                     if (onSelectCompany) onSelectCompany(selectedCompany.ticker);
@@ -375,7 +498,7 @@ export default function DealRoomModule({ onSelectCompany }) {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '6px',
-                    padding: '0.6rem 1.2rem',
+                    padding: '0.6rem 1.1rem',
                     borderRadius: 'var(--radius-md)',
                     background: 'linear-gradient(135deg, #10B981, #059669)',
                     color: '#fff',
@@ -390,6 +513,114 @@ export default function DealRoomModule({ onSelectCompany }) {
                 </button>
               </div>
             </div>
+
+            {/* Founder Presence & Scheduled Meeting Banner */}
+            {(() => {
+              const activeBooking = scheduledMeetings[selectedCompany.ticker];
+              return (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '0.85rem 1.1rem',
+                  borderRadius: 'var(--radius-md)',
+                  background: activeBooking 
+                    ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.16), rgba(5, 150, 105, 0.08))' 
+                    : 'rgba(255, 255, 255, 0.03)',
+                  border: activeBooking 
+                    ? '1px solid rgba(16, 185, 129, 0.38)' 
+                    : '1px solid var(--border-subtle)',
+                  flexWrap: 'wrap',
+                  gap: '0.8rem'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #3B82F6, #10B981)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontWeight: 800,
+                      fontSize: '0.85rem'
+                    }}>
+                      {selectedCompany.founderName ? selectedCompany.founderName.charAt(0) : 'F'}
+                    </div>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                          {selectedCompany.founderName}
+                        </span>
+                        <span style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          padding: '0.15rem 0.5rem',
+                          borderRadius: '999px',
+                          background: 'rgba(16, 185, 129, 0.15)',
+                          color: '#34D399',
+                          fontSize: '0.7rem',
+                          fontWeight: 700
+                        }}>
+                          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10B981', boxShadow: '0 0 6px #10B981' }} />
+                          Founder Active • AI Twin Online
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                        {activeBooking 
+                          ? `📅 Diligence Call Booked: ${activeBooking.dateLabel || activeBooking.date} at ${activeBooking.time} (${activeBooking.platform === 'zoom' ? 'Zoom' : 'Google Meet'})`
+                          : 'Institutional founder line: Verified Founder Profile • Instant response available'}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    {activeBooking ? (
+                      <a
+                        href={activeBooking.meetingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                          padding: '0.45rem 0.85rem',
+                          borderRadius: 'var(--radius-sm)',
+                          background: '#10B981',
+                          color: '#041d14',
+                          fontWeight: 800,
+                          fontSize: '0.75rem',
+                          textDecoration: 'none',
+                          boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)'
+                        }}
+                      >
+                        <Video size={13} /> Join Call Room
+                      </a>
+                    ) : null}
+                    <button
+                      onClick={() => handleOpenConnect('chat')}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        padding: '0.45rem 0.85rem',
+                        borderRadius: 'var(--radius-sm)',
+                        background: 'rgba(255, 255, 255, 0.08)',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                        color: 'var(--text-primary)',
+                        fontWeight: 700,
+                        fontSize: '0.75rem',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <MessageSquare size={13} /> Open Deal Room Chat
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* DCF Valuation Matrix Card */}
             <div style={{
@@ -505,6 +736,21 @@ export default function DealRoomModule({ onSelectCompany }) {
           </div>
         )}
       </div>
+
+      {/* Founder Direct Connect Hub (Chat, 1-Click Video Call & Diligence Scheduler) */}
+      <FounderConnectModal
+        isOpen={isConnectModalOpen}
+        onClose={() => {
+          setIsConnectModalOpen(false);
+          try {
+            const saved = JSON.parse(localStorage.getItem('siq_scheduled_meetings') || '{}');
+            setScheduledMeetings(saved);
+          } catch (e) {}
+        }}
+        company={selectedCompany}
+        currentUser={{ fullName: 'Victoria Sterling (General Partner)' }}
+        initialTab={connectModalTab}
+      />
     </div>
   );
 }

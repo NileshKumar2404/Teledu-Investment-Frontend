@@ -61,67 +61,13 @@ export default function OnboardingModal({
 
   // Deterministic routing calculation
   const calculateRoute = () => {
-    // 1. FOUNDER + ACADEMIC
-    if (initialRole === 'founder') {
-      if (knowledge === 'beginner' || experience === '0-1' || objective === 'learn') {
-        return {
-          role: 'founder',
-          tab: 'learning',
-          badge: 'Business Academy Track',
-          headline: 'Configured: 30-Lesson Business Learning Curriculum',
-          reason: 'As a first-time founder building venture knowledge, we have routed you directly to the 30-Lesson Business Academy & Terms Library to build foundational mastery.'
-        };
-      }
-      if (knowledge === 'advanced' && objective === 'fundraise') {
-        return {
-          role: 'founder',
-          tab: 'financial-model',
-          badge: '5-Year Financial Model',
-          headline: 'Configured: 5-Year DCF Financial Model & Valuation',
-          reason: 'With advanced financial experience, you have been routed directly to the 5-Year DCF Financial Model to prepare institutional investor materials.'
-        };
-      }
-      return {
-        role: 'founder',
-        tab: 'overview',
-        badge: 'Founder OS Cockpit',
-        headline: 'Configured: Founder OS Overview Cockpit',
-        reason: 'Your personalized Founder Cockpit is initialized with health score metrics, lean testing, and valuation tools.'
-      };
-    }
+    const isBeginner = knowledge === 'beginner' || experience === '0-1' || objective === 'learn';
+    const isExperienced = knowledge === 'advanced' || experience === '3+' || 
+      (knowledge === 'intermediate' && experience === '1-3' && ['fundraise', 'cap_table', 'portfolio', 'waterfall', 'screener'].includes(objective));
 
-    // 2. INVESTOR
-    if (initialRole === 'investor') {
-      if (knowledge === 'beginner' || experience === '0-1' || objective === 'learn') {
-        return {
-          role: 'founder',
-          tab: 'learning',
-          badge: 'Diligence Academy',
-          headline: 'Configured: Due Diligence & Valuation Academy',
-          reason: 'Welcome to Venture Capital! As a new investor, we have routed you to the Due Diligence & Valuation Academy to master startup terms and cap tables before allocating capital.'
-        };
-      }
-      if (objective === 'cap_table' || knowledge === 'advanced') {
-        return {
-          role: 'investor',
-          tab: 'cap-table',
-          badge: 'Cap Table Waterfall',
-          headline: 'Configured: Dynamic Cap Table & Waterfall Simulations',
-          reason: 'Routed directly to the Cap Table dilution matrix and transaction ledger for institutional investment structuring.'
-        };
-      }
-      return {
-        role: 'investor',
-        tab: 'investor-portfolio',
-        badge: 'Investor Portfolio',
-        headline: 'Configured: Multi-Company Portfolio & Deal Room',
-        reason: 'Your institutional Investor Portfolio and Live Deal Room pipeline are ready for active capital management.'
-      };
-    }
-
-    // 3. ADVISOR
+    // 1. ADVISOR (Specific advisory track selected)
     if (initialRole === 'advisor') {
-      if (knowledge === 'beginner' || experience === '0-1' || objective === 'learn') {
+      if (isBeginner) {
         return {
           role: 'founder',
           tab: 'learning',
@@ -139,9 +85,9 @@ export default function OnboardingModal({
       };
     }
 
-    // 4. ANALYST
+    // 2. ANALYST (Specific diligence track selected)
     if (initialRole === 'analyst') {
-      if (knowledge === 'beginner' || experience === '0-1' || objective === 'learn') {
+      if (isBeginner) {
         return {
           role: 'founder',
           tab: 'formulas',
@@ -159,12 +105,45 @@ export default function OnboardingModal({
       };
     }
 
+    // 3. EXPERIENCED USERS -> INVESTMENT OS
+    // When the user is experienced according to the questions asked during onboarding, route to Investment OS
+    if (isExperienced) {
+      if (objective === 'cap_table' || objective === 'fundraise' || knowledge === 'advanced') {
+        return {
+          role: 'investor',
+          tab: 'cap-table',
+          badge: 'Investment OS - Cap Table',
+          headline: 'Configured: Investment OS & Cap Table Dilution Engine',
+          reason: 'With your experienced venture background, you have been routed directly to Investment OS to manage equity dilution, cap tables, waterfalls, and deal structuring.'
+        };
+      }
+      return {
+        role: 'investor',
+        tab: 'investor-portfolio',
+        badge: 'Investment OS - Portfolio & Deal Room',
+        headline: 'Configured: Investment OS & Multi-Company Portfolio',
+        reason: 'As an experienced venture operator and investor, your workspace is configured for Investment OS with active portfolio management, startup valuation, and live deal rooms.'
+      };
+    }
+
+    // 4. BEGINNERS / LEARNERS -> FOUNDER OS (BUSINESS ACADEMY)
+    if (isBeginner) {
+      return {
+        role: 'founder',
+        tab: 'learning',
+        badge: 'Business Academy Track',
+        headline: 'Configured: 30-Lesson Business Learning Curriculum',
+        reason: 'As an early-stage founder building venture knowledge, we have routed you directly to the 30-Lesson Business Academy & Terms Library to build foundational mastery.'
+      };
+    }
+
+    // 5. DEVELOPING OPERATORS / DEFAULT -> FOUNDER OS (OVERVIEW COCKPIT)
     return {
-      role: initialRole,
+      role: 'founder',
       tab: 'overview',
-      badge: 'Default Workspace',
-      headline: 'Configured Workspace',
-      reason: 'Initialized your tailored environment.'
+      badge: 'Founder OS Cockpit',
+      headline: 'Configured: Founder OS Overview Cockpit',
+      reason: 'Your personalized Founder Cockpit is initialized with health score metrics, lean testing, and valuation tools.'
     };
   };
 
@@ -183,42 +162,76 @@ export default function OnboardingModal({
         routingReason: route.reason
       });
       if (res) {
-        updatedUser = res;
+        updatedUser = res.user || res.data || res;
       }
     } catch (err) {
       console.warn('Could not persist onboarding to API:', err.message);
     }
 
+    const finalUser = {
+      ...(updatedUser || currentUser || {}),
+      role: route.role,
+      onboarding: {
+        ...((updatedUser && updatedUser.onboarding) || (currentUser && currentUser.onboarding) || {}),
+        completed: true,
+        investmentKnowledge: knowledge,
+        experienceYears: experience,
+        primaryObjective: objective,
+        assignedWorkspace: route.role,
+        assignedTab: route.tab,
+        routingReason: route.reason
+      }
+    };
+
     setTimeout(() => {
-      onCompleteRouting(route, updatedUser);
+      onCompleteRouting(route, finalUser);
     }, 900);
   };
 
   const handleSkip = async () => {
+    const isExperienced = knowledge === 'advanced' || experience === '3+';
+    const fallbackRole = isExperienced ? 'investor' : initialRole;
+    const fallbackTab = fallbackRole === 'investor' ? 'investor-portfolio' : (fallbackRole === 'advisor' ? 'advisor-workspace' : (fallbackRole === 'analyst' ? 'analyst-workspace' : 'overview'));
+
     const route = {
-      role: initialRole,
-      tab: initialRole === 'investor' ? 'investor-portfolio' : (initialRole === 'advisor' ? 'advisor-workspace' : (initialRole === 'analyst' ? 'analyst-workspace' : 'overview')),
-      badge: 'Default Workspace',
-      headline: 'Standard Configuration',
-      reason: 'Welcome to your default workspace environment.'
+      role: fallbackRole,
+      tab: fallbackTab,
+      badge: fallbackRole === 'investor' ? 'Investment OS' : 'Default Workspace',
+      headline: fallbackRole === 'investor' ? 'Configured: Investment OS' : 'Standard Configuration',
+      reason: fallbackRole === 'investor' ? 'Routed to Investment OS based on your experienced profile.' : 'Welcome to your default workspace environment.'
     };
 
     let updatedUser = currentUser;
     try {
       const res = await api.auth.saveOnboarding({
-        investmentKnowledge: 'standard',
-        experienceYears: '1-3',
-        primaryObjective: 'default',
+        investmentKnowledge: knowledge || 'standard',
+        experienceYears: experience || '1-3',
+        primaryObjective: objective || 'default',
         assignedWorkspace: route.role,
         assignedTab: route.tab,
         routingReason: route.reason
       });
       if (res) {
-        updatedUser = res;
+        updatedUser = res.user || res.data || res;
       }
     } catch (err) {}
 
-    onCompleteRouting(route, updatedUser);
+    const finalUser = {
+      ...(updatedUser || currentUser || {}),
+      role: route.role,
+      onboarding: {
+        ...((updatedUser && updatedUser.onboarding) || (currentUser && currentUser.onboarding) || {}),
+        completed: true,
+        investmentKnowledge: knowledge || 'standard',
+        experienceYears: experience || '1-3',
+        primaryObjective: objective || 'default',
+        assignedWorkspace: route.role,
+        assignedTab: route.tab,
+        routingReason: route.reason
+      }
+    };
+
+    onCompleteRouting(route, finalUser);
   };
 
   const recommendedRoute = calculateRoute();
@@ -309,12 +322,30 @@ export default function OnboardingModal({
                 style={{
                   width: '48px',
                   height: '48px',
-                  margin: '0 auto 1.5rem auto',
+                  margin: '0 auto 1.2rem auto',
                   borderRadius: '50%',
-                  border: `3px solid ${theme.color}33`,
-                  borderTopColor: theme.color
+                  border: `3px solid ${recommendedRoute.role === 'investor' ? '#10B981' : theme.color}33`,
+                  borderTopColor: recommendedRoute.role === 'investor' ? '#10B981' : theme.color
                 }}
               />
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '0.25rem 0.75rem',
+                borderRadius: '9999px',
+                background: recommendedRoute.role === 'investor' ? 'rgba(16, 185, 129, 0.12)' : theme.bg,
+                border: `1px solid ${recommendedRoute.role === 'investor' ? 'rgba(16, 185, 129, 0.35)' : theme.border}`,
+                color: recommendedRoute.role === 'investor' ? '#10B981' : theme.color,
+                fontSize: '0.75rem',
+                fontWeight: 800,
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em',
+                marginBottom: '0.85rem'
+              }}>
+                <Zap size={13} />
+                <span>{recommendedRoute.badge}</span>
+              </div>
               <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '0.5rem' }}>
                 {recommendedRoute.headline}
               </h3>

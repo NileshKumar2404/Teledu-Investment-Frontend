@@ -43,7 +43,7 @@ import AdvisorWorkspaceModule from './components/modules/AdvisorWorkspaceModule'
 import AdminWorkspaceModule from './components/modules/AdminWorkspaceModule';
 
 import { DEFAULT_COMPANY, SAMPLE_COMPANIES } from './data/mockCompany';
-import { api, getStoredUser, getAuthToken, clearAuth } from './api/client';
+import { api, getStoredUser, setStoredUser, getAuthToken, clearAuth } from './api/client';
 
 export default function App() {
   const [engineMode, setEngineMode] = useState('founder'); // 'founder' | 'investor'
@@ -178,15 +178,10 @@ export default function App() {
 
   // Synchronize active workspace with authenticated user role (Role-Isolation Enforcement)
   useEffect(() => {
-    if (currentUser?.role) {
-      const r = currentUser.role.toLowerCase();
-      if (['founder', 'investor', 'analyst', 'advisor', 'admin', 'super_admin'].includes(r) && activeTab !== 'portal') {
-        setEngineMode(r);
-        if (r === 'founder') setActiveTab('overview');
-        else if (r === 'investor') setActiveTab('investor-portfolio');
-        else if (r === 'analyst') setActiveTab('analyst-workspace');
-        else if (r === 'advisor') setActiveTab('advisor-workspace');
-        else if (r === 'admin' || r === 'super_admin') setActiveTab('admin-workspace');
+    if (currentUser) {
+      const assignedRole = (currentUser.onboarding?.assignedWorkspace || currentUser.role || 'founder').toLowerCase();
+      if (['founder', 'investor', 'analyst', 'advisor', 'admin', 'super_admin'].includes(assignedRole)) {
+        setEngineMode(assignedRole);
       }
     } else {
       setEngineMode('founder');
@@ -339,14 +334,26 @@ export default function App() {
         return (
           <PortalGatewayModule
             onSelectRole={(role, defaultTab, user, routingReason) => {
+              const assignedRole = role || user?.role || 'founder';
               if (user) {
-                setCurrentUser(user);
+                const userWithAssigned = {
+                  ...user,
+                  role: assignedRole,
+                  onboarding: {
+                    ...(user.onboarding || {}),
+                    completed: true,
+                    assignedWorkspace: assignedRole,
+                    assignedTab: defaultTab
+                  }
+                };
+                setCurrentUser(userWithAssigned);
+                setStoredUser(userWithAssigned);
                 setApiConnected(true);
               }
-              setEngineMode(role);
+              setEngineMode(assignedRole);
               setActiveTab(defaultTab);
               if (routingReason) {
-                setWelcomeToast({ text: routingReason, role, tab: defaultTab });
+                setWelcomeToast({ text: routingReason, role: assignedRole, tab: defaultTab });
               }
             }}
             onEnterGuest={() => {
@@ -400,7 +407,10 @@ export default function App() {
             currentUser={currentUser}
             onOpenPricing={() => setIsPricingOpen(true)}
           >
-            <ActionPlanModule company={company} />
+            <ActionPlanModule
+              company={company}
+              onUpdateCompany={(updated) => setCompany(prev => ({ ...prev, ...updated }))}
+            />
           </FeaturePaywall>
         );
       case 'financial-model':

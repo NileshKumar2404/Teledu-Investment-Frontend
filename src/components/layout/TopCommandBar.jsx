@@ -40,7 +40,7 @@ export default function TopCommandBar({
   });
   const [addCompError, setAddCompError] = useState('');
 
-  const currentRole = currentUser?.role?.toLowerCase() || engineMode || 'founder';
+  const currentRole = engineMode || (currentUser?.onboarding?.assignedWorkspace || currentUser?.role || 'founder').toLowerCase();
   const isInvestor = engineMode === 'investor';
   const isAnalyst = engineMode === 'analyst';
   const isAdvisor = engineMode === 'advisor';

@@ -265,6 +265,10 @@ export const api = {
 
   // 30-Day Action Plan
   getActionPlan: (ticker) => apiRequest(`/action-plan/${ticker}`),
+  verifyActionPlanTask: (ticker, payload) => apiRequest(`/action-plan/${ticker}/verify-task`, {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  }),
 
   // AI Prompt Builder
   getPromptTypes: () => apiRequest('/ai-prompt-builder/types'),
