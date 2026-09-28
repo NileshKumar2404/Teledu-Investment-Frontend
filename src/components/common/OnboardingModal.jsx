@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Sparkles, Briefcase, Compass, BarChart3, BookOpen, Calculator,
@@ -222,52 +223,27 @@ export default function OnboardingModal({
 
   const recommendedRoute = calculateRoute();
 
-  return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      zIndex: 10000,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '1.5rem',
-      background: 'rgba(3, 7, 18, 0.85)',
-      backdropFilter: 'blur(16px)',
-      WebkitBackdropFilter: 'blur(16px)'
-    }}>
+  return typeof document !== 'undefined' ? createPortal(
+    <div className="onboarding-modal-overlay">
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 15 }}
-        style={{
-          width: '100%',
-          maxWidth: '680px',
-          background: '#0B1120',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          borderRadius: '1.5rem',
-          boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.7)',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column'
-        }}
+        className="onboarding-modal-dialog"
       >
         {/* Top Progress & Header Bar */}
-        <div style={{
-          padding: '1.8rem 2.2rem 1.2rem 2.2rem',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.07)',
-          position: 'relative'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+        <div className="onboarding-modal-header">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
             <div style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              padding: '0.3rem 0.75rem',
+              padding: '0.25rem 0.65rem',
               borderRadius: '9999px',
               background: theme.bg,
               border: `1px solid ${theme.border}`,
               color: theme.color,
-              fontSize: '0.74rem',
+              fontSize: '0.72rem',
               fontWeight: 800,
               textTransform: 'uppercase',
               letterSpacing: '0.04em'
@@ -283,7 +259,7 @@ export default function OnboardingModal({
                 background: 'none',
                 border: 'none',
                 color: '#64748B',
-                fontSize: '0.8rem',
+                fontSize: '0.78rem',
                 fontWeight: 600,
                 cursor: 'pointer',
                 transition: 'color 0.2s ease'
@@ -295,18 +271,18 @@ export default function OnboardingModal({
             </button>
           </div>
 
-          <h2 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em', marginBottom: '0.3rem' }}>
+          <h2 className="onboarding-header-title" style={{ fontSize: '1.45rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em', marginBottom: '0.3rem' }}>
             Personalize Your Workspace Experience
           </h2>
-          <p style={{ fontSize: '0.86rem', color: '#94A3B8', margin: 0 }}>
+          <p className="onboarding-header-sub" style={{ fontSize: '0.86rem', color: '#94A3B8', margin: 0 }}>
             Answer 3 quick questions so StartupIQ can configure your dashboard and route you to the optimal tools.
           </p>
 
           {/* Progress bar */}
-          <div style={{
+          <div className="onboarding-progress-bar" style={{
             display: 'flex',
             gap: '8px',
-            marginTop: '1.2rem'
+            marginTop: '1rem'
           }}>
             {[1, 2, 3].map(s => (
               <div 
@@ -324,7 +300,7 @@ export default function OnboardingModal({
         </div>
 
         {/* Question Body */}
-        <div style={{ padding: '2rem 2.2rem', minHeight: '320px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div className="onboarding-modal-body">
           {isRouting ? (
             <div style={{ textAlign: 'center', padding: '2rem 0' }}>
               <motion.div
@@ -351,14 +327,14 @@ export default function OnboardingModal({
               {/* STEP 1: INVESTMENT KNOWLEDGE */}
               {step === 1 && (
                 <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }}>
-                  <div style={{ fontSize: '0.78rem', fontWeight: 700, color: theme.color, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.4rem' }}>
+                  <div className="onboarding-question-tag" style={{ fontSize: '0.78rem', fontWeight: 700, color: theme.color, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem' }}>
                     Question 1 of 3
                   </div>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '1.4rem' }}>
+                  <h3 className="onboarding-question-title" style={{ fontSize: '1.25rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '1.2rem' }}>
                     What is your current level of venture & investment knowledge?
                   </h3>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
                     {[
                       { id: 'beginner', label: 'Beginner / No Prior Knowledge', desc: 'New to venture finance, cap tables, valuation formulas & startup terms' },
                       { id: 'intermediate', label: 'Intermediate Understanding', desc: 'Familiar with seed funding, burn rate, ARR metrics & basic unit economics' },
@@ -369,28 +345,23 @@ export default function OnboardingModal({
                         <div
                           key={opt.id}
                           onClick={() => setKnowledge(opt.id)}
+                          className="onboarding-opt-card"
                           style={{
-                            padding: '1rem 1.25rem',
-                            borderRadius: '0.85rem',
                             background: isSelected ? theme.bg : 'rgba(255, 255, 255, 0.025)',
                             border: isSelected ? `1.5px solid ${theme.color}` : '1px solid rgba(255, 255, 255, 0.08)',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s ease',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between'
+                            boxShadow: isSelected ? `0 0 15px ${theme.color}25` : 'none'
                           }}
                         >
                           <div>
-                            <div style={{ fontSize: '0.96rem', fontWeight: 700, color: isSelected ? '#FFFFFF' : '#CBD5E1', marginBottom: '0.2rem' }}>
+                            <div className="onboarding-opt-label" style={{ fontSize: '0.96rem', fontWeight: 700, color: isSelected ? '#FFFFFF' : '#CBD5E1', marginBottom: '0.2rem' }}>
                               {opt.label}
                             </div>
-                            <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>
+                            <div className="onboarding-opt-desc" style={{ fontSize: '0.8rem', color: '#94A3B8' }}>
                               {opt.desc}
                             </div>
                           </div>
                           {isSelected && (
-                            <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: theme.color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', shrink: 0 }}>
+                            <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: theme.color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', flexShrink: 0 }}>
                               <CheckCircle2 size={14} />
                             </div>
                           )}
@@ -404,14 +375,14 @@ export default function OnboardingModal({
               {/* STEP 2: YEARS OF EXPERIENCE */}
               {step === 2 && (
                 <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }}>
-                  <div style={{ fontSize: '0.78rem', fontWeight: 700, color: theme.color, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.4rem' }}>
+                  <div className="onboarding-question-tag" style={{ fontSize: '0.78rem', fontWeight: 700, color: theme.color, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem' }}>
                     Question 2 of 3
                   </div>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '1.4rem' }}>
+                  <h3 className="onboarding-question-title" style={{ fontSize: '1.25rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '1.2rem' }}>
                     How many years of experience do you have in startups or venture capital?
                   </h3>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
                     {[
                       { id: '0-1', label: '0 – 1 Years', desc: 'First-time founder, student, or aspiring investor exploring early venture concepts' },
                       { id: '1-3', label: '1 – 3 Years', desc: 'Early-stage operational experience, angel backing, or growth-stage involvement' },
@@ -422,28 +393,23 @@ export default function OnboardingModal({
                         <div
                           key={opt.id}
                           onClick={() => setExperience(opt.id)}
+                          className="onboarding-opt-card"
                           style={{
-                            padding: '1rem 1.25rem',
-                            borderRadius: '0.85rem',
                             background: isSelected ? theme.bg : 'rgba(255, 255, 255, 0.025)',
                             border: isSelected ? `1.5px solid ${theme.color}` : '1px solid rgba(255, 255, 255, 0.08)',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s ease',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between'
+                            boxShadow: isSelected ? `0 0 15px ${theme.color}25` : 'none'
                           }}
                         >
                           <div>
-                            <div style={{ fontSize: '0.96rem', fontWeight: 700, color: isSelected ? '#FFFFFF' : '#CBD5E1', marginBottom: '0.2rem' }}>
+                            <div className="onboarding-opt-label" style={{ fontSize: '0.96rem', fontWeight: 700, color: isSelected ? '#FFFFFF' : '#CBD5E1', marginBottom: '0.2rem' }}>
                               {opt.label}
                             </div>
-                            <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>
+                            <div className="onboarding-opt-desc" style={{ fontSize: '0.8rem', color: '#94A3B8' }}>
                               {opt.desc}
                             </div>
                           </div>
                           {isSelected && (
-                            <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: theme.color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', shrink: 0 }}>
+                            <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: theme.color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', flexShrink: 0 }}>
                               <CheckCircle2 size={14} />
                             </div>
                           )}
@@ -457,14 +423,14 @@ export default function OnboardingModal({
               {/* STEP 3: PRIMARY OBJECTIVE */}
               {step === 3 && (
                 <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }}>
-                  <div style={{ fontSize: '0.78rem', fontWeight: 700, color: theme.color, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.4rem' }}>
+                  <div className="onboarding-question-tag" style={{ fontSize: '0.78rem', fontWeight: 700, color: theme.color, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem' }}>
                     Question 3 of 3 • Personalized Objective
                   </div>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '1.4rem' }}>
+                  <h3 className="onboarding-question-title" style={{ fontSize: '1.25rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '1.2rem' }}>
                     What is your immediate primary objective in the platform?
                   </h3>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
                     {objectives.map(opt => {
                       const OptIcon = opt.icon;
                       const isSelected = objective === opt.id;
@@ -472,23 +438,17 @@ export default function OnboardingModal({
                         <div
                           key={opt.id}
                           onClick={() => setObjective(opt.id)}
+                          className="onboarding-opt-card"
                           style={{
-                            padding: '1rem 1.25rem',
-                            borderRadius: '0.85rem',
                             background: isSelected ? theme.bg : 'rgba(255, 255, 255, 0.025)',
                             border: isSelected ? `1.5px solid ${theme.color}` : '1px solid rgba(255, 255, 255, 0.08)',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s ease',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            gap: '1rem'
+                            boxShadow: isSelected ? `0 0 15px ${theme.color}25` : 'none'
                           }}
                         >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, minWidth: 0 }}>
                             <div style={{
-                              width: '36px',
-                              height: '36px',
+                              width: '34px',
+                              height: '34px',
                               borderRadius: '8px',
                               background: isSelected ? `${theme.color}25` : 'rgba(255, 255, 255, 0.05)',
                               border: `1px solid ${isSelected ? theme.color : 'rgba(255, 255, 255, 0.08)'}`,
@@ -496,27 +456,27 @@ export default function OnboardingModal({
                               alignItems: 'center',
                               justifyContent: 'center',
                               color: isSelected ? theme.color : '#64748B',
-                              shrink: 0
+                              flexShrink: 0
                             }}>
-                              <OptIcon size={18} />
+                              <OptIcon size={16} />
                             </div>
-                            <div>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '0.2rem' }}>
-                                <span style={{ fontSize: '0.94rem', fontWeight: 700, color: isSelected ? '#FFFFFF' : '#CBD5E1' }}>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '6px', marginBottom: '0.2rem' }}>
+                                <span className="onboarding-opt-label" style={{ fontSize: '0.92rem', fontWeight: 700, color: isSelected ? '#FFFFFF' : '#CBD5E1' }}>
                                   {opt.label}
                                 </span>
-                                <span style={{ fontSize: '0.68rem', fontWeight: 700, padding: '0.15rem 0.45rem', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.06)', color: theme.color }}>
+                                <span style={{ fontSize: '0.66rem', fontWeight: 700, padding: '0.12rem 0.4rem', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.06)', color: theme.color, flexShrink: 0 }}>
                                   {opt.tag}
                                 </span>
                               </div>
-                              <div style={{ fontSize: '0.78rem', color: '#94A3B8' }}>
+                              <div className="onboarding-opt-desc" style={{ fontSize: '0.78rem', color: '#94A3B8' }}>
                                 {opt.sub}
                               </div>
                             </div>
                           </div>
 
                           {isSelected && (
-                            <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: theme.color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', shrink: 0 }}>
+                            <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: theme.color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', flexShrink: 0 }}>
                               <CheckCircle2 size={14} />
                             </div>
                           )}
@@ -532,14 +492,7 @@ export default function OnboardingModal({
 
         {/* Bottom Footer Controls */}
         {!isRouting && (
-          <div style={{
-            padding: '1.2rem 2.2rem',
-            background: 'rgba(255, 255, 255, 0.02)',
-            borderTop: '1px solid rgba(255, 255, 255, 0.06)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}>
+          <div className="onboarding-modal-footer">
             {step > 1 ? (
               <button
                 type="button"
@@ -611,6 +564,7 @@ export default function OnboardingModal({
           </div>
         )}
       </motion.div>
-    </div>
-  );
+    </div>,
+    document.body
+  ) : null;
 }

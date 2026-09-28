@@ -1253,6 +1253,146 @@ textarea.input-field {
   }
 }
 
+/* ==========================================================================
+   ONBOARDING MODAL RESPONSIVE STYLES
+   ========================================================================== */
+
+.onboarding-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(3, 7, 18, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.onboarding-modal-dialog {
+  width: 100%;
+  max-width: 680px;
+  max-height: min(88vh, 720px);
+  max-height: min(88dvh, 720px);
+  background: #0B1120;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.onboarding-modal-header {
+  padding: 1.5rem 2rem 1rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.onboarding-modal-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 1.5rem 2rem;
+  scrollbar-width: thin;
+}
+
+.onboarding-modal-footer {
+  padding: 1.1rem 2rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.onboarding-opt-card {
+  padding: 0.9rem 1.15rem;
+  border-radius: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .onboarding-modal-overlay {
+    padding: 0.5rem !important;
+  }
+
+  .onboarding-modal-dialog {
+    max-height: 94vh !important;
+    max-height: 94dvh !important;
+    border-radius: 1.1rem !important;
+    margin: auto 0 !important;
+  }
+
+  .onboarding-modal-header {
+    padding: 0.85rem 1rem 0.6rem 1rem !important;
+  }
+
+  .onboarding-header-title {
+    font-size: 1.12rem !important;
+    margin-bottom: 0.2rem !important;
+  }
+
+  .onboarding-header-sub {
+    font-size: 0.76rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .onboarding-progress-bar {
+    margin-top: 0.65rem !important;
+  }
+
+  .onboarding-modal-body {
+    padding: 0.75rem 0.9rem !important;
+  }
+
+  .onboarding-question-tag {
+    font-size: 0.7rem !important;
+    margin-bottom: 0.2rem !important;
+  }
+
+  .onboarding-question-title {
+    font-size: 0.96rem !important;
+    margin-bottom: 0.7rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .onboarding-opt-card {
+    padding: 0.65rem 0.8rem !important;
+    gap: 0.5rem !important;
+  }
+
+  .onboarding-opt-label {
+    font-size: 0.84rem !important;
+  }
+
+  .onboarding-opt-desc {
+    font-size: 0.71rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .onboarding-modal-footer {
+    padding: 0.65rem 0.9rem !important;
+  }
+
+  .onboarding-modal-footer button {
+    padding: 0.55rem 1rem !important;
+    font-size: 0.82rem !important;
+  }
+}
+
+
 
 
 
