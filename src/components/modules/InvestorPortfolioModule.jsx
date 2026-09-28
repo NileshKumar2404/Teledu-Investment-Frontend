@@ -371,7 +371,7 @@ export default function InvestorPortfolioModule({ onSelectCompany, onAddCompany 
         </div>
 
         {/* Table Content */}
-        <div style={{ overflowX: 'auto' }}>
+        <div className="table-responsive">
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase' }}>
@@ -534,6 +534,9 @@ export default function InvestorPortfolioModule({ onSelectCompany, onAddCompany 
                 borderRadius: 'var(--radius-xl)',
                 width: '100%',
                 maxWidth: '560px',
+                maxHeight: '90vh',
+                overflowY: 'auto',
+                WebkitOverflowScrolling: 'touch',
                 padding: '2rem',
                 boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)'
               }}
@@ -556,7 +559,7 @@ export default function InvestorPortfolioModule({ onSelectCompany, onAddCompany 
               </div>
 
               <form onSubmit={handleCreateDeal} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="cockpit-modal-form-grid">
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.4rem', fontWeight: 600 }}>
                       Company Ticker
@@ -604,7 +607,7 @@ export default function InvestorPortfolioModule({ onSelectCompany, onAddCompany 
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="cockpit-modal-form-grid">
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.4rem', fontWeight: 600 }}>
                       Amount Invested ($)

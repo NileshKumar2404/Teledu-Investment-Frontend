@@ -205,11 +205,7 @@ export default function OverviewModule({ onNavigate, company = {}, healthScore =
       {/* ============================================================
           ZONE 1: LIVE FINANCIAL TELEMETRY STRIP (DYNAMIC METRICS)
           ============================================================ */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-        gap: '1rem'
-      }}>
+      <div className="cockpit-telemetry-grid">
         {/* DCF Valuation */}
         <div className="glass-card" style={{ padding: '1.4rem', borderLeft: '4px solid #6366F1' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-muted)' }}>
@@ -297,12 +293,7 @@ export default function OverviewModule({ onNavigate, company = {}, healthScore =
       {/* ============================================================
           ZONE 2: DUAL-ZONE EXECUTIVE INTELLIGENCE WORKSPACE
           ============================================================ */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'minmax(0, 1.8fr) minmax(340px, 1.1fr)',
-        gap: '1.6rem',
-        alignItems: 'start'
-      }}>
+      <div className="cockpit-executive-grid">
         {/* Left Side: Interactive Operating Telemetry Canvas */}
         <div className="glass-card" style={{ padding: '1.8rem', display: 'flex', flexDirection: 'column', gap: '1.4rem' }}>
           {/* Sub-Tabs Header */}
@@ -339,7 +330,7 @@ export default function OverviewModule({ onNavigate, company = {}, healthScore =
             </div>
 
             {/* Switchable View Pills */}
-            <div style={{ display: 'flex', gap: '4px', background: 'rgba(255, 255, 255, 0.04)', padding: '3px', borderRadius: 'var(--radius-pill)' }}>
+            <div style={{ display: 'flex', gap: '4px', background: 'rgba(255, 255, 255, 0.04)', padding: '3px', borderRadius: 'var(--radius-pill)', overflowX: 'auto', maxWidth: '100%', WebkitOverflowScrolling: 'touch' }}>
               {subTabs.map((st) => (
                 <button
                   key={st.id}
@@ -351,6 +342,7 @@ export default function OverviewModule({ onNavigate, company = {}, healthScore =
                     fontSize: '0.74rem',
                     fontWeight: 700,
                     cursor: 'pointer',
+                    whiteSpace: 'nowrap',
                     background: activeSubTab === st.id ? 'var(--accent)' : 'transparent',
                     color: activeSubTab === st.id ? '#fff' : 'var(--text-muted)',
                     transition: 'all 0.18s ease'
@@ -365,7 +357,7 @@ export default function OverviewModule({ onNavigate, company = {}, healthScore =
           {/* Sub-Tab 1: Financial Projections & 5-Year Cash Flow */}
           {activeSubTab === 'projections' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', fontSize: '0.8rem' }}>
+              <div className="cockpit-projections-grid" style={{ fontSize: '0.8rem' }}>
                 <div style={{ padding: '0.8rem', borderRadius: 'var(--radius-md)', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid var(--border-subtle)' }}>
                   <div style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>Gross Margin</div>
                   <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#10B981', marginTop: '2px' }}>{grossMargin}%</div>
@@ -405,7 +397,7 @@ export default function OverviewModule({ onNavigate, company = {}, healthScore =
 
           {/* Sub-Tab 2: Unit Economics */}
           {activeSubTab === 'unit-economics' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="cockpit-economics-grid">
               <div style={{ padding: '1.2rem', borderRadius: 'var(--radius-md)', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid var(--border-subtle)', textAlign: 'center' }}>
                 <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Customer Acquisition Cost (CAC)</div>
                 <div style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--text-primary)', marginTop: '4px' }}>${cac}</div>
@@ -540,11 +532,7 @@ export default function OverviewModule({ onNavigate, company = {}, healthScore =
           </p>
         </div>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '1.4rem'
-        }}>
+        <div className="cockpit-tools-grid">
           {toolsCategories.map((cat) => (
             <div
               key={cat.domain}
@@ -652,6 +640,9 @@ export default function OverviewModule({ onNavigate, company = {}, healthScore =
                 borderRadius: 'var(--radius-xl)',
                 width: '100%',
                 maxWidth: '560px',
+                maxHeight: '90vh',
+                overflowY: 'auto',
+                WebkitOverflowScrolling: 'touch',
                 padding: '2.2rem',
                 boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.85)'
               }}
@@ -674,7 +665,7 @@ export default function OverviewModule({ onNavigate, company = {}, healthScore =
               </div>
 
               <form onSubmit={handleSaveMetrics} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
+                <div className="cockpit-modal-form-grid">
                   <div>
                     <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.35rem', fontWeight: 600 }}>
                       Monthly Revenue (MRR $)
@@ -716,7 +707,7 @@ export default function OverviewModule({ onNavigate, company = {}, healthScore =
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
+                <div className="cockpit-modal-form-grid">
                   <div>
                     <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.35rem', fontWeight: 600 }}>
                       Cash in Bank ($)
@@ -758,7 +749,7 @@ export default function OverviewModule({ onNavigate, company = {}, healthScore =
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
+                <div className="cockpit-modal-form-grid">
                   <div>
                     <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.35rem', fontWeight: 600 }}>
                       CAC (Acquisition Cost $)
@@ -800,7 +791,7 @@ export default function OverviewModule({ onNavigate, company = {}, healthScore =
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
+                <div className="cockpit-modal-form-grid">
                   <div>
                     <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.35rem', fontWeight: 600 }}>
                       YoY Growth Rate (%)

@@ -232,7 +232,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
             <div style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#A5B4FC', marginBottom: '0.75rem' }}>
               ⚡ 1-Click Role Login (Role-Isolated Workspaces)
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+            <div className="auth-personas-grid">
               {demoPersonas.map((p) => {
                 const Icon = p.icon;
                 return (

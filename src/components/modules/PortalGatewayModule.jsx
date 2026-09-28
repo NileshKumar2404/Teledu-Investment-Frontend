@@ -226,33 +226,9 @@ export default function PortalGatewayModule({ onSelectRole, currentUser, company
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      width: '100vw',
-      height: '100vh',
-      zIndex: 9999,
-      display: 'flex',
-      background: '#070A13',
-      color: '#F8FAFC',
-      fontFamily: 'var(--font-sans, system-ui, -apple-system, sans-serif)',
-      overflow: 'hidden'
-    }}>
+    <div className="portal-gateway-root">
       {/* ================= LEFT SIDE: STARTUPIQ VENTURE SHOWCASE ================= */}
-      <div style={{
-        flex: '1 1 50%',
-        minWidth: '340px',
-        height: '100%',
-        padding: '3rem 4rem',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        position: 'relative',
-        background: 'radial-gradient(ellipse at 20% 30%, rgba(99, 102, 241, 0.12) 0%, rgba(7, 10, 19, 0.98) 70%)',
-        borderRight: '1px solid rgba(255, 255, 255, 0.08)',
-        overflowY: 'auto',
-        overflowX: 'hidden'
-      }}>
+      <div className="portal-gateway-left">
         {/* Subtle dynamic glow matching active role */}
         <div style={{
           position: 'absolute',
@@ -448,19 +424,7 @@ export default function PortalGatewayModule({ onSelectRole, currentUser, company
       </div>
 
       {/* ================= RIGHT SIDE: CLEAN ROLE SELECTOR & ACCESS ================= */}
-      <div style={{
-        flex: '1 1 50%',
-        minWidth: '340px',
-        height: '100%',
-        padding: '2.5rem 3.5rem 4rem 3.5rem',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        background: '#070A13',
-        position: 'relative',
-        overflowY: 'auto',
-        overflowX: 'hidden'
-      }}>
+      <div className="portal-gateway-right">
         {/* Top Controls: Return to platform */}
         <div style={{
           width: '100%',
@@ -549,11 +513,7 @@ export default function PortalGatewayModule({ onSelectRole, currentUser, company
               I'm entering as
             </label>
 
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '0.75rem'
-            }}>
+            <div className="portal-gateway-roles-grid">
               {roles.map((r) => {
                 const RoleIcon = r.icon;
                 const isSelected = selectedRole === r.id;

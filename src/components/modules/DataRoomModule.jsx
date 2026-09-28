@@ -404,7 +404,7 @@ export default function DataRoomModule({ activeTicker = 'TELEDU' }) {
       </div>
 
       {/* Document Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.2rem' }}>
         {filteredDocs.map((doc) => {
           const docId = doc._id || doc.id;
           const fileName = doc.originalFileName || doc.name || 'Confidential_Document.pdf';
@@ -558,6 +558,9 @@ export default function DataRoomModule({ activeTicker = 'TELEDU' }) {
                 borderRadius: 'var(--radius-xl)',
                 width: '100%',
                 maxWidth: '540px',
+                maxHeight: '90vh',
+                overflowY: 'auto',
+                WebkitOverflowScrolling: 'touch',
                 padding: '2.2rem',
                 boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.85)'
               }}

@@ -110,40 +110,16 @@ export default function LessonReaderModal({
 
   return (
     <AnimatePresence>
-      <div style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 1100,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '1.25rem',
-        background: 'rgba(2, 6, 23, 0.88)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)'
-      }}>
+      <div className="lesson-reader-overlay">
         {/* Backdrop Dismiss */}
         <div onClick={onClose} style={{ position: 'absolute', inset: 0 }} />
 
         <motion.div
+          className="lesson-reader-dialog"
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
           transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-          style={{
-            position: 'relative',
-            width: '100%',
-            maxWidth: '1150px',
-            height: '92vh',
-            display: 'flex',
-            flexDirection: 'column',
-            background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(9, 14, 26, 0.99) 100%)',
-            border: '1px solid rgba(255, 255, 255, 0.12)',
-            borderRadius: '24px',
-            boxShadow: '0 30px 80px -20px rgba(0, 0, 0, 0.9), 0 0 50px rgba(99, 102, 241, 0.2)',
-            zIndex: 10,
-            overflow: 'hidden'
-          }}
         >
           {/* Top Bar Navigation */}
           <div style={{

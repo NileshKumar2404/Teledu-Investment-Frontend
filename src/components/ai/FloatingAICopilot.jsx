@@ -259,6 +259,7 @@ The strategic mandate—*"${goalText || goal}"*—requires tightening unit acqui
       {/* ============================================================== */}
       <motion.button
         type="button"
+        className="floating-ai-launcher"
         onClick={() => setOpen(!open)}
         whileHover={{ scale: 1.05, y: -2 }}
         whileTap={{ scale: 0.95 }}
@@ -307,7 +308,7 @@ The strategic mandate—*"${goalText || goal}"*—requires tightening unit acqui
 
         <span>AI Copilot</span>
 
-        <span style={{
+        <span className="floating-ai-shortcut-badge" style={{
           fontSize: '0.68rem',
           padding: '0.12rem 0.45rem',
           borderRadius: '6px',
@@ -327,6 +328,7 @@ The strategic mandate—*"${goalText || goal}"*—requires tightening unit acqui
       <AnimatePresence>
         {open && (
           <motion.div
+            className="floating-ai-window"
             initial={{ opacity: 0, scale: 0.92, y: 25 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 25 }}

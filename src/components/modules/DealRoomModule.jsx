@@ -199,12 +199,7 @@ export default function DealRoomModule({ onSelectCompany }) {
       </div>
 
       {/* Deals Grid & Spotlight Layout */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'minmax(320px, 1fr) minmax(360px, 1.4fr)',
-        gap: '1.8rem',
-        alignItems: 'start'
-      }}>
+      <div className="dealroom-split-grid">
         {/* Left Column: Deal Cards Catalog */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {filteredCompanies.map((comp) => {

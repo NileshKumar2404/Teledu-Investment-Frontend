@@ -143,17 +143,7 @@ export default function LearningModule({ company, currentUser, onOpenPricing }) 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       {/* Header Banner */}
-      <div className="glass-card" style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        gap: '1.5rem',
-        padding: '2rem',
-        background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(15, 23, 42, 0.8) 100%)',
-        border: '1px solid rgba(99, 102, 241, 0.25)',
-        borderRadius: '20px'
-      }}>
+      <div className="glass-card academy-header-banner">
         <div style={{ maxWidth: '650px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.6rem' }}>
             <span style={{
@@ -189,16 +179,7 @@ export default function LearningModule({ company, currentUser, onOpenPricing }) 
         </div>
 
         {/* Progress Card */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1.5rem',
-          background: 'rgba(15, 23, 42, 0.7)',
-          padding: '1.2rem 1.6rem',
-          borderRadius: '16px',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          minWidth: '240px'
-        }}>
+        <div className="academy-header-progress">
           <div style={{
             width: '48px',
             height: '48px',
@@ -272,7 +253,7 @@ export default function LearningModule({ company, currentUser, onOpenPricing }) 
           )}
         </div>
 
-        <div style={{ display: 'flex', gap: '0.75rem', overflowX: 'auto', paddingBottom: '0.6rem' }}>
+        <div style={{ display: 'flex', gap: '0.75rem', overflowX: 'auto', paddingBottom: '0.6rem', WebkitOverflowScrolling: 'touch' }}>
           {ACADEMY_PHASES.map(p => {
             const isPhaseActive = selectedPhase === p.num;
             return (
@@ -448,11 +429,7 @@ export default function LearningModule({ company, currentUser, onOpenPricing }) 
           </button>
         </div>
       ) : (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-          gap: '1.25rem'
-        }}>
+        <div className="academy-lessons-grid">
           {filteredLessons.map(lesson => {
             const isDone = progress[lesson.id]?.status === 'COMPLETED';
 
