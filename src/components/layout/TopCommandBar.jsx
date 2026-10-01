@@ -6,7 +6,7 @@ import {
   Library, Target, FlaskConical, Map, TrendingUp, Activity, 
   PieChart, FileSpreadsheet, Bookmark, FolderLock, Zap, ChevronDown,
   User, Lock, LogOut, ShieldCheck, Crown, CreditCard, Plus, X, AlertCircle,
-  BarChart3, Shield, Users, Layers, Menu
+  BarChart3, Shield, Users, Layers, Menu, Calculator
 } from 'lucide-react';
 import { SAMPLE_COMPANIES } from '../../data/mockCompany';
 
@@ -52,13 +52,14 @@ export default function TopCommandBar({
   // Founder OS primary navigation tabs
   const founderTabs = [
     { id: 'overview', label: 'Cockpit', icon: Compass },
+    { id: 'profile-wizard', label: 'Company Wizard', icon: Sparkles },
+    { id: 'tools', label: 'Tools', icon: Calculator },
+    { id: 'analyze', label: 'Analyze', icon: Activity },
     { id: 'learning', label: 'Academy', icon: BookOpen },
     { id: 'terms', label: 'Terms & Formulas', icon: Library },
     { id: 'idea-analyzer', label: 'Idea Lab', icon: Target },
     { id: 'idea-testing', label: 'Lean Testing', icon: FlaskConical },
-    { id: 'gtm', label: 'GTM Roadmap', icon: Map },
     { id: 'financial-model', label: '5-Yr DCF', icon: TrendingUp, isPro: true },
-    { id: 'health-score', label: 'Health Score', icon: Activity },
     { id: 'action-plan', label: 'Action Plan', icon: Target, isPro: true },
     { id: 'data-room', label: 'Data Room', icon: FolderLock, isPro: true },
   ];
@@ -1108,6 +1109,32 @@ export default function TopCommandBar({
                     }}
                   >
                     <Plus size={16} /> Create & Open Company Workspace
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsAddCompanyOpen(false);
+                      setActiveTab('profile-wizard');
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      padding: '0.75rem',
+                      borderRadius: 'var(--radius-md)',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(99, 102, 241, 0.4)',
+                      color: '#A5B4FC',
+                      fontWeight: 700,
+                      fontSize: '0.82rem',
+                      cursor: 'pointer',
+                      marginTop: '0.4rem',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    <Sparkles size={15} /> Launch Full 8-Step Profile Wizard
                   </button>
                 </form>
               </motion.div>

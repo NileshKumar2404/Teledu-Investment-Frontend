@@ -4,23 +4,47 @@ import {
   Compass, TrendingUp, DollarSign, ShieldAlert, Sparkles, 
   Bookmark, CheckCircle2, ChevronRight, Award, FileText, 
   Users, Layers, ArrowUpRight, Search, SlidersHorizontal, Eye,
-  MessageSquare, Video, Calendar, PhoneCall
+  MessageSquare, Video, Calendar, PhoneCall, Plus, Phone, Mail,
+  Zap, ExternalLink, Send, ArrowRight, Check, Briefcase, Scale, PieChart, Sliders, ShieldCheck
 } from 'lucide-react';
 import { api } from '../../api/client';
-import { DEAL_ROOM_COMPANIES } from '../../data/investmentData';
+import { DEAL_ROOM_COMPANIES, STARTUP_INVESTMENT_CHECKLIST_TEMPLATE } from '../../data/investmentData';
 import FounderConnectModal from '../common/FounderConnectModal';
+import ListStartupModal from '../common/ListStartupModal';
+import ExpressInterestModal from '../common/ExpressInterestModal';
 
-export default function DealRoomModule({ onSelectCompany }) {
-  const [companies, setCompanies] = useState(DEAL_ROOM_COMPANIES);
+export default function DealRoomModule({ onSelectCompany, activeCompany = null }) {
+  // Load default companies merged with custom companies listed by founders
+  const [companies, setCompanies] = useState(() => {
+    let custom = [];
+    try {
+      const saved = localStorage.getItem('siq_deal_room_custom_companies');
+      if (saved) custom = JSON.parse(saved);
+    } catch (e) {}
+    const customTickers = new Set(custom.map(c => c.ticker?.toUpperCase()));
+    const defaults = DEAL_ROOM_COMPANIES.filter(c => !customTickers.has(c.ticker?.toUpperCase()));
+    return [...custom, ...defaults];
+  });
+
   const [searchQuery, setSearchQuery] = useState('');
   const [sectorFilter, setSectorFilter] = useState('ALL');
-  const [selectedCompany, setSelectedCompany] = useState(DEAL_ROOM_COMPANIES[0]);
+  const [selectedCompany, setSelectedCompany] = useState(() => {
+    let custom = [];
+    try {
+      const saved = localStorage.getItem('siq_deal_room_custom_companies');
+      if (saved) custom = JSON.parse(saved);
+    } catch (e) {}
+    return custom.length > 0 ? custom[0] : DEAL_ROOM_COMPANIES[0];
+  });
   const [watchlistToast, setWatchlistToast] = useState(null);
 
-  // Founder Connect Modal & Scheduled Meetings State
+  // Modals State
+  const [isListModalOpen, setIsListModalOpen] = useState(false);
+  const [isExpressModalOpen, setIsExpressModalOpen] = useState(false);
   const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
   const [connectModalTab, setConnectModalTab] = useState('chat'); // 'chat' | 'video' | 'schedule'
   const [scheduledMeetings, setScheduledMeetings] = useState({});
+  const [inboundLeadCount, setInboundLeadCount] = useState(0);
 
   useEffect(() => {
     try {
@@ -28,6 +52,16 @@ export default function DealRoomModule({ onSelectCompany }) {
       setScheduledMeetings(saved);
     } catch (e) {}
   }, []);
+
+  // Update inbound lead counts when selected company changes
+  useEffect(() => {
+    if (!selectedCompany?.ticker) return;
+    try {
+      const key = `siq_inbound_interests_${selectedCompany.ticker.toUpperCase()}`;
+      const leads = JSON.parse(localStorage.getItem(key) || '[]');
+      setInboundLeadCount(leads.length);
+    } catch (e) {}
+  }, [selectedCompany]);
 
   const handleOpenConnect = (tab = 'chat', comp = null) => {
     if (comp) {
@@ -37,13 +71,54 @@ export default function DealRoomModule({ onSelectCompany }) {
     setIsConnectModalOpen(true);
   };
 
+  const handleOpenExpressInterest = (comp = null) => {
+    if (comp) {
+      setSelectedCompany(comp);
+    }
+    setIsExpressModalOpen(true);
+  };
+
+  const handleStartupListed = (newComp) => {
+    setCompanies(prev => {
+      const filtered = prev.filter(c => c.ticker.toUpperCase() !== newComp.ticker.toUpperCase());
+      return [newComp, ...filtered];
+    });
+    setSelectedCompany(newComp);
+    setWatchlistToast(`🚀 "${newComp.companyName} (${newComp.ticker})" is now live in the Deal Room! Direct investor contact enabled.`);
+    setTimeout(() => setWatchlistToast(null), 5000);
+  };
+
+  const handleInterestSubmitted = (lead) => {
+    setInboundLeadCount(prev => prev + 1);
+    setCompanies(prev => prev.map(c => {
+      if (c.ticker.toUpperCase() === selectedCompany.ticker.toUpperCase()) {
+        return {
+          ...c,
+          inboundInquiriesCount: (c.inboundInquiriesCount || 0) + 1,
+          softCommittedAmount: (c.softCommittedAmount || 0) + lead.checkSize
+        };
+      }
+      return c;
+    }));
+    setWatchlistToast(`Check interest of $${lead.checkSize.toLocaleString()} logged for ${selectedCompany.companyName}!`);
+    setTimeout(() => setWatchlistToast(null), 4000);
+  };
+
   useEffect(() => {
     async function loadDeals() {
       try {
         const data = await api.getCompanies();
         if (data && data.length > 0) {
-          setCompanies(data);
-          setSelectedCompany(data[0]);
+          setCompanies(prev => {
+            let custom = [];
+            try {
+              const saved = localStorage.getItem('siq_deal_room_custom_companies');
+              if (saved) custom = JSON.parse(saved);
+            } catch (e) {}
+            const customTickers = new Set(custom.map(c => c.ticker?.toUpperCase()));
+            const backendFiltered = data.filter(c => !customTickers.has(c.ticker?.toUpperCase()));
+            return [...custom, ...backendFiltered];
+          });
         }
       } catch (err) {
         console.warn('Using offline deal room data', err);
@@ -139,27 +214,74 @@ export default function DealRoomModule({ onSelectCompany }) {
           </p>
         </div>
 
-        {/* Quick Stats */}
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <div style={{
-            padding: '1rem 1.4rem',
-            borderRadius: 'var(--radius-lg)',
-            background: 'rgba(255, 255, 255, 0.05)',
-            border: '1px solid var(--border-subtle)',
-            textAlign: 'center'
-          }}>
-            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#10B981' }}>{companies.length}</div>
-            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Vetted Deals</div>
-          </div>
-          <div style={{
-            padding: '1rem 1.4rem',
-            borderRadius: 'var(--radius-lg)',
-            background: 'rgba(255, 255, 255, 0.05)',
-            border: '1px solid var(--border-subtle)',
-            textAlign: 'center'
-          }}>
-            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#818CF8' }}>$27.3M</div>
-            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Aggregate Pipeline</div>
+        {/* Founder Call to Action & Deal Flow Stats */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem', alignItems: 'flex-end' }}>
+          <button
+            id="list-startup-dealroom-btn"
+            onClick={() => setIsListModalOpen(true)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '0.8rem 1.4rem',
+              borderRadius: 'var(--radius-lg)',
+              background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+              color: '#fff',
+              border: '1px solid rgba(255, 255, 255, 0.25)',
+              fontWeight: 800,
+              fontSize: '0.88rem',
+              cursor: 'pointer',
+              boxShadow: '0 8px 24px rgba(16, 185, 129, 0.45)',
+              transition: 'all 0.2s ease',
+              letterSpacing: '0.01em'
+            }}
+          >
+            <Plus size={18} strokeWidth={2.8} />
+            <span>List Your Startup / Raise Capital</span>
+            <span style={{
+              fontSize: '0.7rem',
+              background: 'rgba(255, 255, 255, 0.25)',
+              padding: '0.15rem 0.5rem',
+              borderRadius: '999px',
+              fontWeight: 800,
+              color: '#fff'
+            }}>
+              Get Funded
+            </span>
+          </button>
+
+          {/* Quick Stats */}
+          <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap' }}>
+            <div style={{
+              padding: '0.75rem 1.2rem',
+              borderRadius: 'var(--radius-lg)',
+              background: 'rgba(255, 255, 255, 0.05)',
+              border: '1px solid var(--border-subtle)',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '1.3rem', fontWeight: 800, color: '#10B981' }}>{companies.length}</div>
+              <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Vetted Deals</div>
+            </div>
+            <div style={{
+              padding: '0.75rem 1.2rem',
+              borderRadius: 'var(--radius-lg)',
+              background: 'rgba(255, 255, 255, 0.05)',
+              border: '1px solid var(--border-subtle)',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '1.3rem', fontWeight: 800, color: '#818CF8' }}>$27.3M</div>
+              <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Aggregate Pipeline</div>
+            </div>
+            <div style={{
+              padding: '0.75rem 1.2rem',
+              borderRadius: 'var(--radius-lg)',
+              background: 'rgba(16, 185, 129, 0.1)',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '1.3rem', fontWeight: 800, color: '#34D399' }}>240+</div>
+              <div style={{ fontSize: '0.68rem', color: '#A7F3D0' }}>Active Angels & VCs</div>
+            </div>
           </div>
         </div>
       </div>
@@ -237,9 +359,28 @@ export default function DealRoomModule({ onSelectCompany }) {
                   border: isSelected ? '1.5px solid #818CF8' : '1px solid var(--border-subtle)',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
-                  boxShadow: isSelected ? '0 10px 25px -5px rgba(99, 102, 241, 0.25)' : 'none'
+                  boxShadow: isSelected ? '0 10px 25px -5px rgba(99, 102, 241, 0.25)' : 'none',
+                  position: 'relative',
+                  overflow: 'hidden'
                 }}
               >
+                {comp.isCustomListing && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '0',
+                    right: '0',
+                    background: 'linear-gradient(135deg, #10B981, #059669)',
+                    color: '#fff',
+                    fontSize: '0.65rem',
+                    fontWeight: 800,
+                    padding: '0.2rem 0.8rem',
+                    borderBottomLeftRadius: '8px',
+                    letterSpacing: '0.04em'
+                  }}>
+                    ⚡ NEW LISTING • FOUNDER DIRECT
+                  </div>
+                )}
+
                 {/* Header */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.6rem' }}>
                   <div>
@@ -301,13 +442,86 @@ export default function DealRoomModule({ onSelectCompany }) {
                   </div>
                 </div>
 
-                {/* Card Footer */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem' }}>
+                {/* Soft-Commitment Progress Meter */}
+                {comp.fundingRequired > 0 && (
+                  <div style={{ marginTop: '0.8rem' }}>
+                    {(() => {
+                      const softAmount = comp.softCommittedAmount || Math.round(comp.fundingRequired * 0.45);
+                      const pct = Math.min(100, Math.round((softAmount / comp.fundingRequired) * 100));
+                      return (
+                        <div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', marginBottom: '3px' }}>
+                            <span style={{ color: '#34D399', fontWeight: 700 }}>
+                              🔥 ${softAmount.toLocaleString()} Soft-Committed
+                            </span>
+                            <span style={{ color: 'var(--text-muted)' }}>
+                              {pct}% of ${(comp.fundingRequired).toLocaleString()}
+                            </span>
+                          </div>
+                          <div style={{ height: '4px', borderRadius: '999px', background: 'rgba(255, 255, 255, 0.08)', overflow: 'hidden' }}>
+                            <div style={{ width: `${pct}%`, height: '100%', background: 'linear-gradient(90deg, #10B981, #34D399)' }} />
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
+
+                {/* Card Footer with Direct Channels */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', flexWrap: 'wrap', gap: '6px' }}>
                   <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                     Health Score: <strong style={{ color: '#FBBF24' }}>{comp.healthScore}/100</strong>
                   </span>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    {comp.founderWhatsApp && (
+                      <a
+                        href={`https://wa.me/${comp.founderWhatsApp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi ${comp.founderName}, I'm reviewing ${comp.companyName} on StartupIQ Deal Room.`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '3px',
+                          background: 'rgba(37, 211, 102, 0.15)',
+                          border: '1px solid rgba(37, 211, 102, 0.35)',
+                          color: '#25D366',
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          padding: '0.28rem 0.55rem',
+                          borderRadius: 'var(--radius-sm)',
+                          textDecoration: 'none'
+                        }}
+                        title={`WhatsApp chat with ${comp.founderName}`}
+                      >
+                        <Phone size={11} /> WhatsApp
+                      </a>
+                    )}
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenExpressInterest(comp);
+                      }}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '3px',
+                        background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.25))',
+                        border: '1px solid rgba(16, 185, 129, 0.4)',
+                        color: '#34D399',
+                        fontSize: '0.72rem',
+                        fontWeight: 800,
+                        padding: '0.28rem 0.55rem',
+                        borderRadius: 'var(--radius-sm)',
+                        cursor: 'pointer'
+                      }}
+                      title="Express Check Interest / Submit Soft Commitment"
+                    >
+                      <DollarSign size={11} /> Check
+                    </button>
+
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -322,14 +536,13 @@ export default function DealRoomModule({ onSelectCompany }) {
                         color: '#34D399',
                         fontSize: '0.72rem',
                         fontWeight: 700,
-                        padding: '0.3rem 0.6rem',
+                        padding: '0.28rem 0.55rem',
                         borderRadius: 'var(--radius-sm)',
                         cursor: 'pointer'
                       }}
                       title={`Talk with ${comp.founderName || 'Founder'}`}
                     >
-                      <MessageSquare size={12} />
-                      Talk
+                      <MessageSquare size={11} /> Talk
                     </button>
 
                     <button
@@ -350,7 +563,6 @@ export default function DealRoomModule({ onSelectCompany }) {
                       }}
                     >
                       <Bookmark size={14} />
-                      Watchlist
                     </button>
                   </div>
                 </div>
@@ -395,7 +607,31 @@ export default function DealRoomModule({ onSelectCompany }) {
                 </h2>
               </div>
 
-              <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                <button
+                  id="express-interest-header-btn"
+                  onClick={() => handleOpenExpressInterest(selectedCompany)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '0.6rem 1.1rem',
+                    borderRadius: 'var(--radius-md)',
+                    background: 'linear-gradient(135deg, #10B981, #059669)',
+                    border: 'none',
+                    color: '#fff',
+                    fontSize: '0.82rem',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 14px rgba(16, 185, 129, 0.45)',
+                    transition: 'all 0.2s ease'
+                  }}
+                  title="Express Check Interest / Submit Allocation"
+                >
+                  <DollarSign size={15} />
+                  Express Interest ($)
+                </button>
+
                 <button
                   id="connect-founder-btn"
                   onClick={() => handleOpenConnect('chat')}
@@ -512,6 +748,168 @@ export default function DealRoomModule({ onSelectCompany }) {
                   Cap Table & Ledger <ChevronRight size={16} />
                 </button>
               </div>
+            </div>
+
+            {/* DIRECT FOUNDER CONTACT CHANNELS & ALLOCATION HUB */}
+            <div style={{
+              padding: '1.25rem 1.4rem',
+              borderRadius: 'var(--radius-lg)',
+              background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(99, 102, 241, 0.08) 100%)',
+              border: '1px solid rgba(16, 185, 129, 0.35)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1rem'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.8rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div style={{
+                    width: '42px',
+                    height: '42px',
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #10B981, #3B82F6)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fff',
+                    fontWeight: 800,
+                    fontSize: '1rem',
+                    boxShadow: '0 4px 14px rgba(16, 185, 129, 0.4)'
+                  }}>
+                    {selectedCompany.founderName ? selectedCompany.founderName.charAt(0) : 'F'}
+                  </div>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '0.98rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                        {selectedCompany.founderName || 'Founder & CEO'}
+                      </span>
+                      <span style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        padding: '0.15rem 0.5rem',
+                        borderRadius: '999px',
+                        background: 'rgba(16, 185, 129, 0.2)',
+                        border: '1px solid rgba(16, 185, 129, 0.4)',
+                        color: '#34D399',
+                        fontSize: '0.68rem',
+                        fontWeight: 700
+                      }}>
+                        <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10B981', boxShadow: '0 0 6px #10B981' }} />
+                        Verified Founder Line
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                      {selectedCompany.founderRole || 'Founder & CEO'} • Direct Contact Enabled
+                    </div>
+                  </div>
+                </div>
+
+                {/* Direct Action Badges (WhatsApp & Direct Mail) */}
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  {selectedCompany.founderWhatsApp ? (
+                    <a
+                      href={`https://wa.me/${selectedCompany.founderWhatsApp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi ${selectedCompany.founderName}, I'm reviewing ${selectedCompany.companyName} on StartupIQ Deal Room ($${(selectedCompany.fundingRequired || 0).toLocaleString()} round). I would like to discuss participating.`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '0.55rem 0.95rem',
+                        borderRadius: 'var(--radius-md)',
+                        background: '#25D366',
+                        color: '#000',
+                        fontWeight: 800,
+                        fontSize: '0.78rem',
+                        textDecoration: 'none',
+                        boxShadow: '0 4px 12px rgba(37, 211, 102, 0.35)'
+                      }}
+                    >
+                      <Phone size={13} strokeWidth={2.6} />
+                      <span>WhatsApp Founder ({selectedCompany.founderWhatsApp})</span>
+                    </a>
+                  ) : null}
+
+                  {selectedCompany.founderEmail ? (
+                    <a
+                      href={`mailto:${selectedCompany.founderEmail}?subject=${encodeURIComponent(`Investment Interest in ${selectedCompany.companyName} (${selectedCompany.ticker})`)}&body=${encodeURIComponent(`Hello ${selectedCompany.founderName},\n\nI am reviewing your ${selectedCompany.stage || 'active'} round on StartupIQ Deal Room. We would like to schedule a 20-minute diligence call.\n\nBest regards,\nAccredited Investor`)}`}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '0.55rem 0.9rem',
+                        borderRadius: 'var(--radius-md)',
+                        background: 'rgba(255, 255, 255, 0.08)',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                        color: '#fff',
+                        fontWeight: 700,
+                        fontSize: '0.78rem',
+                        textDecoration: 'none'
+                      }}
+                    >
+                      <Mail size={13} />
+                      <span>Direct Email</span>
+                    </a>
+                  ) : null}
+
+                  {selectedCompany.pitchDeckUrl ? (
+                    <a
+                      href={selectedCompany.pitchDeckUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        padding: '0.55rem 0.85rem',
+                        borderRadius: 'var(--radius-md)',
+                        background: 'rgba(99, 102, 241, 0.15)',
+                        border: '1px solid rgba(129, 140, 248, 0.35)',
+                        color: '#A5B4FC',
+                        fontWeight: 700,
+                        fontSize: '0.78rem',
+                        textDecoration: 'none'
+                      }}
+                    >
+                      <FileText size={13} /> Pitch Deck
+                    </a>
+                  ) : null}
+                </div>
+              </div>
+
+              {/* Round Momentum & Syndicate Soft-Commitment Gauge */}
+              {selectedCompany.fundingRequired > 0 && (
+                <div style={{
+                  padding: '0.8rem 1rem',
+                  borderRadius: 'var(--radius-md)',
+                  background: 'rgba(15, 23, 42, 0.6)',
+                  border: '1px solid rgba(255, 255, 255, 0.05)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.5rem'
+                }}>
+                  {(() => {
+                    const softAmount = selectedCompany.softCommittedAmount || Math.round(selectedCompany.fundingRequired * 0.45);
+                    const pct = Math.min(100, Math.round((softAmount / selectedCompany.fundingRequired) * 100));
+                    const leads = selectedCompany.inboundInquiriesCount || inboundLeadCount || 3;
+                    return (
+                      <>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.78rem' }}>
+                          <span style={{ color: '#34D399', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                            <Zap size={14} /> ${softAmount.toLocaleString()} Soft-Committed ({pct}% of ${(selectedCompany.fundingRequired).toLocaleString()} Ask)
+                          </span>
+                          <span style={{ color: '#A5B4FC', fontWeight: 700 }}>
+                            🔥 {leads} Accredited Investors Inquired
+                          </span>
+                        </div>
+                        <div style={{ height: '6px', borderRadius: '999px', background: 'rgba(255, 255, 255, 0.08)', overflow: 'hidden' }}>
+                          <div style={{ width: `${pct}%`, height: '100%', background: 'linear-gradient(90deg, #10B981 0%, #34D399 70%, #60A5FA 100%)' }} />
+                        </div>
+                      </>
+                    );
+                  })()}
+                </div>
+              )}
             </div>
 
             {/* Founder Presence & Scheduled Meeting Banner */}
@@ -703,34 +1101,149 @@ export default function DealRoomModule({ onSelectCompany }) {
               </div>
             </div>
 
-            {/* 10-Dimension Completeness Radar */}
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem' }}>
-                <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                  Investment Readiness Radar
-                </h4>
-                <span style={{ fontSize: '0.8rem', color: '#10B981', fontWeight: 700 }}>
-                  {selectedCompany.completeness?.overall || 88}% Complete
+            {/* STARTUP INVESTMENT CHECKLIST — 11-POINT INSTITUTIONAL DUE DILIGENCE */}
+            <div style={{
+              padding: '1.4rem',
+              borderRadius: 'var(--radius-lg)',
+              background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(16, 185, 129, 0.05) 100%)',
+              border: '1px solid rgba(16, 185, 129, 0.28)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1.1rem'
+            }}>
+              {/* Header */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.8rem' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
+                    <ShieldCheck size={18} color="#34D399" />
+                    <h4 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+                      Startup Investment Checklist
+                    </h4>
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    Institutional diligence package verifying business, economics, governance, and compliance.
+                  </div>
+                </div>
+
+                <span style={{
+                  padding: '0.25rem 0.75rem',
+                  borderRadius: 'var(--radius-pill)',
+                  background: 'rgba(16, 185, 129, 0.2)',
+                  border: '1px solid rgba(16, 185, 129, 0.4)',
+                  color: '#34D399',
+                  fontSize: '0.78rem',
+                  fontWeight: 800
+                }}>
+                  {selectedCompany.completeness?.overall || 95}% Diligence Ready
                 </span>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                {[
-                  { label: 'Statutory KYC & CIN', value: selectedCompany.completeness?.kyc || 90 },
-                  { label: 'Financial Statements & DCF', value: selectedCompany.completeness?.financials || 95 },
-                  { label: 'Funding & Round Parameters', value: selectedCompany.completeness?.funding || 100 },
-                  { label: 'Virtual Data Room Documents', value: selectedCompany.completeness?.documents || 80 },
-                ].map((item) => (
-                  <div key={item.label}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '0.2rem' }}>
-                      <span style={{ color: 'var(--text-muted)' }}>{item.label}</span>
-                      <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>{item.value}%</span>
-                    </div>
-                    <div style={{ height: '6px', borderRadius: 'var(--radius-pill)', background: 'rgba(255, 255, 255, 0.06)', overflow: 'hidden' }}>
-                      <div style={{ width: `${item.value}%`, height: '100%', background: '#6366F1' }} />
-                    </div>
+              {/* Why Investors Need This Banner */}
+              <div style={{
+                padding: '0.75rem 0.9rem',
+                borderRadius: 'var(--radius-md)',
+                background: 'rgba(255, 255, 255, 0.03)',
+                borderLeft: '3px solid #10B981',
+                fontSize: '0.75rem',
+                color: '#CBD5E1',
+                lineHeight: 1.45
+              }}>
+                <strong style={{ color: '#34D399' }}>Investor Verification Standard:</strong> The investor needs to understand what the startup does, whether it can make money, who owns it, how the investment will be used, and whether the company is legally and financially genuine.
+              </div>
+
+              {/* Use of Funds Allocation Breakdown Widget */}
+              {selectedCompany.useOfFunds && (
+                <div style={{
+                  padding: '0.9rem 1.1rem',
+                  borderRadius: 'var(--radius-md)',
+                  background: 'rgba(15, 23, 42, 0.7)',
+                  border: '1px solid rgba(255, 255, 255, 0.06)'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
+                    <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#fff' }}>
+                      💰 Use of Funds Breakdown (${(selectedCompany.fundingRequired || 0).toLocaleString()} Ask):
+                    </span>
+                    <span style={{ fontSize: '0.72rem', color: '#10B981', fontWeight: 700 }}>
+                      100% Capital Allocated
+                    </span>
                   </div>
-                ))}
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.6rem', textAlign: 'center' }}>
+                    {[
+                      { label: 'Product & R&D', pct: selectedCompany.useOfFunds.rnd || 40, color: '#3B82F6' },
+                      { label: 'Marketing & GTM', pct: selectedCompany.useOfFunds.marketing || 30, color: '#10B981' },
+                      { label: 'Talent & Hiring', pct: selectedCompany.useOfFunds.hiring || 20, color: '#8B5CF6' },
+                      { label: 'Working Capital', pct: selectedCompany.useOfFunds.operations || 10, color: '#F59E0B' }
+                    ].map(cat => (
+                      <div key={cat.label} style={{ padding: '0.5rem', borderRadius: '6px', background: 'rgba(255, 255, 255, 0.03)' }}>
+                        <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>{cat.label}</div>
+                        <div style={{ fontSize: '0.92rem', fontWeight: 800, color: cat.color, marginTop: '2px' }}>{cat.pct}%</div>
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
+                          ${Math.round(((selectedCompany.fundingRequired || 0) * cat.pct) / 100).toLocaleString()}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 11 Checklist Items Grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.65rem' }}>
+                {STARTUP_INVESTMENT_CHECKLIST_TEMPLATE.map(item => {
+                  const itemData = selectedCompany.investmentChecklist?.[item.id] || { status: 'VERIFIED', label: item.shortDesc };
+                  return (
+                    <div
+                      key={item.id}
+                      style={{
+                        padding: '0.65rem 0.8rem',
+                        borderRadius: 'var(--radius-sm)',
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        border: '1px solid rgba(255, 255, 255, 0.06)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: '0.6rem'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                        <div style={{
+                          width: '20px',
+                          height: '20px',
+                          borderRadius: '50%',
+                          background: 'rgba(16, 185, 129, 0.15)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#10B981',
+                          flexShrink: 0
+                        }}>
+                          <Check size={12} strokeWidth={3} />
+                        </div>
+                        <div style={{ minWidth: 0 }}>
+                          <div style={{ fontSize: '0.76rem', fontWeight: 700, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {item.label}
+                          </div>
+                          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {itemData.label || item.shortDesc}
+                          </div>
+                        </div>
+                      </div>
+
+                      <span style={{
+                        fontSize: '0.65rem',
+                        fontWeight: 800,
+                        padding: '0.15rem 0.45rem',
+                        borderRadius: '4px',
+                        background: 'rgba(16, 185, 129, 0.15)',
+                        color: '#34D399',
+                        border: '1px solid rgba(16, 185, 129, 0.3)',
+                        flexShrink: 0
+                      }}>
+                        {itemData.status || 'VERIFIED'}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -750,6 +1263,23 @@ export default function DealRoomModule({ onSelectCompany }) {
         company={selectedCompany}
         currentUser={{ fullName: 'Victoria Sterling (General Partner)' }}
         initialTab={connectModalTab}
+      />
+
+      {/* Founder Pitch & Capital Raise Modal ("List Your Startup") */}
+      <ListStartupModal
+        isOpen={isListModalOpen}
+        onClose={() => setIsListModalOpen(false)}
+        onStartupListed={handleStartupListed}
+        activeCompany={activeCompany}
+      />
+
+      {/* Investor Express Check Interest & Soft Commitment Modal */}
+      <ExpressInterestModal
+        isOpen={isExpressModalOpen}
+        onClose={() => setIsExpressModalOpen(false)}
+        company={selectedCompany}
+        currentUser={{ fullName: 'Victoria Sterling (General Partner)' }}
+        onInterestSubmitted={handleInterestSubmitted}
       />
     </div>
   );

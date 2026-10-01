@@ -132,6 +132,20 @@ export const INVESTMENTS_LIST = [
   }
 ];
 
+export const STARTUP_INVESTMENT_CHECKLIST_TEMPLATE = [
+  { id: 'companyProfile', label: 'Company Profile', shortDesc: 'Explain business, vision, problem & solution', purpose: 'The investor needs to understand what the startup does and its market problem.', category: 'Foundation', required: true },
+  { id: 'pitchDeck', label: 'Pitch Deck', shortDesc: 'Idea, product, market size & growth metrics', purpose: 'To present the opportunity, value proposition, and traction trajectory in presentation format.', category: 'Foundation', required: true },
+  { id: 'businessModel', label: 'Business Model', shortDesc: 'Monetization, revenue streams & unit economics', purpose: 'To show how the startup makes money and whether it can achieve profitability.', category: 'Economics', required: true },
+  { id: 'financialStatements', label: 'Financial Statements', shortDesc: 'Audited P&L, balance sheet, historical performance', purpose: 'To show historical financial performance and verify revenue authenticity.', category: 'Economics', required: true },
+  { id: 'financialProjections', label: 'Financial Projections', shortDesc: '3-5 year DCF forecasts & growth assumptions', purpose: 'To show expected future performance and return potential.', category: 'Economics', required: true },
+  { id: 'capTable', label: 'Cap Table', shortDesc: 'Shareholder ledger, dilution & ESOP pool', purpose: 'To show who owns the company and how equity will dilute post-round.', category: 'Governance', required: true },
+  { id: 'fundingAndUseOfFunds', label: 'Funding Requirement & Use of Funds', shortDesc: 'Target raise, valuation & allocation breakdown', purpose: 'To explain how much money is needed and exactly where it will be spent.', category: 'Round Terms', required: true },
+  { id: 'companyDocuments', label: 'Company Documents', shortDesc: 'Incorporation certificate (COI), MOA, AOA, PAN, GST', purpose: 'To verify the company is legally registered and statutory compliant.', category: 'Compliance', required: true },
+  { id: 'founderKyc', label: 'Founder KYC', shortDesc: 'Verified directors, IDs, credentials & background', purpose: 'To verify the founders/directors are genuine and vetted.', category: 'Compliance', required: true },
+  { id: 'legalAndTaxDocs', label: 'Legal & Tax Documents', shortDesc: 'Statutory filings, auditor report, tax clearance', purpose: 'For investor due diligence and risk assessment.', category: 'Legal', required: true },
+  { id: 'contractsAndIpDocs', label: 'Contracts & IP Documents', shortDesc: 'Patents, trademarks, customer MSAs & IP assignments', purpose: 'To verify important business assets and proprietary rights.', category: 'Legal', required: true }
+];
+
 export const DEAL_ROOM_COMPANIES = [
   {
     ticker: "TELEDU",
@@ -158,16 +172,43 @@ export const DEAL_ROOM_COMPANIES = [
     recommendationColorHex: "#34D399",
     tagline: "AI-driven vertical learning management system for coaching institutes and academies.",
     founderName: "Zeeshan Khan",
+    founderRole: "Co-Founder & CEO",
+    founderWhatsApp: "+1 (555) 234-5678",
+    founderEmail: "zeeshan@teledu.io",
+    founderLinkedIn: "https://linkedin.com/in/zeeshan-teledu",
+    pitchDeckUrl: "https://teledu.io/deck.pdf",
+    seekingInvestment: true,
+    softCommittedAmount: 350000,
+    inboundInquiriesCount: 6,
     headcount: 14,
+    useOfFunds: {
+      rnd: 40,
+      marketing: 30,
+      hiring: 20,
+      operations: 10
+    },
+    investmentChecklist: {
+      companyProfile: { status: 'VERIFIED', label: 'Verified Entity Profile & SaaS Vision' },
+      pitchDeck: { status: 'VERIFIED', label: 'Series A Ready Deck (14 Slides, PDF)' },
+      businessModel: { status: 'VERIFIED', label: 'B2B Academy Subscription + 8% Marketplace' },
+      financialStatements: { status: 'VERIFIED', label: 'Audited P&L & Balance Sheet FY24' },
+      financialProjections: { status: 'VERIFIED', label: '5-Year DCF Model ($5.62M Enterprise Value)' },
+      capTable: { status: 'VERIFIED', label: 'Fully Diluted Ledger (Founders 72%, ESOP 10.5%)' },
+      fundingAndUseOfFunds: { status: 'VERIFIED', label: '$500K Ask (40% R&D, 30% GTM, 20% Team)' },
+      companyDocuments: { status: 'VERIFIED', label: 'COI No. U72900KA2020PTC138890, MOA, AOA, GST' },
+      founderKyc: { status: 'VERIFIED', label: 'DIN & Identity Verified (Zeeshan Khan & Maryam Akhtar)' },
+      legalAndTaxDocs: { status: 'VERIFIED', label: 'Clean Auditor Clearance & RoC Filings' },
+      contractsAndIpDocs: { status: 'VERIFIED', label: '14 Active Enterprise Contracts & AI IP Filings' }
+    },
     completeness: {
       profile: 100,
-      kyc: 90,
-      team: 85,
-      business: 90,
+      kyc: 95,
+      team: 90,
+      business: 95,
       financials: 95,
       funding: 100,
-      documents: 80,
-      overall: 91
+      documents: 90,
+      overall: 95
     }
   },
   {
@@ -195,16 +236,43 @@ export const DEAL_ROOM_COMPANIES = [
     recommendationColorHex: "#10B981",
     tagline: "Autonomous multi-agent orchestration cloud for high-throughput enterprise workflows.",
     founderName: "Ayesha Noor",
+    founderRole: "Founder & CTO",
+    founderWhatsApp: "+1 (555) 876-5432",
+    founderEmail: "ayesha@zenithcloud.ai",
+    founderLinkedIn: "https://linkedin.com/in/ayesha-noor",
+    pitchDeckUrl: "https://zenithcloud.ai/pitch.pdf",
+    seekingInvestment: true,
+    softCommittedAmount: 1100000,
+    inboundInquiriesCount: 11,
     headcount: 28,
+    useOfFunds: {
+      rnd: 45,
+      marketing: 25,
+      hiring: 20,
+      operations: 10
+    },
+    investmentChecklist: {
+      companyProfile: { status: 'VERIFIED', label: 'Verified AI Cloud Architecture' },
+      pitchDeck: { status: 'VERIFIED', label: 'Series A Institutional Deck (18 Slides)' },
+      businessModel: { status: 'VERIFIED', label: 'Multi-Tenant API Consumption & Enterprise Licenses' },
+      financialStatements: { status: 'VERIFIED', label: 'Audited Financials FY24 ($1.24M ARR)' },
+      financialProjections: { status: 'VERIFIED', label: '5-Year Forecast ($15.4M DCF Valuation)' },
+      capTable: { status: 'VERIFIED', label: 'Series A Ready Cap Table with 15% ESOP' },
+      fundingAndUseOfFunds: { status: 'VERIFIED', label: '$1.5M Ask (45% GPU R&D, 25% Enterprise Sales)' },
+      companyDocuments: { status: 'VERIFIED', label: 'Delaware C-Corp & India Subsidiary COI, MOA' },
+      founderKyc: { status: 'VERIFIED', label: 'Verified Founder Credentials & Clear Background' },
+      legalAndTaxDocs: { status: 'VERIFIED', label: 'Full SEBI & US-India Transfer Pricing Audits' },
+      contractsAndIpDocs: { status: 'VERIFIED', label: '3 Provisional LLM Patents & Fortune 500 Pilots' }
+    },
     completeness: {
       profile: 100,
-      kyc: 95,
-      team: 90,
+      kyc: 98,
+      team: 95,
       business: 95,
       financials: 100,
       funding: 100,
-      documents: 90,
-      overall: 96
+      documents: 95,
+      overall: 98
     }
   },
   {
@@ -232,16 +300,43 @@ export const DEAL_ROOM_COMPANIES = [
     recommendationColorHex: "#34D399",
     tagline: "Real-time wearable sensor telemetry and algorithmic patient deterioration early warning.",
     founderName: "Dr. Tariq Mahmood",
+    founderRole: "Founder & Chief Medical Officer",
+    founderWhatsApp: "+1 (555) 456-7890",
+    founderEmail: "tariq@pulsehealth.org",
+    founderLinkedIn: "https://linkedin.com/in/dr-tariq-mahmood",
+    pitchDeckUrl: "https://pulsehealth.org/diligence.pdf",
+    seekingInvestment: true,
+    softCommittedAmount: 420000,
+    inboundInquiriesCount: 4,
     headcount: 19,
+    useOfFunds: {
+      rnd: 50,
+      marketing: 20,
+      hiring: 20,
+      operations: 10
+    },
+    investmentChecklist: {
+      companyProfile: { status: 'VERIFIED', label: 'Clinical AI Diagnostics Profile' },
+      pitchDeck: { status: 'VERIFIED', label: 'Clinical Diligence Deck & Hospital Trials' },
+      businessModel: { status: 'VERIFIED', label: 'B2B Hospital SaaS + Hardware Sensor Lease' },
+      financialStatements: { status: 'VERIFIED', label: 'Audited Financials FY24 ($480K ARR)' },
+      financialProjections: { status: 'VERIFIED', label: '3-Year Clinical Commercialization Model' },
+      capTable: { status: 'VERIFIED', label: 'MedTech Seed Cap Table (83% Founders, 17% Pool)' },
+      fundingAndUseOfFunds: { status: 'VERIFIED', label: '$750K Ask (50% Clinical Trials, 20% Regulatory)' },
+      companyDocuments: { status: 'VERIFIED', label: 'COI, ISO 13485 Certification, MOA, AOA' },
+      founderKyc: { status: 'VERIFIED', label: 'Licensed Medical Doctor & Regulatory Lead Verified' },
+      legalAndTaxDocs: { status: 'VERIFIED', label: 'HIPAA & Clinical Research Compliance' },
+      contractsAndIpDocs: { status: 'VERIFIED', label: '2 Diagnostic Patents & 3 Hospital Trial MOUs' }
+    },
     completeness: {
       profile: 95,
-      kyc: 85,
+      kyc: 90,
       team: 90,
-      business: 85,
-      financials: 85,
+      business: 90,
+      financials: 88,
       funding: 90,
-      documents: 75,
-      overall: 86
+      documents: 85,
+      overall: 90
     }
   },
   {
@@ -269,16 +364,43 @@ export const DEAL_ROOM_COMPANIES = [
     recommendationColorHex: "#F2A93B",
     tagline: "Micro-fulfillment robotic dispatch system for same-hour urban grocery delivery.",
     founderName: "Bilal Ahmed",
+    founderRole: "Founder & Lead Engineer",
+    founderWhatsApp: "+1 (555) 789-0123",
+    founderEmail: "bilal@logixrobotics.com",
+    founderLinkedIn: "https://linkedin.com/in/bilal-ahmed-robotics",
+    pitchDeckUrl: "https://logixrobotics.com/seed.pdf",
+    seekingInvestment: true,
+    softCommittedAmount: 85000,
+    inboundInquiriesCount: 2,
     headcount: 7,
+    useOfFunds: {
+      rnd: 60,
+      marketing: 15,
+      hiring: 15,
+      operations: 10
+    },
+    investmentChecklist: {
+      companyProfile: { status: 'VERIFIED', label: 'Robotics Micro-Fulfillment Profile' },
+      pitchDeck: { status: 'VERIFIED', label: 'Pre-Seed Hardware Prototype Deck' },
+      businessModel: { status: 'VERIFIED', label: 'Robotics-as-a-Service (RaaS) Monthly Fee' },
+      financialStatements: { status: 'UPLOADED', label: 'Internal Financial Statements FY24' },
+      financialProjections: { status: 'UPLOADED', label: 'Unit Economics & Fleet Scaling Projections' },
+      capTable: { status: 'VERIFIED', label: 'Clean Pre-Seed Cap Table' },
+      fundingAndUseOfFunds: { status: 'VERIFIED', label: '$300K Ask (60% Prototype HW, 15% Ops)' },
+      companyDocuments: { status: 'VERIFIED', label: 'Incorporation Certificate & GST' },
+      founderKyc: { status: 'VERIFIED', label: 'Founder & Robotics Team Verified' },
+      legalAndTaxDocs: { status: 'UPLOADED', label: 'Annual Tax Returns' },
+      contractsAndIpDocs: { status: 'UPLOADED', label: '1 Hardware Utility Patent Pending' }
+    },
     completeness: {
       profile: 85,
-      kyc: 70,
-      team: 75,
+      kyc: 80,
+      team: 80,
       business: 80,
-      financials: 70,
+      financials: 75,
       funding: 80,
-      documents: 60,
-      overall: 74
+      documents: 70,
+      overall: 78
     }
   }
 ];

@@ -131,6 +131,7 @@ export default function OverviewModule({ onNavigate, company = {}, healthScore =
       domain: 'Venture Strategy & Lean Testing',
       color: '#6366F1',
       tools: [
+        { id: 'profile-wizard', title: 'Company Profile & Diligence Wizard', desc: '8-step institutional profile, KYC verification, SWOT matrix & data vault.', icon: Award, badge: '8 Steps' },
         { id: 'founder-assessment', title: 'Founder Competency Assessment', desc: 'AI-generated 30-question diagnostic across 6 venture domains.', icon: Award, badge: 'AI Test' },
         { id: 'idea-analyzer', title: 'Idea Assessment Lab', desc: '0-100 score on problem urgency and market size.', icon: Target, badge: 'TAM / SAM' },
         { id: 'idea-testing', title: 'Lean Hypothesis Lab', desc: 'Formulate Riskiest Assumptions (RAT) & validation tests.', icon: FlaskConical, badge: '6 Stages' },
@@ -143,9 +144,9 @@ export default function OverviewModule({ onNavigate, company = {}, healthScore =
       color: '#06B6D4',
       tools: [
         { id: 'financial-model', title: '5-Year Financial Model', desc: 'DCF enterprise valuation, revenue compounding & cash flow.', icon: TrendingUp, badge: '5-Yr DCF' },
+        { id: 'tools', title: 'Financial & Business Calculators', desc: 'Calculator Studio, 30 Finance Formulas, What-If Simulator & 12-Mo Projections.', icon: Calculator, badge: 'Tools Studio' },
         { id: 'metrics', title: 'Metric Driver Network', desc: 'Trace how CAC shifts LTV:CAC, and how burn shifts runway.', icon: Network, badge: 'Simulations' },
-        { id: 'health-score', title: 'Startup Health Score', desc: 'Algorithmic benchmark measuring growth, burn & churn.', icon: Activity, badge: `${currentHealth} / 100` },
-        { id: 'terms', title: '30 Finance Calculators & Formulas', desc: 'Formulas for profitability, liquidity, turnover & valuation.', icon: Calculator, badge: '30 Cards' }
+        { id: 'health-score', title: 'Startup Health Score', desc: 'Algorithmic benchmark measuring growth, burn & churn.', icon: Activity, badge: `${currentHealth} / 100` }
       ]
     },
     {

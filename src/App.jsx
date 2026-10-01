@@ -27,6 +27,9 @@ import MetricExplorerModule from './components/modules/MetricExplorerModule';
 import ActionPlanModule from './components/modules/ActionPlanModule';
 import PromptBuilderModule from './components/modules/PromptBuilderModule';
 import MyStartupModule from './components/modules/MyStartupModule';
+import ToolsModule from './components/modules/ToolsModule';
+import AnalyzeModule from './components/modules/AnalyzeModule';
+import CompanyProfileWizardModule from './components/modules/CompanyProfileWizardModule';
 import FloatingAICopilot from './components/ai/FloatingAICopilot';
 
 // Actual Investment Module & Deal Room Components
@@ -367,7 +370,7 @@ export default function App() {
 
       // --- FOUNDER OS (STARTUPIQ) ---
       case 'overview':
-        return <OverviewModule onNavigate={setActiveTab} company={company} healthScore={healthScore} onOpenAI={() => setIsAIOpen(true)} />;
+        return <OverviewModule onNavigate={setActiveTab} company={company} healthScore={healthScore} onOpenAI={() => setIsAIOpen(true)} onUpdateCompany={handleUpdateCompany} />;
       case 'learning':
       case 'curriculum':
         return <LearningModule company={company} currentUser={currentUser} onOpenPricing={() => setIsPricingOpen(true)} />;
@@ -391,7 +394,9 @@ export default function App() {
         return <IdeaTestingModule company={company} />;
       case 'gtm':
       case 'gtmRoadmap':
-        return <GtmRoadmapModule company={company} />;
+      case 'audienceRoadmap':
+      case 'audience-roadmap':
+        return <AnalyzeModule company={company} onNavigate={setActiveTab} defaultTab="audienceRoadmap" />;
       case 'action-plan':
       case 'actionPlan':
         return (
@@ -416,28 +421,49 @@ export default function App() {
       case 'financial-model':
       case 'financialModel':
         return <FinancialModelModule company={company} />;
-      case 'metrics':
-      case 'metricExplorer':
-        return <MetricExplorerModule company={company} />;
-      case 'health-score':
-      case 'health':
-        return <HealthScoreModule company={company} />;
-      case 'prompt-builder':
-      case 'promptBuilder':
-        return <OverviewModule onNavigate={setActiveTab} company={company} healthScore={healthScore} onOpenAI={() => setIsAIOpen(true)} />;
+      // --- TOOLS & CALCULATOR STUDIO ECOSYSTEM ---
+      case 'tools':
+      case 'tools-hub':
+      case 'calculator-studio':
+      case 'calculatorStudio':
+        return <ToolsModule company={company} onNavigate={setActiveTab} onUpdateCompany={handleUpdateCompany} defaultTab="calc" />;
       case 'formulas':
       case 'financeFormulas':
-        return <FinanceFormulasModule />;
+      case 'finance-formulas':
+        return <ToolsModule company={company} onNavigate={setActiveTab} onUpdateCompany={handleUpdateCompany} defaultTab="finance" />;
+      case 'what-if':
+      case 'whatif':
+      case 'scenario-simulator':
+        return <ToolsModule company={company} onNavigate={setActiveTab} onUpdateCompany={handleUpdateCompany} defaultTab="whatif" />;
+      case '12mo-model':
+      case 'monthly-financial-model':
+        return <ToolsModule company={company} onNavigate={setActiveTab} onUpdateCompany={handleUpdateCompany} defaultTab="model12" />;
+      case 'metrics':
+      case 'metricExplorer':
+        return <ToolsModule company={company} onNavigate={setActiveTab} onUpdateCompany={handleUpdateCompany} defaultTab="metrics" />;
+      case 'analyze':
+      case 'analyze-hub':
+      case 'health-score':
+      case 'health':
+        return <AnalyzeModule company={company} onNavigate={setActiveTab} defaultTab="health" />;
+      case 'prompt-builder':
+      case 'promptBuilder':
+        return <OverviewModule onNavigate={setActiveTab} company={company} healthScore={healthScore} onOpenAI={() => setIsAIOpen(true)} onUpdateCompany={handleUpdateCompany} />;
       case 'marketing':
         return <MarketingIndexModule />;
+      case 'profile-wizard':
+      case 'profileWizard':
+      case 'wizard':
       case 'myStartup':
-        return <MyStartupModule company={company} onUpdateCompany={(updated) => setCompany(prev => ({ ...prev, ...updated }))} />;
+      case 'my-startup':
+      case 'company-profile':
+        return <CompanyProfileWizardModule company={company} onUpdateCompany={handleUpdateCompany} onNavigate={setActiveTab} />;
 
       // --- INVESTOR OS (ACTUAL INVESTMENT MODULE) ---
       case 'investor-portfolio':
         return <InvestorPortfolioModule onSelectCompany={handleSelectCompanyInDealRoom} onAddCompany={handleAddNewCompany} />;
       case 'deal-room':
-        return <DealRoomModule onSelectCompany={handleSelectCompanyInDealRoom} />;
+        return <DealRoomModule onSelectCompany={handleSelectCompanyInDealRoom} activeCompany={company} />;
       case 'cap-table':
         return <CapTableModule activeTicker={selectedTicker} />;
       case 'ledger':
