@@ -114,7 +114,58 @@ export default function WatchlistModule({ onSelectCompany }) {
 
       {/* Watchlist Cards Grid */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-        {filteredItems.map((item) => {
+        {filteredItems.length === 0 ? (
+          <div style={{
+            padding: '3.5rem 2rem',
+            borderRadius: 'var(--radius-xl)',
+            background: 'var(--surface-card)',
+            border: '1px dashed var(--border-subtle)',
+            textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '1rem'
+          }}>
+            <div style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '50%',
+              background: 'rgba(245, 158, 11, 0.12)',
+              border: '1px solid rgba(245, 158, 11, 0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#FBBF24'
+            }}>
+              <Bookmark size={24} />
+            </div>
+            <div>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.4rem' }}>
+                {priorityFilter === 'ALL' ? 'Your Diligence Watchlist is Empty' : `No ${priorityFilter} Priority Startups Found`}
+              </h3>
+              <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', maxWidth: '480px', margin: '0 auto', lineHeight: 1.6 }}>
+                {priorityFilter === 'ALL'
+                  ? 'Track target startups through your investment evaluation pipeline. Add companies from the Deal Room or restore sample deals below.'
+                  : `You do not have any deals flagged as ${priorityFilter} priority. Switch back to "ALL" to inspect all tracked targets.`}
+              </p>
+            </div>
+            {priorityFilter !== 'ALL' ? (
+              <button onClick={() => setPriorityFilter('ALL')} className="btn btn-secondary btn-sm" style={{ marginTop: '0.5rem' }}>
+                Show All Priorities
+              </button>
+            ) : (
+              <button 
+                onClick={() => setItems(WATCHLIST_ITEMS)} 
+                className="btn btn-primary btn-sm"
+                style={{ marginTop: '0.5rem', gap: '6px' }}
+              >
+                <Sparkles size={15} />
+                <span>⚡ Restore Sample Watchlist Deals</span>
+              </button>
+            )}
+          </div>
+        ) : (
+          filteredItems.map((item) => {
           const comp = item.companyId;
           const isEditing = editingId === item._id;
           return (
@@ -294,7 +345,7 @@ export default function WatchlistModule({ onSelectCompany }) {
               </div>
             </div>
           );
-        })}
+        }))}
       </div>
     </div>
   );

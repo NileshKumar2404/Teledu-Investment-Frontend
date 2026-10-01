@@ -405,7 +405,66 @@ export default function DataRoomModule({ activeTicker = 'TELEDU' }) {
 
       {/* Document Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.2rem' }}>
-        {filteredDocs.map((doc) => {
+        {filteredDocs.length === 0 ? (
+          <div style={{
+            gridColumn: '1 / -1',
+            padding: '3.5rem 1.5rem',
+            borderRadius: 'var(--radius-xl)',
+            background: 'var(--surface-card)',
+            border: '1px dashed var(--border-subtle)',
+            textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '0.85rem'
+          }}>
+            <div style={{
+              width: '52px',
+              height: '52px',
+              borderRadius: '50%',
+              background: 'rgba(139, 92, 246, 0.12)',
+              border: '1px solid rgba(139, 92, 246, 0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#A78BFA'
+            }}>
+              <FolderLock size={24} />
+            </div>
+            <div>
+              <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.3rem' }}>
+                No Documents in {categoryFilter === 'ALL' ? 'This Data Room' : categoryFilter.replace(/_/g, ' ')}
+              </div>
+              <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', maxWidth: '440px', margin: 0, lineHeight: 1.5 }}>
+                {categoryFilter === 'ALL'
+                  ? 'This virtual data room does not contain any diligence documents yet. Upload audited financials, pitch decks, or incorporation filings below.'
+                  : `No files found under category "${categoryFilter.replace(/_/g, ' ')}". Switch back to "ALL" or upload a file.`}
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+              <button
+                onClick={() => {
+                  setUploadError('');
+                  setSelectedFile(null);
+                  setShowUploadModal(true);
+                }}
+                className="btn btn-primary btn-sm"
+                style={{ gap: '6px' }}
+              >
+                <Plus size={14} /> Upload Document
+              </button>
+              {categoryFilter !== 'ALL' && (
+                <button
+                  onClick={() => setCategoryFilter('ALL')}
+                  className="btn btn-secondary btn-sm"
+                >
+                  Show All Categories
+                </button>
+              )}
+            </div>
+          </div>
+        ) : (
+          filteredDocs.map((doc) => {
           const docId = doc._id || doc.id;
           const fileName = doc.originalFileName || doc.name || 'Confidential_Document.pdf';
           const fileCategory = doc.category || 'PITCH_DECK';
@@ -531,7 +590,7 @@ export default function DataRoomModule({ activeTicker = 'TELEDU' }) {
               </div>
             </div>
           );
-        })}
+        }))}
       </div>
 
       {/* Modal: Real File Upload into Protected Vault */}

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, DollarSign, Send, CheckCircle2, Phone, Mail, 
   ExternalLink, Sparkles, Building2, User, Clock, ArrowRight,
-  ShieldCheck, HelpCircle
+  ShieldCheck, HelpCircle, Lock, Zap
 } from 'lucide-react';
 
 const CHECK_OPTIONS = [10000, 25000, 50000, 100000, 250000];
@@ -13,8 +13,18 @@ export default function ExpressInterestModal({
   onClose,
   company,
   currentUser = { fullName: 'Victoria Sterling (General Partner)' },
+  onOpenPricing,
   onInterestSubmitted
 }) {
+  // Subscription Entitlement Check
+  const userPlan = currentUser?.subscription?.plan || 'free';
+  const isAdmin = ['admin', 'super_admin'].includes(currentUser?.role);
+  const isPaidUser = Boolean(
+    isAdmin ||
+    (['investor_pro', 'all_access_pro', 'founder_pro'].includes(userPlan) && (currentUser?.subscription?.status === 'active' || !currentUser?.subscription?.status)) ||
+    ['investor_pro', 'all_access_pro'].includes(userPlan)
+  );
+
   const [checkSize, setCheckSize] = useState(50000);
   const [customCheck, setCustomCheck] = useState('');
   const [investorRole, setInvestorRole] = useState('Co-Investor / Syndicate'); // 'Lead Investor' | 'Co-Investor' | 'Angel'
@@ -322,43 +332,70 @@ export default function ExpressInterestModal({
                 ⚡ Also Reach Out Directly:
               </span>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <a
-                  href={whatsAppUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '5px',
-                    padding: '0.4rem 0.75rem',
-                    borderRadius: '6px',
-                    background: '#25D366',
-                    color: '#000',
-                    fontWeight: 800,
-                    fontSize: '0.74rem',
-                    textDecoration: 'none'
-                  }}
-                >
-                  <Phone size={12} /> WhatsApp ({founderWhatsApp})
-                </a>
+                {isPaidUser ? (
+                  <>
+                    <a
+                      href={whatsAppUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        padding: '0.4rem 0.75rem',
+                        borderRadius: '6px',
+                        background: '#25D366',
+                        color: '#000',
+                        fontWeight: 800,
+                        fontSize: '0.74rem',
+                        textDecoration: 'none'
+                      }}
+                    >
+                      <Phone size={12} /> WhatsApp ({founderWhatsApp})
+                    </a>
 
-                <a
-                  href={mailtoUrl}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '5px',
-                    padding: '0.4rem 0.75rem',
-                    borderRadius: '6px',
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    color: '#fff',
-                    fontWeight: 700,
-                    fontSize: '0.74rem',
-                    textDecoration: 'none'
-                  }}
-                >
-                  <Mail size={12} /> Email Founder
-                </a>
+                    <a
+                      href={mailtoUrl}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        padding: '0.4rem 0.75rem',
+                        borderRadius: '6px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: '#fff',
+                        fontWeight: 700,
+                        fontSize: '0.74rem',
+                        textDecoration: 'none'
+                      }}
+                    >
+                      <Mail size={12} /> Email Founder
+                    </a>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onClose();
+                      if (onOpenPricing) onOpenPricing();
+                    }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      padding: '0.4rem 0.75rem',
+                      borderRadius: '6px',
+                      background: 'rgba(99, 102, 241, 0.15)',
+                      border: '1px solid rgba(99, 102, 241, 0.3)',
+                      color: '#A5B4FC',
+                      fontWeight: 800,
+                      fontSize: '0.72rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Lock size={11} color="#FBBF24" /> Unlock Direct WhatsApp & Email (Investor Pro)
+                  </button>
+                )}
               </div>
             </div>
 
@@ -425,25 +462,51 @@ export default function ExpressInterestModal({
             </p>
 
             <div style={{ display: 'flex', gap: '0.8rem', marginTop: '1rem' }}>
-              <a
-                href={whatsAppUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '7px',
-                  padding: '0.65rem 1.2rem',
-                  borderRadius: '8px',
-                  background: '#25D366',
-                  color: '#000',
-                  fontWeight: 800,
-                  fontSize: '0.85rem',
-                  textDecoration: 'none'
-                }}
-              >
-                <Phone size={14} /> Send Directly on WhatsApp
-              </a>
+              {isPaidUser ? (
+                <a
+                  href={whatsAppUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '7px',
+                    padding: '0.65rem 1.2rem',
+                    borderRadius: '8px',
+                    background: '#25D366',
+                    color: '#000',
+                    fontWeight: 800,
+                    fontSize: '0.85rem',
+                    textDecoration: 'none'
+                  }}
+                >
+                  <Phone size={14} /> Send Directly on WhatsApp
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    if (onOpenPricing) onOpenPricing();
+                  }}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '7px',
+                    padding: '0.65rem 1.2rem',
+                    borderRadius: '8px',
+                    background: 'linear-gradient(135deg, #6366F1, #4F46E5)',
+                    color: '#fff',
+                    border: 'none',
+                    fontWeight: 800,
+                    fontSize: '0.85rem',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)'
+                  }}
+                >
+                  <Lock size={14} color="#FBBF24" /> Unlock WhatsApp Contact (Investor Pro)
+                </button>
+              )}
 
               <button
                 onClick={onClose}

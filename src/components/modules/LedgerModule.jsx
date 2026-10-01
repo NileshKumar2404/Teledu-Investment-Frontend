@@ -266,7 +266,54 @@ export default function LedgerModule({ activeTicker = 'TELEDU' }) {
               </tr>
             </thead>
             <tbody>
-              {filteredTransactions.map((entry) => {
+              {filteredTransactions.length === 0 ? (
+                <tr>
+                  <td colSpan={7} style={{ padding: '3.5rem 1rem', textAlign: 'center' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.85rem' }}>
+                      <div style={{
+                        width: '52px',
+                        height: '52px',
+                        borderRadius: '50%',
+                        background: 'rgba(16, 185, 129, 0.12)',
+                        border: '1px solid rgba(16, 185, 129, 0.3)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#10B981'
+                      }}>
+                        <FileSpreadsheet size={22} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.3rem' }}>
+                          No Journal Entries Recorded
+                        </div>
+                        <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', maxWidth: '440px', margin: 0, lineHeight: 1.5 }}>
+                          {typeFilter === 'ALL'
+                            ? 'Double-entry ledger is empty. Record your first operating revenue or expense entry to calculate real-time cash flow and burn rate.'
+                            : `No transactions found matching "${typeFilter}". Switch filter back to "ALL" to inspect the full journal.`}
+                        </p>
+                      </div>
+                      <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+                        <button
+                          onClick={() => setShowAddModal(true)}
+                          className="btn btn-primary btn-sm"
+                          style={{ gap: '6px' }}
+                        >
+                          <Plus size={14} /> Record Entry
+                        </button>
+                        <button
+                          onClick={() => setTransactions(LEDGER_TRANSACTIONS)}
+                          className="btn btn-secondary btn-sm"
+                          style={{ gap: '6px' }}
+                        >
+                          <Sparkles size={14} /> ⚡ Seed Default Transactions
+                        </button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                filteredTransactions.map((entry) => {
                 const isRevenue = entry.type === 'Revenue';
                 return (
                   <tr
@@ -348,7 +395,7 @@ export default function LedgerModule({ activeTicker = 'TELEDU' }) {
                     </td>
                   </tr>
                 );
-              })}
+              }))}
             </tbody>
           </table>
         </div>

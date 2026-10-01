@@ -463,7 +463,14 @@ export default function App() {
       case 'investor-portfolio':
         return <InvestorPortfolioModule onSelectCompany={handleSelectCompanyInDealRoom} onAddCompany={handleAddNewCompany} />;
       case 'deal-room':
-        return <DealRoomModule onSelectCompany={handleSelectCompanyInDealRoom} activeCompany={company} />;
+        return (
+          <DealRoomModule 
+            onSelectCompany={handleSelectCompanyInDealRoom} 
+            activeCompany={company} 
+            currentUser={currentUser}
+            onOpenPricing={() => setIsPricingOpen(true)}
+          />
+        );
       case 'cap-table':
         return <CapTableModule activeTicker={selectedTicker} />;
       case 'ledger':

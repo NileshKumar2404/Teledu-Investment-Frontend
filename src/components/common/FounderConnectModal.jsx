@@ -6,7 +6,7 @@ import {
   ExternalLink, Sparkles, User, Clock, ShieldCheck, Bot,
   Phone, ArrowRight, Zap, CheckCircle2, ChevronRight, AlertCircle,
   Mic, MicOff, VideoOff, Monitor, PhoneOff, Edit3, Save, Link as LinkIcon,
-  RefreshCw, Radio, Trash2
+  RefreshCw, Radio, Trash2, Lock
 } from 'lucide-react';
 import { api } from '../../api/client';
 
@@ -15,8 +15,18 @@ export default function FounderConnectModal({
   onClose,
   company,
   currentUser,
+  onOpenPricing,
   initialTab = 'chat' // 'chat' | 'video' | 'schedule'
 }) {
+  // Subscription Entitlement Check
+  const userPlan = currentUser?.subscription?.plan || 'free';
+  const isAdmin = ['admin', 'super_admin'].includes(currentUser?.role);
+  const isPaidUser = Boolean(
+    isAdmin ||
+    (['investor_pro', 'all_access_pro', 'founder_pro'].includes(userPlan) && (currentUser?.subscription?.status === 'active' || !currentUser?.subscription?.status)) ||
+    ['investor_pro', 'all_access_pro'].includes(userPlan)
+  );
+
   const [activeTab, setActiveTab] = useState(initialTab);
   const [isAITwinMode, setIsAITwinMode] = useState(true);
   const [copiedLink, setCopiedLink] = useState(false);
@@ -174,6 +184,11 @@ export default function FounderConnectModal({
 
   // In-App Diligence Call Handlers
   const handleStartInAppCall = async () => {
+    if (!isPaidUser) {
+      onClose();
+      if (onOpenPricing) onOpenPricing();
+      return;
+    }
     setInAppCallActive(true);
     setCallDuration(0);
     try {
@@ -358,6 +373,11 @@ export default function FounderConnectModal({
   };
 
   const handleSendMessage = (textToSend = inputText) => {
+    if (!isPaidUser) {
+      onClose();
+      if (onOpenPricing) onOpenPricing();
+      return;
+    }
     const text = textToSend.trim();
     if (!text) return;
 
@@ -401,6 +421,11 @@ export default function FounderConnectModal({
 
   const handleScheduleCall = (e) => {
     e.preventDefault();
+    if (!isPaidUser) {
+      onClose();
+      if (onOpenPricing) onOpenPricing();
+      return;
+    }
 
     const confirmation = {
       ticker,
@@ -608,6 +633,49 @@ export default function FounderConnectModal({
           </div>
         </div>
 
+        {/* Subscription Notice Banner for Free Users */}
+        {!isPaidUser && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '0.75rem 1.6rem',
+            background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.22) 0%, rgba(234, 179, 8, 0.15) 100%)',
+            borderBottom: '1px solid rgba(99, 102, 241, 0.3)',
+            flexWrap: 'wrap',
+            gap: '0.8rem'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Lock size={15} color="#FBBF24" />
+              <span style={{ fontSize: '0.8rem', color: '#F8FAFC' }}>
+                <strong>Investor Pro Required:</strong> Direct founder messaging, 1-click video calls, and calendar scheduling require an active subscription.
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                if (onOpenPricing) onOpenPricing();
+              }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '0.35rem 0.85rem',
+                borderRadius: '6px',
+                background: 'linear-gradient(135deg, #6366F1, #4F46E5)',
+                border: 'none',
+                color: '#fff',
+                fontSize: '0.75rem',
+                fontWeight: 800,
+                cursor: 'pointer'
+              }}
+            >
+              <Zap size={12} /> Upgrade to Investor Pro
+            </button>
+          </div>
+        )}
+
         {/* Dynamic Body Content */}
         <div style={{
           flex: 1,
@@ -707,54 +775,95 @@ export default function FounderConnectModal({
               </div>
 
               {/* Message Input Box */}
-              <div style={{
-                padding: '0.9rem 1.6rem',
-                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-                background: 'rgba(15, 23, 42, 0.7)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.75rem'
-              }}>
-                <input
-                  type="text"
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleSendMessage();
-                  }}
-                  placeholder={`Ask ${founderName} about valuation, unit economics, or deal terms...`}
-                  style={{
-                    flex: 1,
-                    padding: '0.75rem 1rem',
-                    borderRadius: '0.75rem',
-                    background: 'rgba(255, 255, 255, 0.04)',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
-                    color: '#FFFFFF',
-                    fontSize: '0.88rem',
-                    outline: 'none'
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={() => handleSendMessage()}
-                  style={{
-                    padding: '0.75rem 1.2rem',
-                    borderRadius: '0.75rem',
-                    background: '#10B981',
-                    border: 'none',
-                    color: '#FFFFFF',
-                    fontWeight: 700,
-                    fontSize: '0.85rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 15px rgba(16, 185, 129, 0.35)'
-                  }}
-                >
-                  <Send size={15} /> Send
-                </button>
-              </div>
+              {!isPaidUser ? (
+                <div style={{
+                  padding: '1rem 1.6rem',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                  background: 'rgba(15, 23, 42, 0.85)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '1rem'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: '#94A3B8' }}>
+                    <Lock size={16} color="#FBBF24" />
+                    <span>Upgrade to <strong>Investor Pro</strong> to send direct bilateral messages to {founderName}.</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onClose();
+                      if (onOpenPricing) onOpenPricing();
+                    }}
+                    style={{
+                      padding: '0.55rem 1.1rem',
+                      borderRadius: '8px',
+                      background: 'linear-gradient(135deg, #6366F1, #4F46E5)',
+                      color: '#fff',
+                      border: 'none',
+                      fontWeight: 800,
+                      fontSize: '0.78rem',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      boxShadow: '0 4px 15px rgba(99, 102, 241, 0.4)'
+                    }}
+                  >
+                    <Zap size={13} /> Unlock Messaging (Pro)
+                  </button>
+                </div>
+              ) : (
+                <div style={{
+                  padding: '0.9rem 1.6rem',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                  background: 'rgba(15, 23, 42, 0.7)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem'
+                }}>
+                  <input
+                    type="text"
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleSendMessage();
+                    }}
+                    placeholder={`Ask ${founderName} about valuation, unit economics, or deal terms...`}
+                    style={{
+                      flex: 1,
+                      padding: '0.75rem 1rem',
+                      borderRadius: '0.75rem',
+                      background: 'rgba(255, 255, 255, 0.04)',
+                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      color: '#FFFFFF',
+                      fontSize: '0.88rem',
+                      outline: 'none'
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleSendMessage()}
+                    style={{
+                      padding: '0.75rem 1.2rem',
+                      borderRadius: '0.75rem',
+                      background: '#10B981',
+                      border: 'none',
+                      color: '#FFFFFF',
+                      fontWeight: 700,
+                      fontSize: '0.85rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 15px rgba(16, 185, 129, 0.35)'
+                    }}
+                  >
+                    <Send size={15} /> Send
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
@@ -1190,7 +1299,7 @@ export default function FounderConnectModal({
                       style={{
                         padding: '0.75rem 1.4rem',
                         borderRadius: '0.75rem',
-                        background: 'linear-gradient(135deg, #10B981, #059669)',
+                        background: isPaidUser ? 'linear-gradient(135deg, #10B981, #059669)' : 'linear-gradient(135deg, #6366F1, #4F46E5)',
                         color: '#FFFFFF',
                         fontSize: '0.88rem',
                         fontWeight: 800,
@@ -1199,10 +1308,18 @@ export default function FounderConnectModal({
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '8px',
-                        boxShadow: '0 4px 18px rgba(16, 185, 129, 0.4)'
+                        boxShadow: isPaidUser ? '0 4px 18px rgba(16, 185, 129, 0.4)' : '0 4px 18px rgba(99, 102, 241, 0.4)'
                       }}
                     >
-                      <Video size={17} /> Enter In-App Diligence Call
+                      {isPaidUser ? (
+                        <>
+                          <Video size={17} /> Enter In-App Diligence Call
+                        </>
+                      ) : (
+                        <>
+                          <Lock size={15} color="#FBBF24" /> Unlock Video Call (Investor Pro)
+                        </>
+                      )}
                     </button>
                   </div>
 
@@ -1247,31 +1364,57 @@ export default function FounderConnectModal({
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap'
                       }}>
-                        {googleMeetUrl}
+                        {isPaidUser ? googleMeetUrl : 'https://meet.google.com/••••-••••-•••• (Investor Pro)'}
                       </div>
 
-                      <a
-                        href={googleMeetUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          padding: '0.75rem',
-                          borderRadius: '0.75rem',
-                          background: '#2563EB',
-                          color: '#FFFFFF',
-                          fontSize: '0.85rem',
-                          fontWeight: 800,
-                          textDecoration: 'none',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '8px',
-                          boxShadow: '0 4px 14px rgba(37, 99, 235, 0.35)'
-                        }}
-                      >
-                        <span>Launch Google Meet</span>
-                        <ExternalLink size={14} />
-                      </a>
+                      {isPaidUser ? (
+                        <a
+                          href={googleMeetUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            padding: '0.75rem',
+                            borderRadius: '0.75rem',
+                            background: '#2563EB',
+                            color: '#FFFFFF',
+                            fontSize: '0.85rem',
+                            fontWeight: 800,
+                            textDecoration: 'none',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px',
+                            boxShadow: '0 4px 14px rgba(37, 99, 235, 0.35)'
+                          }}
+                        >
+                          <span>Launch Google Meet</span>
+                          <ExternalLink size={14} />
+                        </a>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onClose();
+                            if (onOpenPricing) onOpenPricing();
+                          }}
+                          style={{
+                            padding: '0.75rem',
+                            borderRadius: '0.75rem',
+                            background: 'rgba(37, 99, 235, 0.15)',
+                            border: '1px solid rgba(96, 165, 250, 0.3)',
+                            color: '#93C5FD',
+                            fontSize: '0.85rem',
+                            fontWeight: 800,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <Lock size={13} color="#FBBF24" /> Launch Google Meet (Investor Pro)
+                        </button>
+                      )}
 
                       <p style={{ fontSize: '0.72rem', color: '#94A3B8', margin: 0, lineHeight: 1.4 }}>
                         Guaranteed to launch a live Google Meet room without "Invalid video call name" errors.
@@ -1317,31 +1460,57 @@ export default function FounderConnectModal({
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap'
                       }}>
-                        {zoomMeetingUrl}
+                        {isPaidUser ? zoomMeetingUrl : 'https://zoom.us/••••••••• (Investor Pro)'}
                       </div>
 
-                      <a
-                        href={zoomMeetingUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          padding: '0.75rem',
-                          borderRadius: '0.75rem',
-                          background: 'linear-gradient(135deg, #10B981, #059669)',
-                          color: '#FFFFFF',
-                          fontSize: '0.85rem',
-                          fontWeight: 800,
-                          textDecoration: 'none',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '8px',
-                          boxShadow: '0 4px 14px rgba(16, 185, 129, 0.35)'
-                        }}
-                      >
-                        <span>Launch Zoom Room</span>
-                        <ExternalLink size={14} />
-                      </a>
+                      {isPaidUser ? (
+                        <a
+                          href={zoomMeetingUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            padding: '0.75rem',
+                            borderRadius: '0.75rem',
+                            background: 'linear-gradient(135deg, #10B981, #059669)',
+                            color: '#FFFFFF',
+                            fontSize: '0.85rem',
+                            fontWeight: 800,
+                            textDecoration: 'none',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px',
+                            boxShadow: '0 4px 14px rgba(16, 185, 129, 0.35)'
+                          }}
+                        >
+                          <span>Launch Zoom Room</span>
+                          <ExternalLink size={14} />
+                        </a>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onClose();
+                            if (onOpenPricing) onOpenPricing();
+                          }}
+                          style={{
+                            padding: '0.75rem',
+                            borderRadius: '0.75rem',
+                            background: 'rgba(16, 185, 129, 0.15)',
+                            border: '1px solid rgba(16, 185, 129, 0.3)',
+                            color: '#6EE7B7',
+                            fontSize: '0.85rem',
+                            fontWeight: 800,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <Lock size={13} color="#FBBF24" /> Launch Zoom Room (Investor Pro)
+                        </button>
+                      )}
 
                       <p style={{ fontSize: '0.72rem', color: '#94A3B8', margin: 0, lineHeight: 1.4 }}>
                         Opens your instant Zoom session or custom team meeting room.
@@ -1815,7 +1984,7 @@ export default function FounderConnectModal({
                       marginTop: '0.5rem',
                       padding: '0.85rem 1.4rem',
                       borderRadius: '0.75rem',
-                      background: 'linear-gradient(135deg, #10B981, #059669)',
+                      background: isPaidUser ? 'linear-gradient(135deg, #10B981, #059669)' : 'linear-gradient(135deg, #6366F1, #4F46E5)',
                       color: '#FFFFFF',
                       fontSize: '0.9rem',
                       fontWeight: 800,
@@ -1825,10 +1994,18 @@ export default function FounderConnectModal({
                       justifyContent: 'center',
                       gap: '8px',
                       cursor: 'pointer',
-                      boxShadow: '0 4px 18px rgba(16, 185, 129, 0.35)'
+                      boxShadow: isPaidUser ? '0 4px 18px rgba(16, 185, 129, 0.35)' : '0 4px 18px rgba(99, 102, 241, 0.4)'
                     }}
                   >
-                    <Calendar size={16} /> Confirm & Dispatch Diligence Invitation
+                    {isPaidUser ? (
+                      <>
+                        <Calendar size={16} /> Confirm & Dispatch Diligence Invitation
+                      </>
+                    ) : (
+                      <>
+                        <Lock size={16} color="#FBBF24" /> Upgrade to Investor Pro to Book Meeting
+                      </>
+                    )}
                   </button>
                 </form>
               )}

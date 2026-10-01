@@ -387,7 +387,54 @@ export default function InvestorPortfolioModule({ onSelectCompany, onAddCompany 
               </tr>
             </thead>
             <tbody>
-              {filteredInvestments.map((deal) => {
+              {filteredInvestments.length === 0 ? (
+                <tr>
+                  <td colSpan={8} style={{ padding: '3.5rem 1rem', textAlign: 'center' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.85rem' }}>
+                      <div style={{
+                        width: '52px',
+                        height: '52px',
+                        borderRadius: '50%',
+                        background: 'rgba(99, 102, 241, 0.12)',
+                        border: '1px solid rgba(99, 102, 241, 0.3)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#818CF8'
+                      }}>
+                        <Briefcase size={22} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.3rem' }}>
+                          No Portfolio Investments Found
+                        </div>
+                        <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', maxWidth: '440px', margin: 0, lineHeight: 1.5 }}>
+                          {filterStatus === 'ALL'
+                            ? 'You have not recorded any active investments yet. Deploy capital or add your first deal to track fair value, ownership, and returns.'
+                            : `No investments currently found in "${filterStatus}" status. Switch back to "ALL" to inspect all holdings.`}
+                        </p>
+                      </div>
+                      <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+                        <button
+                          onClick={() => setShowAddModal(true)}
+                          className="btn btn-primary btn-sm"
+                          style={{ gap: '6px' }}
+                        >
+                          <Plus size={14} /> Deploy Capital / Add Deal
+                        </button>
+                        <button
+                          onClick={() => setInvestments(INVESTMENTS_LIST)}
+                          className="btn btn-secondary btn-sm"
+                          style={{ gap: '6px' }}
+                        >
+                          <Sparkles size={14} /> ⚡ Load Demo Portfolio
+                        </button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                filteredInvestments.map((deal) => {
                 const isPositive = (deal.roi || 0) >= 0;
                 return (
                   <tr
@@ -504,7 +551,7 @@ export default function InvestorPortfolioModule({ onSelectCompany, onAddCompany 
                     </td>
                   </tr>
                 );
-              })}
+              }))}
             </tbody>
           </table>
         </div>

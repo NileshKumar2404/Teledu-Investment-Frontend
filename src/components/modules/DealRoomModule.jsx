@@ -5,15 +5,30 @@ import {
   Bookmark, CheckCircle2, ChevronRight, Award, FileText, 
   Users, Layers, ArrowUpRight, Search, SlidersHorizontal, Eye,
   MessageSquare, Video, Calendar, PhoneCall, Plus, Phone, Mail,
-  Zap, ExternalLink, Send, ArrowRight, Check, Briefcase, Scale, PieChart, Sliders, ShieldCheck
+  Zap, ExternalLink, Send, ArrowRight, Check, Briefcase, Scale, PieChart, Sliders, ShieldCheck, Lock
 } from 'lucide-react';
 import { api } from '../../api/client';
 import { DEAL_ROOM_COMPANIES, STARTUP_INVESTMENT_CHECKLIST_TEMPLATE } from '../../data/investmentData';
 import FounderConnectModal from '../common/FounderConnectModal';
 import ListStartupModal from '../common/ListStartupModal';
 import ExpressInterestModal from '../common/ExpressInterestModal';
+import FounderContactPaywallModal from '../common/FounderContactPaywallModal';
 
-export default function DealRoomModule({ onSelectCompany, activeCompany = null }) {
+export default function DealRoomModule({ 
+  onSelectCompany, 
+  activeCompany = null, 
+  currentUser = null, 
+  onOpenPricing = null 
+}) {
+  // Entitlement Check for Subscription-Based Founder Contact
+  const userPlan = currentUser?.subscription?.plan || 'free';
+  const isAdmin = ['admin', 'super_admin'].includes(currentUser?.role);
+  const isPaidUser = Boolean(
+    isAdmin ||
+    (['investor_pro', 'all_access_pro', 'founder_pro'].includes(userPlan) && (currentUser?.subscription?.status === 'active' || !currentUser?.subscription?.status)) ||
+    ['investor_pro', 'all_access_pro'].includes(userPlan)
+  );
+
   // Load default companies merged with custom companies listed by founders
   const [companies, setCompanies] = useState(() => {
     let custom = [];
@@ -42,6 +57,7 @@ export default function DealRoomModule({ onSelectCompany, activeCompany = null }
   const [isListModalOpen, setIsListModalOpen] = useState(false);
   const [isExpressModalOpen, setIsExpressModalOpen] = useState(false);
   const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
+  const [isPaywallModalOpen, setIsPaywallModalOpen] = useState(false);
   const [connectModalTab, setConnectModalTab] = useState('chat'); // 'chat' | 'video' | 'schedule'
   const [scheduledMeetings, setScheduledMeetings] = useState({});
   const [inboundLeadCount, setInboundLeadCount] = useState(0);
@@ -66,6 +82,11 @@ export default function DealRoomModule({ onSelectCompany, activeCompany = null }
   const handleOpenConnect = (tab = 'chat', comp = null) => {
     if (comp) {
       setSelectedCompany(comp);
+    }
+    // Intercept with subscription paywall for non-paying users
+    if (!isPaidUser) {
+      setIsPaywallModalOpen(true);
+      return;
     }
     setConnectModalTab(tab);
     setIsConnectModalOpen(true);
@@ -346,7 +367,45 @@ export default function DealRoomModule({ onSelectCompany, activeCompany = null }
       <div className="dealroom-split-grid">
         {/* Left Column: Deal Cards Catalog */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {filteredCompanies.map((comp) => {
+          {filteredCompanies.length === 0 ? (
+            <div style={{
+              padding: '3rem 1.5rem',
+              borderRadius: 'var(--radius-lg)',
+              background: 'var(--surface-card)',
+              border: '1px dashed var(--border-subtle)',
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '0.85rem'
+            }}>
+              <Search size={28} color="var(--text-muted)" />
+              <div style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                No Startups Match Your Search
+              </div>
+              <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', maxWidth: '340px', margin: 0, lineHeight: 1.5 }}>
+                {searchQuery 
+                  ? `No deals found matching "${searchQuery}". Try resetting search or exploring all sectors.`
+                  : `No startups currently listed under the ${sectorFilter} sector.`}
+              </p>
+              <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+                <button 
+                  onClick={() => { setSearchQuery(''); setSectorFilter('ALL'); }}
+                  className="btn btn-secondary btn-sm"
+                >
+                  Clear Filters
+                </button>
+                <button 
+                  onClick={() => setIsListModalOpen(true)}
+                  className="btn btn-primary btn-sm"
+                  style={{ gap: '4px' }}
+                >
+                  <Plus size={14} /> List Your Startup
+                </button>
+              </div>
+            </div>
+          ) : (
+            filteredCompanies.map((comp) => {
             const isSelected = selectedCompany?.ticker === comp.ticker;
             return (
               <div
@@ -531,18 +590,28 @@ export default function DealRoomModule({ onSelectCompany, activeCompany = null }
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '4px',
-                        background: 'rgba(16, 185, 129, 0.12)',
-                        border: '1px solid rgba(16, 185, 129, 0.3)',
-                        color: '#34D399',
+                        background: isPaidUser ? 'rgba(16, 185, 129, 0.12)' : 'rgba(99, 102, 241, 0.12)',
+                        border: isPaidUser ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(99, 102, 241, 0.35)',
+                        color: isPaidUser ? '#34D399' : '#A5B4FC',
                         fontSize: '0.72rem',
                         fontWeight: 700,
                         padding: '0.28rem 0.55rem',
                         borderRadius: 'var(--radius-sm)',
                         cursor: 'pointer'
                       }}
-                      title={`Talk with ${comp.founderName || 'Founder'}`}
+                      title={isPaidUser ? `Talk with ${comp.founderName || 'Founder'}` : `Investor Pro Subscription Required to Talk with ${comp.founderName || 'Founder'}`}
                     >
-                      <MessageSquare size={11} /> Talk
+                      {isPaidUser ? (
+                        <>
+                          <MessageSquare size={11} /> Talk
+                        </>
+                      ) : (
+                        <>
+                          <Lock size={10} color="#FBBF24" />
+                          <span>Talk</span>
+                          <span style={{ fontSize: '0.58rem', background: 'rgba(251, 191, 36, 0.25)', color: '#FBBF24', padding: '1px 3px', borderRadius: '3px', fontWeight: 800 }}>PRO</span>
+                        </>
+                      )}
                     </button>
 
                     <button
@@ -568,7 +637,7 @@ export default function DealRoomModule({ onSelectCompany, activeCompany = null }
                 </div>
               </div>
             );
-          })}
+          }))}
         </div>
 
         {/* Right Column: Selected Company Institutional Valuation Dossier */}
@@ -799,7 +868,7 @@ export default function DealRoomModule({ onSelectCompany, activeCompany = null }
                       </span>
                     </div>
                     <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                      {selectedCompany.founderRole || 'Founder & CEO'} • Direct Contact Enabled
+                      {selectedCompany.founderRole || 'Founder & CEO'} • {isPaidUser ? 'Direct Contact Enabled' : '🔒 Direct Contact (Investor Pro Required)'}
                     </div>
                   </div>
                 </div>
@@ -807,49 +876,99 @@ export default function DealRoomModule({ onSelectCompany, activeCompany = null }
                 {/* Direct Action Badges (WhatsApp & Direct Mail) */}
                 <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                   {selectedCompany.founderWhatsApp ? (
-                    <a
-                      href={`https://wa.me/${selectedCompany.founderWhatsApp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi ${selectedCompany.founderName}, I'm reviewing ${selectedCompany.companyName} on StartupIQ Deal Room ($${(selectedCompany.fundingRequired || 0).toLocaleString()} round). I would like to discuss participating.`)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        padding: '0.55rem 0.95rem',
-                        borderRadius: 'var(--radius-md)',
-                        background: '#25D366',
-                        color: '#000',
-                        fontWeight: 800,
-                        fontSize: '0.78rem',
-                        textDecoration: 'none',
-                        boxShadow: '0 4px 12px rgba(37, 211, 102, 0.35)'
-                      }}
-                    >
-                      <Phone size={13} strokeWidth={2.6} />
-                      <span>WhatsApp Founder ({selectedCompany.founderWhatsApp})</span>
-                    </a>
+                    isPaidUser ? (
+                      <a
+                        href={`https://wa.me/${selectedCompany.founderWhatsApp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi ${selectedCompany.founderName}, I'm reviewing ${selectedCompany.companyName} on StartupIQ Deal Room ($${(selectedCompany.fundingRequired || 0).toLocaleString()} round). I would like to discuss participating.`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          padding: '0.55rem 0.95rem',
+                          borderRadius: 'var(--radius-md)',
+                          background: '#25D366',
+                          color: '#000',
+                          fontWeight: 800,
+                          fontSize: '0.78rem',
+                          textDecoration: 'none',
+                          boxShadow: '0 4px 12px rgba(37, 211, 102, 0.35)'
+                        }}
+                      >
+                        <Phone size={13} strokeWidth={2.6} />
+                        <span>WhatsApp Founder ({selectedCompany.founderWhatsApp})</span>
+                      </a>
+                    ) : (
+                      <button
+                        onClick={() => setIsPaywallModalOpen(true)}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          padding: '0.55rem 0.95rem',
+                          borderRadius: 'var(--radius-md)',
+                          background: 'rgba(37, 211, 102, 0.12)',
+                          border: '1px solid rgba(37, 211, 102, 0.3)',
+                          color: '#86EFAC',
+                          fontWeight: 800,
+                          fontSize: '0.78rem',
+                          cursor: 'pointer'
+                        }}
+                        title="Investor Pro Subscription Required to Contact Founder on WhatsApp"
+                      >
+                        <Lock size={12} color="#FBBF24" />
+                        <Phone size={13} strokeWidth={2.6} />
+                        <span>WhatsApp Founder (+91 ••••••••)</span>
+                        <span style={{ fontSize: '0.6rem', background: 'rgba(251, 191, 36, 0.25)', color: '#FBBF24', padding: '1px 4px', borderRadius: '3px', fontWeight: 800 }}>PRO</span>
+                      </button>
+                    )
                   ) : null}
 
                   {selectedCompany.founderEmail ? (
-                    <a
-                      href={`mailto:${selectedCompany.founderEmail}?subject=${encodeURIComponent(`Investment Interest in ${selectedCompany.companyName} (${selectedCompany.ticker})`)}&body=${encodeURIComponent(`Hello ${selectedCompany.founderName},\n\nI am reviewing your ${selectedCompany.stage || 'active'} round on StartupIQ Deal Room. We would like to schedule a 20-minute diligence call.\n\nBest regards,\nAccredited Investor`)}`}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        padding: '0.55rem 0.9rem',
-                        borderRadius: 'var(--radius-md)',
-                        background: 'rgba(255, 255, 255, 0.08)',
-                        border: '1px solid rgba(255, 255, 255, 0.15)',
-                        color: '#fff',
-                        fontWeight: 700,
-                        fontSize: '0.78rem',
-                        textDecoration: 'none'
-                      }}
-                    >
-                      <Mail size={13} />
-                      <span>Direct Email</span>
-                    </a>
+                    isPaidUser ? (
+                      <a
+                        href={`mailto:${selectedCompany.founderEmail}?subject=${encodeURIComponent(`Investment Interest in ${selectedCompany.companyName} (${selectedCompany.ticker})`)}&body=${encodeURIComponent(`Hello ${selectedCompany.founderName},\n\nI am reviewing your ${selectedCompany.stage || 'active'} round on StartupIQ Deal Room. We would like to schedule a 20-minute diligence call.\n\nBest regards,\nAccredited Investor`)}`}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          padding: '0.55rem 0.9rem',
+                          borderRadius: 'var(--radius-md)',
+                          background: 'rgba(255, 255, 255, 0.08)',
+                          border: '1px solid rgba(255, 255, 255, 0.15)',
+                          color: '#fff',
+                          fontWeight: 700,
+                          fontSize: '0.78rem',
+                          textDecoration: 'none'
+                        }}
+                      >
+                        <Mail size={13} />
+                        <span>Direct Email</span>
+                      </a>
+                    ) : (
+                      <button
+                        onClick={() => setIsPaywallModalOpen(true)}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          padding: '0.55rem 0.9rem',
+                          borderRadius: 'var(--radius-md)',
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          border: '1px solid rgba(255, 255, 255, 0.15)',
+                          color: '#94A3B8',
+                          fontWeight: 700,
+                          fontSize: '0.78rem',
+                          cursor: 'pointer'
+                        }}
+                        title="Investor Pro Subscription Required for Direct Founder Email"
+                      >
+                        <Lock size={12} color="#FBBF24" />
+                        <Mail size={13} />
+                        <span>Direct Email</span>
+                        <span style={{ fontSize: '0.6rem', background: 'rgba(251, 191, 36, 0.25)', color: '#FBBF24', padding: '1px 4px', borderRadius: '3px', fontWeight: 800 }}>PRO</span>
+                      </button>
+                    )
                   ) : null}
 
                   {selectedCompany.pitchDeckUrl ? (
@@ -976,44 +1095,80 @@ export default function DealRoomModule({ onSelectCompany, activeCompany = null }
 
                   <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                     {activeBooking ? (
-                      <a
-                        href={activeBooking.meetingUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '5px',
-                          padding: '0.45rem 0.85rem',
-                          borderRadius: 'var(--radius-sm)',
-                          background: '#10B981',
-                          color: '#041d14',
-                          fontWeight: 800,
-                          fontSize: '0.75rem',
-                          textDecoration: 'none',
-                          boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)'
-                        }}
-                      >
-                        <Video size={13} /> Join Call Room
-                      </a>
+                      isPaidUser ? (
+                        <a
+                          href={activeBooking.meetingUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            padding: '0.45rem 0.85rem',
+                            borderRadius: 'var(--radius-sm)',
+                            background: '#10B981',
+                            color: '#041d14',
+                            fontWeight: 800,
+                            fontSize: '0.75rem',
+                            textDecoration: 'none',
+                            boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)'
+                          }}
+                        >
+                          <Video size={13} /> Join Call Room
+                        </a>
+                      ) : (
+                        <button
+                          onClick={() => setIsPaywallModalOpen(true)}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            padding: '0.45rem 0.85rem',
+                            borderRadius: 'var(--radius-sm)',
+                            background: 'rgba(16, 185, 129, 0.12)',
+                            border: '1px solid rgba(16, 185, 129, 0.3)',
+                            color: '#34D399',
+                            fontWeight: 800,
+                            fontSize: '0.75rem',
+                            cursor: 'pointer'
+                          }}
+                          title="Investor Pro Subscription Required to Join Founder Video Call Room"
+                        >
+                          <Lock size={12} color="#FBBF24" />
+                          <Video size={13} />
+                          <span>Join Call Room</span>
+                          <span style={{ fontSize: '0.6rem', background: 'rgba(251, 191, 36, 0.25)', color: '#FBBF24', padding: '1px 4px', borderRadius: '3px', fontWeight: 800 }}>PRO</span>
+                        </button>
+                      )
                     ) : null}
                     <button
                       onClick={() => handleOpenConnect('chat')}
                       style={{
                         display: 'inline-flex',
                         alignItems: 'center',
-                        gap: '5px',
+                        gap: '6px',
                         padding: '0.45rem 0.85rem',
                         borderRadius: 'var(--radius-sm)',
-                        background: 'rgba(255, 255, 255, 0.08)',
-                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                        background: isPaidUser ? 'rgba(255, 255, 255, 0.08)' : 'linear-gradient(135deg, rgba(99, 102, 241, 0.18), rgba(16, 185, 129, 0.12))',
+                        border: isPaidUser ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid rgba(99, 102, 241, 0.35)',
                         color: 'var(--text-primary)',
                         fontWeight: 700,
                         fontSize: '0.75rem',
                         cursor: 'pointer'
                       }}
+                      title={isPaidUser ? "Open Deal Room Chat with Founder" : "Investor Pro Subscription Required to Chat with Founder"}
                     >
-                      <MessageSquare size={13} /> Open Deal Room Chat
+                      {isPaidUser ? (
+                        <>
+                          <MessageSquare size={13} /> Open Deal Room Chat
+                        </>
+                      ) : (
+                        <>
+                          <Lock size={12} color="#FBBF24" />
+                          <span>Open Deal Room Chat</span>
+                          <span style={{ fontSize: '0.6rem', background: 'rgba(251, 191, 36, 0.25)', color: '#FBBF24', padding: '1px 4px', borderRadius: '3px', fontWeight: 800 }}>PRO</span>
+                        </>
+                      )}
                     </button>
                   </div>
                 </div>
@@ -1250,6 +1405,14 @@ export default function DealRoomModule({ onSelectCompany, activeCompany = null }
         )}
       </div>
 
+      {/* Founder Direct Contact Subscription Paywall Modal */}
+      <FounderContactPaywallModal
+        isOpen={isPaywallModalOpen}
+        onClose={() => setIsPaywallModalOpen(false)}
+        company={selectedCompany}
+        onOpenPricing={onOpenPricing}
+      />
+
       {/* Founder Direct Connect Hub (Chat, 1-Click Video Call & Diligence Scheduler) */}
       <FounderConnectModal
         isOpen={isConnectModalOpen}
@@ -1261,7 +1424,8 @@ export default function DealRoomModule({ onSelectCompany, activeCompany = null }
           } catch (e) {}
         }}
         company={selectedCompany}
-        currentUser={{ fullName: 'Victoria Sterling (General Partner)' }}
+        currentUser={currentUser || { fullName: 'Victoria Sterling (General Partner)' }}
+        onOpenPricing={onOpenPricing}
         initialTab={connectModalTab}
       />
 
@@ -1278,7 +1442,8 @@ export default function DealRoomModule({ onSelectCompany, activeCompany = null }
         isOpen={isExpressModalOpen}
         onClose={() => setIsExpressModalOpen(false)}
         company={selectedCompany}
-        currentUser={{ fullName: 'Victoria Sterling (General Partner)' }}
+        currentUser={currentUser || { fullName: 'Victoria Sterling (General Partner)' }}
+        onOpenPricing={onOpenPricing}
         onInterestSubmitted={handleInterestSubmitted}
       />
     </div>
