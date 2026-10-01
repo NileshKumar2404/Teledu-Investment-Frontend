@@ -496,7 +496,7 @@ export default function LessonReaderModal({
                         Mastery Learning Objectives
                       </h4>
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '0.75rem' }}>
+                    <div className="lesson-reader-quiz-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '0.75rem' }}>
                       {lesson.objectives.map((obj, i) => (
                         <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
                           <Check size={14} color="#10B981" style={{ flexShrink: 0, marginTop: '3px' }} />
@@ -711,7 +711,7 @@ export default function LessonReaderModal({
                   Analyze how breakout ventures navigated this exact dilemma—and how failed companies collapsed.
                 </p>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: '1.5rem' }}>
+                <div className="lesson-reader-case-study-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: '1.5rem' }}>
                   {(lesson.caseStudies || []).map((cs, i) => (
                     <div key={i} style={{
                       background: 'rgba(15, 23, 42, 0.75)',

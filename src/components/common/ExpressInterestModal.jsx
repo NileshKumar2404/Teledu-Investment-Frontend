@@ -185,7 +185,7 @@ export default function ExpressInterestModal({
           <form onSubmit={handleSubmit} style={{ padding: '1.5rem 1.6rem', display: 'flex', flexDirection: 'column', gap: '1.3rem', overflowY: 'auto' }}>
             
             {/* Round Summary Strip */}
-            <div style={{
+            <div className="express-interest-grid" style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(3, 1fr)',
               gap: '0.8rem',

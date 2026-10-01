@@ -876,7 +876,7 @@ export default function ToolsModule({
           SUB-TAB 3: WHAT-IF SCENARIO SIMULATOR
           ============================================================== */}
       {activeSubTab === 'whatif' && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: '1.5rem', alignItems: 'start' }}>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="tools-whatif-layout" style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: '1.5rem', alignItems: 'start' }}>
           {/* Left Panel: Sliders & Controls */}
           <div className="glass-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>

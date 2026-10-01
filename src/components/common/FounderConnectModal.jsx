@@ -914,7 +914,7 @@ export default function FounderConnectModal({
                   </div>
 
                   {/* Video Stage + Side Diligence Panel */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '1rem', minHeight: '380px' }}>
+                  <div className="founder-connect-chat-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '1rem', minHeight: '380px' }}>
                     {/* Video Split Grid */}
                     <div style={{ display: 'grid', gridTemplateRows: '1fr 1fr', gap: '0.8rem', height: '100%' }}>
                       {/* Founder Feed */}
@@ -1777,7 +1777,7 @@ export default function FounderConnectModal({
                     <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#CBD5E1', marginBottom: '0.45rem' }}>
                       Meeting Duration & Format
                     </label>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.6rem' }}>
+                    <div className="founder-connect-time-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.6rem' }}>
                       {[
                         { id: '15min', label: '15-Min Intro', sub: 'Executive Pitch' },
                         { id: '30min', label: '30-Min Diligence', sub: 'Metrics & Unit Economics' },

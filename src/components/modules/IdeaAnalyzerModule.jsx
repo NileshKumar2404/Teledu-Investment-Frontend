@@ -69,7 +69,7 @@ export default function IdeaAnalyzerModule({ company }) {
         </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: result ? '1fr 1fr' : '1fr', gap: '1.75rem', alignItems: 'start' }}>
+      <div className="idea-analyzer-split" style={{ display: 'grid', gridTemplateColumns: result ? '1fr 1fr' : '1fr', gap: '1.75rem', alignItems: 'start' }}>
         <form onSubmit={handleAnalyze} className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
           <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Idea Inputs</h3>
 
@@ -93,7 +93,7 @@ export default function IdeaAnalyzerModule({ company }) {
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+          <div className="prompt-builder-two-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
             <div>
               <label className="input-label">Target Customer (Avoid 'Everyone')</label>
               <input

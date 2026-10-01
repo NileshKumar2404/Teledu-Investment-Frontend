@@ -886,7 +886,7 @@ export default function FinancialModelModule({ company = {} }) {
         {/* VIEW 2: 5-YEAR INSTITUTIONAL DCF WATERFALL */}
         {activeView === 'dcf5yr' && (
           <div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.8rem', marginBottom: '1.4rem' }}>
+            <div className="fm-dcf-year-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.8rem', marginBottom: '1.4rem' }}>
               {dcfModel.years.map(y => (
                 <div key={y.year} style={{
                   padding: '1rem',

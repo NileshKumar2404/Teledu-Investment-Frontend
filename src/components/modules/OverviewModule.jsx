@@ -383,7 +383,7 @@ export default function OverviewModule({ onNavigate, company = {}, healthScore =
                   <span style={{ fontWeight: 700, color: 'var(--text-secondary)' }}>5-Year Compound Revenue Projections ($)</span>
                   <span style={{ color: '#34D399', fontWeight: 800 }}>CAGR: +{growthRate}.0%</span>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.6rem', alignItems: 'end', height: '110px', padding: '0.5rem', background: 'rgba(255, 255, 255, 0.02)', borderRadius: 'var(--radius-md)', border: '1px solid rgba(255, 255, 255, 0.04)' }}>
+                <div className="overview-mini-bar-chart" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '0.6rem', alignItems: 'end', height: '110px', padding: '0.5rem', background: 'rgba(255, 255, 255, 0.02)', borderRadius: 'var(--radius-md)', border: '1px solid rgba(255, 255, 255, 0.04)' }}>
                   {projectionBars.map((col, idx) => (
                     <div key={col.year} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end', gap: '4px' }}>
                       <span style={{ fontSize: '0.72rem', fontWeight: 800, color: idx === 4 ? '#10B981' : 'var(--text-primary)' }}>{col.rev}</span>

@@ -471,7 +471,7 @@ The strategic priority—*"${goalText || goal}"*—requires immediate alignment 
           </div>
 
           {/* Configuration & Output Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.35fr', gap: '1.75rem', alignItems: 'start' }}>
+          <div className="prompt-builder-split" style={{ display: 'grid', gridTemplateColumns: '1fr 1.35fr', gap: '1.75rem', alignItems: 'start' }}>
             <form onSubmit={handleRunAnalysis} className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff', margin: 0 }}>Diagnostic Configuration</h3>
@@ -500,7 +500,7 @@ The strategic priority—*"${goalText || goal}"*—requires immediate alignment 
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <div className="prompt-builder-two-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                 <div>
                   <label className="input-label">Target Audience</label>
                   <input type="text" className="input-field" value={audience} onChange={e => setAudience(e.target.value)} />
@@ -804,7 +804,7 @@ The strategic priority—*"${goalText || goal}"*—requires immediate alignment 
 
       {/* TAB 3: PROMPT ENGINEERING STUDIO */}
       {activeTab === 'prompt' && (
-        <div style={{ display: 'grid', gridTemplateColumns: generatedPrompt ? '1fr 1fr' : '1fr', gap: '1.75rem', alignItems: 'start' }}>
+        <div className="prompt-builder-split" style={{ display: 'grid', gridTemplateColumns: generatedPrompt ? '1fr 1fr' : '1fr', gap: '1.75rem', alignItems: 'start' }}>
           <form onSubmit={handleCompilePrompt} className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
             <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>Structured Prompt Compiler</h3>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
@@ -833,7 +833,7 @@ The strategic priority—*"${goalText || goal}"*—requires immediate alignment 
               />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            <div className="prompt-builder-two-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
               <div>
                 <label className="input-label">Target Audience</label>
                 <input type="text" className="input-field" value={audience} onChange={e => setAudience(e.target.value)} />

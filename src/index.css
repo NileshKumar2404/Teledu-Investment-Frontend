@@ -1392,8 +1392,939 @@ textarea.input-field {
   }
 }
 
+/* ==========================================================================
+   COMPREHENSIVE MODULE RESPONSIVE SYSTEM
+   Global overrides for all inline-styled grids, tables, and layouts
+   ========================================================================== */
 
+/* --- GLOBAL: Force all grid containers inside command-canvas to respect viewport --- */
+.command-canvas * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
 
+.command-canvas table {
+  max-width: none;
+}
+
+/* --- RESPONSIVE CLASS: Module Header Banners --- */
+.module-header-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+/* --- RESPONSIVE CLASS: Module KPI Grid (4-col auto-fit) --- */
+.module-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.2rem;
+}
+
+/* --- RESPONSIVE CLASS: Module Form Grid (2-col) --- */
+.module-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+/* --- RESPONSIVE CLASS: Module Split Layout (sidebar + main) --- */
+.module-split-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* --- RESPONSIVE CLASS: Two-column detail layout --- */
+.module-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* --- RESPONSIVE CLASS: 3-col metric strip --- */
+.module-metric-strip-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+}
+
+/* --- RESPONSIVE CLASS: 5-col DCF/year grid --- */
+.module-year-grid-5 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.8rem;
+}
+
+/* --- RESPONSIVE CLASS: 4-col data grid --- */
+.module-data-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.6rem;
+}
+
+/* ==========================================================================
+   BREAKPOINT: 1200px (Small Desktop / Large Tablet Landscape)
+   ========================================================================== */
+@media (max-width: 1200px) {
+  .module-split-layout {
+    grid-template-columns: 280px 1fr !important;
+    gap: 1.25rem !important;
+  }
+}
+
+/* ==========================================================================
+   BREAKPOINT: 1024px (Tablet Landscape)
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .module-split-layout {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
+
+  .module-two-col {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
+
+  .module-year-grid-5 {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.65rem !important;
+  }
+
+  /* Force all inline 2-col split grids (like '1fr 1.35fr', '1fr 300px') to stack */
+  .command-canvas [style*="grid-template-columns: 1fr 1.35fr"],
+  .command-canvas [style*="grid-template-columns: 1fr 300px"],
+  .command-canvas [style*="gridTemplateColumns"][style*="320px 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
+}
+
+/* ==========================================================================
+   BREAKPOINT: 768px (Tablet Portrait)
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* Module Header Banners */
+  .module-header-banner {
+    padding: 1.25rem 1rem !important;
+    gap: 1rem !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .module-header-banner h1 {
+    font-size: 1.5rem !important;
+  }
+
+  .module-header-banner p {
+    font-size: 0.85rem !important;
+  }
+
+  /* KPI Grid: 2 columns on tablet */
+  .module-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.85rem !important;
+  }
+
+  /* Module Form Grid: Stack on tablet */
+  .module-form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+
+  /* 3-col metric strips: Stack to 1 col */
+  .module-metric-strip-3 {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+
+  /* 5-col year grid: 2 cols on tablet */
+  .module-year-grid-5 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.6rem !important;
+  }
+
+  /* 4-col data grid: 2 cols on tablet */
+  .module-data-grid-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Card Padding Reduction */
+  .command-canvas .glass-card {
+    padding: 1.1rem !important;
+  }
+
+  /* Section Containers */
+  .command-canvas [style*="padding: 1.8rem"] {
+    padding: 1.1rem !important;
+  }
+
+  /* Typography Scale Down */
+  .command-canvas h1 {
+    font-size: 1.45rem !important;
+    letter-spacing: -0.015em !important;
+  }
+
+  .command-canvas h2 {
+    font-size: 1.2rem !important;
+  }
+
+  .command-canvas h3 {
+    font-size: 1.05rem !important;
+  }
+
+  /* Large numerals in KPI cards */
+  .command-canvas [style*="fontSize: '1.85rem'"],
+  .command-canvas [style*="font-size: 1.85rem"],
+  .command-canvas [style*="fontSize: '1.8rem'"],
+  .command-canvas [style*="font-size: 1.8rem"] {
+    font-size: 1.4rem !important;
+  }
+
+  /* Filter button groups - horizontal scroll */
+  .command-canvas [style*="display: 'flex'"][style*="gap: '0.4rem'"],
+  .command-canvas [style*="display: flex"][style*="gap: 0.4rem"] {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+
+  /* Tables: Ensure horizontal scroll wrapper */
+  .command-canvas table {
+    min-width: 600px;
+  }
+
+  .command-canvas [style*="overflowX: 'auto'"],
+  .command-canvas [style*="overflow-x: auto"],
+  .table-responsive {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+}
+
+/* ==========================================================================
+   BREAKPOINT: 640px (Mobile Landscape / Large Phone)
+   ========================================================================== */
+@media (max-width: 640px) {
+  /* KPI Grid: 1 column on mobile */
+  .module-kpi-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+
+  /* 5-col year grid: Stack single */
+  .module-year-grid-5 {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+
+  /* 4-col data grid: Stack single */
+  .module-data-grid-4 {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Module Header Banners */
+  .module-header-banner {
+    padding: 1rem 0.85rem !important;
+    border-radius: var(--radius-lg) !important;
+  }
+
+  .module-header-banner h1 {
+    font-size: 1.3rem !important;
+  }
+
+  /* Large numerals smaller */
+  .command-canvas [style*="fontSize: '1.85rem'"],
+  .command-canvas [style*="fontSize: '1.8rem'"] {
+    font-size: 1.2rem !important;
+  }
+
+  /* Command canvas overall padding already handled above */
+
+  /* Modal grids inside modals - all 2-col and 3-col grids collapse */
+  .modal-overlay [style*="repeat(3, 1fr)"],
+  .modal-overlay [style*="repeat(4, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .modal-overlay [style*="repeat(2, 1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Buttons - smaller on mobile */
+  .btn {
+    padding: 0.6rem 1.1rem !important;
+    font-size: 0.82rem !important;
+  }
+
+  .btn-sm {
+    padding: 0.4rem 0.85rem !important;
+    font-size: 0.78rem !important;
+  }
+
+  /* Chip / Badge sizes */
+  .chip {
+    font-size: 0.75rem !important;
+    padding: 0.3rem 0.7rem !important;
+  }
+
+  /* Section card padding */
+  .command-canvas [style*="padding: '1.5rem'"] {
+    padding: 1rem !important;
+  }
+}
+
+/* ==========================================================================
+   BREAKPOINT: 480px (Small Phone)
+   ========================================================================== */
+@media (max-width: 480px) {
+  .command-canvas {
+    padding: 0.75rem 0.5rem 4rem !important;
+  }
+
+  .module-header-banner {
+    padding: 0.85rem 0.75rem !important;
+    gap: 0.75rem !important;
+  }
+
+  .module-header-banner h1 {
+    font-size: 1.15rem !important;
+  }
+
+  .module-header-banner p {
+    font-size: 0.78rem !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Badge Tags */
+  .module-header-banner [style*="borderRadius: 'var(--radius-pill)'"] {
+    font-size: 0.65rem !important;
+    padding: 0.25rem 0.6rem !important;
+  }
+
+  /* KPI Cards: Tighter padding */
+  .module-kpi-grid > div {
+    padding: 1rem !important;
+  }
+
+  .module-kpi-grid [style*="fontSize: '1.85rem'"],
+  .module-kpi-grid [style*="fontSize: '1.8rem'"] {
+    font-size: 1.15rem !important;
+  }
+
+  /* Table minimum width lower for very small screens */
+  .command-canvas table {
+    min-width: 520px;
+  }
+
+  /* Modal content tighter */
+  .modal-content {
+    border-radius: var(--radius-md) !important;
+  }
+
+  /* All modal grids collapse to single column */
+  .modal-overlay [style*="repeat(3, 1fr)"],
+  .modal-overlay [style*="repeat(4, 1fr)"],
+  .modal-overlay [style*="repeat(2, 1fr)"] {
+    grid-template-columns: 1fr !important;
+    gap: 0.6rem !important;
+  }
+
+  /* Canvas typography */
+  .command-canvas h1 {
+    font-size: 1.2rem !important;
+  }
+
+  .command-canvas h2 {
+    font-size: 1.05rem !important;
+  }
+
+  .command-canvas h3 {
+    font-size: 0.95rem !important;
+  }
+
+  /* General text sizing */
+  .command-canvas p,
+  .command-canvas span,
+  .command-canvas div {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+/* ==========================================================================
+   BREAKPOINT: 360px (Very Small Phone)
+   ========================================================================== */
+@media (max-width: 360px) {
+  .command-canvas {
+    padding: 0.5rem 0.35rem 3.5rem !important;
+  }
+
+  .glass-card {
+    padding: 0.75rem !important;
+    border-radius: var(--radius-sm) !important;
+  }
+
+  .btn {
+    padding: 0.5rem 0.85rem !important;
+    font-size: 0.78rem !important;
+  }
+
+  .module-header-banner h1 {
+    font-size: 1.05rem !important;
+  }
+
+  .modal-overlay {
+    padding: 0.35rem !important;
+  }
+
+  .modal-content {
+    max-height: 96vh !important;
+    border-radius: var(--radius-sm) !important;
+  }
+}
+
+/* ==========================================================================
+   TOOLS MODULE WHAT-IF SIMULATOR RESPONSIVE
+   ========================================================================== */
+.tools-whatif-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .tools-whatif-layout {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
+}
+
+/* ==========================================================================
+   FINANCIAL MODEL DCF YEAR GRID RESPONSIVE
+   ========================================================================== */
+.fm-dcf-year-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.8rem;
+}
+
+@media (max-width: 1024px) {
+  .fm-dcf-year-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .fm-dcf-year-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .fm-dcf-year-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ==========================================================================
+   FINANCIAL MODEL SENSITIVITY GRID
+   ========================================================================== */
+.fm-sensitivity-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.8rem;
+}
+
+@media (max-width: 768px) {
+  .fm-sensitivity-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.6rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .fm-sensitivity-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+}
+
+/* ==========================================================================
+   DEAL ROOM RESPONSIVE LAYOUTS
+   ========================================================================== */
+.dealroom-metric-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+}
+
+@media (max-width: 480px) {
+  .dealroom-metric-strip {
+    grid-template-columns: 1fr !important;
+    gap: 0.4rem !important;
+  }
+}
+
+.dealroom-detail-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .dealroom-detail-metrics {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .dealroom-detail-metrics {
+    grid-template-columns: 1fr !important;
+    gap: 0.6rem !important;
+  }
+}
+
+.dealroom-checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.6rem;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .dealroom-checklist-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .dealroom-checklist-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.dealroom-due-diligence {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.65rem;
+}
+
+@media (max-width: 640px) {
+  .dealroom-due-diligence {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+}
+
+/* ==========================================================================
+   PROMPT BUILDER RESPONSIVE LAYOUTS
+   ========================================================================== */
+.prompt-builder-split {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 1.75rem;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .prompt-builder-split {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
+}
+
+.prompt-builder-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .prompt-builder-two-col {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+}
+
+/* ==========================================================================
+   IDEA ANALYZER RESPONSIVE LAYOUTS
+   ========================================================================== */
+.idea-analyzer-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.75rem;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .idea-analyzer-split {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
+}
+
+/* ==========================================================================
+   FOUNDER CONNECT MODAL RESPONSIVE
+   ========================================================================== */
+.founder-connect-chat-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1rem;
+  min-height: 380px;
+}
+
+@media (max-width: 768px) {
+  .founder-connect-chat-layout {
+    grid-template-columns: 1fr !important;
+    min-height: auto !important;
+  }
+}
+
+.founder-connect-time-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+}
+
+@media (max-width: 640px) {
+  .founder-connect-time-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+}
+
+/* ==========================================================================
+   LIST STARTUP MODAL RESPONSIVE
+   ========================================================================== */
+.list-startup-form-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.9rem;
+}
+
+.list-startup-form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.9rem;
+}
+
+.list-startup-form-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.8rem;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .list-startup-form-grid-3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .list-startup-form-grid-4 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.6rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .list-startup-form-grid-3 {
+    grid-template-columns: 1fr !important;
+    gap: 0.6rem !important;
+  }
+
+  .list-startup-form-grid-2 {
+    grid-template-columns: 1fr !important;
+    gap: 0.6rem !important;
+  }
+
+  .list-startup-form-grid-4 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ==========================================================================
+   EXPRESS INTEREST MODAL RESPONSIVE
+   ========================================================================== */
+.express-interest-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+}
+
+@media (max-width: 640px) {
+  .express-interest-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.6rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .express-interest-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ==========================================================================
+   OVERVIEW MODULE MINI CHART / BAR GRIDS
+   ========================================================================== */
+.overview-mini-bar-chart {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.6rem;
+  align-items: end;
+}
+
+@media (max-width: 480px) {
+  .overview-mini-bar-chart {
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 0.3rem !important;
+  }
+}
+
+/* ==========================================================================
+   LESSON READER RESPONSIVE
+   ========================================================================== */
+.lesson-reader-quiz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .lesson-reader-quiz-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.6rem !important;
+  }
+}
+
+.lesson-reader-case-study-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .lesson-reader-case-study-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+}
+
+/* ==========================================================================
+   PRICING MODAL RESPONSIVE
+   ========================================================================== */
+.pricing-plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+@media (max-width: 640px) {
+  .pricing-plans-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+}
+
+/* ==========================================================================
+   FEATURE PAYWALL RESPONSIVE
+   ========================================================================== */
+@media (max-width: 640px) {
+  .feature-paywall-content {
+    padding: 1.25rem 1rem !important;
+  }
+}
+
+/* ==========================================================================
+   AUTH MODAL RESPONSIVE
+   ========================================================================== */
+@media (max-width: 640px) {
+  .auth-modal-content {
+    padding: 1.5rem 1rem !important;
+    max-width: 100% !important;
+    border-radius: var(--radius-lg) !important;
+  }
+}
+
+/* ==========================================================================
+   INVESTOR PORTFOLIO RESPONSIVE
+   ========================================================================== */
+.portfolio-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .portfolio-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .portfolio-kpi-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ==========================================================================
+   GLOBAL: PREVENT HORIZONTAL OVERFLOW ON ALL INLINE GRIDS
+   Apply to common auto-fit patterns with large minmax values
+   ========================================================================== */
+@media (max-width: 640px) {
+  /* All grid containers with auto-fit and large minimums get clamped */
+  .command-canvas [style*="minmax(320px"],
+  .command-canvas [style*="minmax(340px"],
+  .command-canvas [style*="minmax(350px"],
+  .command-canvas [style*="minmax(360px"],
+  .command-canvas [style*="minmax(420px"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* All fixed 3+ column grids inside canvas collapse */
+  .command-canvas [style*="repeat(3, 1fr)"],
+  .command-canvas [style*="repeat(4, 1fr)"],
+  .command-canvas [style*="repeat(5, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* All inline 2-col grids collapse on phones */
+  .command-canvas [style*="'1fr 1fr'"],
+  .command-canvas [style*="1fr 1fr"],
+  .command-canvas [style*="'1fr 1.35fr'"],
+  .command-canvas [style*="'320px 1fr'"],
+  .command-canvas [style*="'1fr 300px'"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .command-canvas [style*="repeat(2, 1fr)"],
+  .command-canvas [style*="repeat(3, 1fr)"],
+  .command-canvas [style*="repeat(4, 1fr)"],
+  .command-canvas [style*="repeat(5, 1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ==========================================================================
+   GLOBAL: FLEX WRAP ENFORCEMENT ON SMALL SCREENS
+   ========================================================================== */
+@media (max-width: 640px) {
+  .command-canvas [style*="display: 'flex'"][style*="justifyContent: 'space-between'"],
+  .command-canvas [style*="display: flex"][style*="justify-content: space-between"] {
+    flex-wrap: wrap !important;
+    gap: 0.75rem !important;
+  }
+}
+
+/* ==========================================================================
+   GLOBAL: IMAGE / SVG CONTAINMENT
+   ========================================================================== */
+.command-canvas img,
+.command-canvas svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.command-canvas svg {
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   LEDGER TABLE RESPONSIVE ENHANCEMENTS
+   ========================================================================== */
+@media (max-width: 768px) {
+  .command-canvas th,
+  .command-canvas td {
+    padding: 0.65rem 0.6rem !important;
+    font-size: 0.78rem !important;
+  }
+
+  .command-canvas thead th {
+    font-size: 0.68rem !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* ==========================================================================
+   FINANCIAL MODEL MILESTONE TOGGLE GRID
+   ========================================================================== */
+.fm-milestone-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.65rem;
+}
+
+@media (max-width: 480px) {
+  .fm-milestone-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+}
+
+/* ==========================================================================
+   PRICING MODAL RESPONSIVE DETAIL
+   ========================================================================== */
+@media (max-width: 640px) {
+  .pricing-plans-grid > div {
+    padding: 1.25rem 1rem !important;
+  }
+}
+
+/* ==========================================================================
+   SEARCH PALETTE RESPONSIVE
+   ========================================================================== */
+@media (max-width: 640px) {
+  .search-palette-overlay {
+    padding: 1rem 0.5rem !important;
+  }
+
+  .search-palette-dialog {
+    max-width: 100% !important;
+    border-radius: var(--radius-lg) !important;
+  }
+}
+
+/* ==========================================================================
+   ACTION PROOF MODAL RESPONSIVE
+   ========================================================================== */
+@media (max-width: 640px) {
+  .action-proof-modal .modal-content {
+    max-width: 100% !important;
+    max-height: 94vh !important;
+  }
+}
+
+/* ==========================================================================
+   ADMIN / ADVISOR / ANALYST WORKSPACE RESPONSIVE
+   ========================================================================== */
+@media (max-width: 768px) {
+  .workspace-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .workspace-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
 
 
 

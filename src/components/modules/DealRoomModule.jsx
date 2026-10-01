@@ -470,7 +470,7 @@ export default function DealRoomModule({
                 </p>
 
                 {/* Key Metrics Strip */}
-                <div style={{
+                <div className="dealroom-metric-strip" style={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(3, 1fr)',
                   gap: '0.6rem',
@@ -1201,7 +1201,7 @@ export default function DealRoomModule({
                 </span>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+              <div className="dealroom-detail-metrics" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
                 <div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>DCF Enterprise Value</div>
                   <div style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '2px' }}>
@@ -1323,7 +1323,7 @@ export default function DealRoomModule({
                     </span>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.6rem', textAlign: 'center' }}>
+                  <div className="dealroom-checklist-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.6rem', textAlign: 'center' }}>
                     {[
                       { label: 'Product & R&D', pct: selectedCompany.useOfFunds.rnd || 40, color: '#3B82F6' },
                       { label: 'Marketing & GTM', pct: selectedCompany.useOfFunds.marketing || 30, color: '#10B981' },
@@ -1343,7 +1343,7 @@ export default function DealRoomModule({
               )}
 
               {/* 11 Checklist Items Grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.65rem' }}>
+              <div className="dealroom-due-diligence" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.65rem' }}>
                 {STARTUP_INVESTMENT_CHECKLIST_TEMPLATE.map(item => {
                   const itemData = selectedCompany.investmentChecklist?.[item.id] || { status: 'VERIFIED', label: item.shortDesc };
                   return (
