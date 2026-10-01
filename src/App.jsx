@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './responsive-hardening.css';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Sparkles as SparklesIcon, X as XIcon } from 'lucide-react';
 
