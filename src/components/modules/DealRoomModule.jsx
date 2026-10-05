@@ -1435,6 +1435,7 @@ export default function DealRoomModule({
         onClose={() => setIsListModalOpen(false)}
         onStartupListed={handleStartupListed}
         activeCompany={activeCompany}
+        currentUser={currentUser}
       />
 
       {/* Investor Express Check Interest & Soft Commitment Modal */}
