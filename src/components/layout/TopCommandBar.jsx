@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -29,6 +29,43 @@ export default function TopCommandBar({
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isAddCompanyOpen, setIsAddCompanyOpen] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const navRef = useRef(null);
+
+  // Auto-scroll active tab into horizontal view whenever activeTab or engineMode changes
+  useEffect(() => {
+    if (!navRef.current) return;
+    const activeBtn = navRef.current.querySelector('[data-active="true"]');
+    if (activeBtn) {
+      activeBtn.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest'
+      });
+    }
+  }, [activeTab, engineMode]);
+
+  // Lock background scroll when mobile drawer is open
+  useEffect(() => {
+    if (isMobileDrawerOpen) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prevOverflow;
+      };
+    }
+  }, [isMobileDrawerOpen]);
+
+  // Close drawer on ESC key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isMobileDrawerOpen) {
+        setIsMobileDrawerOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isMobileDrawerOpen]);
+
   const [newCompForm, setNewCompForm] = useState({
     companyName: '',
     ticker: '',
@@ -520,6 +557,9 @@ export default function TopCommandBar({
                     {c.ticker}
                   </option>
                 ))}
+                <option value="__ADD_NEW__" style={{ background: '#1E1B4B', color: '#A5B4FC', fontWeight: 'bold' }}>
+                  + Add...
+                </option>
               </select>
             </div>
 
@@ -527,8 +567,8 @@ export default function TopCommandBar({
             <button
               onClick={onOpenSearch}
               style={{
-                width: '32px',
-                height: '32px',
+                width: '34px',
+                height: '34px',
                 borderRadius: '8px',
                 background: 'rgba(255, 255, 255, 0.06)',
                 border: '1px solid rgba(255, 255, 255, 0.14)',
@@ -536,19 +576,21 @@ export default function TopCommandBar({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                flexShrink: 0
               }}
               title="Search Palette (Ctrl+K)"
+              aria-label="Search"
             >
-              <Search size={14} />
+              <Search size={15} />
             </button>
 
             {/* Mobile Hamburger Drawer Toggle */}
             <button
               onClick={() => setIsMobileDrawerOpen(!isMobileDrawerOpen)}
               style={{
-                width: '32px',
-                height: '32px',
+                width: '34px',
+                height: '34px',
                 borderRadius: '8px',
                 background: isMobileDrawerOpen ? 'rgba(99, 102, 241, 0.25)' : 'rgba(255, 255, 255, 0.08)',
                 border: isMobileDrawerOpen ? '1px solid #818CF8' : '1px solid rgba(255, 255, 255, 0.18)',
@@ -557,9 +599,11 @@ export default function TopCommandBar({
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.2s ease',
+                flexShrink: 0
               }}
               title="Toggle Navigation Menu"
+              aria-label="Navigation Menu"
             >
               {isMobileDrawerOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
@@ -571,77 +615,365 @@ export default function TopCommandBar({
       {typeof document !== 'undefined' && createPortal(
         <AnimatePresence>
           {isMobileDrawerOpen && (
-          <motion.div
-            className="mobile-nav-drawer"
-            initial={{ opacity: 0, y: -15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.2 }}
-          >
-            {/* User / Auth Info */}
-            <div style={{
-              padding: '1rem',
-              borderRadius: 'var(--radius-lg)',
-              background: 'rgba(255, 255, 255, 0.03)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              marginBottom: '1rem'
-            }}>
-              {currentUser ? (
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.8rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                    <div style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #6366F1, #EC4899)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '0.85rem',
-                      fontWeight: 800,
-                      color: '#fff'
+            <motion.div
+              className="mobile-nav-drawer"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
+            >
+              {/* Drawer Top Bar */}
+              <div className="mobile-nav-drawer-header">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                  <div style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: 'var(--radius-md)',
+                    background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 0 16px rgba(99, 102, 241, 0.45)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)'
+                  }}>
+                    <Zap size={18} color="#fff" />
+                  </div>
+                  <div>
+                    <div style={{ 
+                      fontFamily: 'var(--font-mono)', 
+                      fontWeight: 800, 
+                      fontSize: '1.05rem', 
+                      letterSpacing: '-0.03em',
+                      color: 'var(--text-primary)',
+                      lineHeight: 1.1
                     }}>
-                      {currentUser.fullName ? currentUser.fullName[0].toUpperCase() : 'U'}
+                      Startup<span style={{ color: '#818CF8' }}>IQ</span>
                     </div>
-                    <div>
-                      <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#fff' }}>{currentUser.fullName}</div>
-                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{currentUser.email}</div>
+                    <div style={{ 
+                      fontSize: '0.66rem', 
+                      color: activeBadge.color,
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.04em'
+                    }}>
+                      {activeBadge.title}
                     </div>
                   </div>
-                  <button
-                    onClick={() => {
-                      setIsMobileDrawerOpen(false);
-                      onLogout();
-                    }}
-                    style={{
-                      background: 'rgba(239, 68, 68, 0.15)',
-                      border: '1px solid rgba(239, 68, 68, 0.3)',
-                      color: '#F87171',
-                      padding: '0.35rem 0.65rem',
-                      borderRadius: '6px',
-                      fontSize: '0.72rem',
-                      fontWeight: 700,
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Logout
-                  </button>
                 </div>
-              ) : (
+
+                <button
+                  onClick={() => setIsMobileDrawerOpen(false)}
+                  style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '10px',
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    border: '1px solid rgba(255, 255, 255, 0.16)',
+                    color: '#FFFFFF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease'
+                  }}
+                  aria-label="Close Navigation"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Drawer Scrollable Body */}
+              <div className="mobile-nav-drawer-body">
+                {/* Search Quick Action */}
                 <button
                   onClick={() => {
                     setIsMobileDrawerOpen(false);
-                    onOpenAuth();
+                    onOpenSearch();
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.65rem',
+                    width: '100%',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '10px',
+                    background: 'rgba(255, 255, 255, 0.04)',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    color: '#CBD5E1',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    textAlign: 'left'
+                  }}
+                >
+                  <Search size={16} color="#818CF8" />
+                  <span style={{ flex: 1 }}>Search commands & modules...</span>
+                  <kbd style={{
+                    fontSize: '0.65rem',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.16)',
+                    padding: '2px 6px',
+                    borderRadius: '4px',
+                    color: '#CBD5E1'
+                  }}>Ctrl+K</kbd>
+                </button>
+
+                {/* User / Auth Info */}
+                <div style={{
+                  padding: '0.9rem',
+                  borderRadius: '10px',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)'
+                }}>
+                  {currentUser ? (
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.8rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', overflow: 'hidden' }}>
+                        <div style={{
+                          width: '34px',
+                          height: '34px',
+                          borderRadius: '50%',
+                          background: 'linear-gradient(135deg, #6366F1, #EC4899)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '0.85rem',
+                          fontWeight: 800,
+                          color: '#fff',
+                          flexShrink: 0
+                        }}>
+                          {currentUser.fullName ? currentUser.fullName[0].toUpperCase() : 'U'}
+                        </div>
+                        <div style={{ overflow: 'hidden' }}>
+                          <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#fff', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                            {currentUser.fullName}
+                          </div>
+                          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                            {currentUser.email}
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setIsMobileDrawerOpen(false);
+                          onLogout();
+                        }}
+                        style={{
+                          background: 'rgba(239, 68, 68, 0.15)',
+                          border: '1px solid rgba(239, 68, 68, 0.3)',
+                          color: '#F87171',
+                          padding: '0.35rem 0.65rem',
+                          borderRadius: '6px',
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          flexShrink: 0
+                        }}
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setIsMobileDrawerOpen(false);
+                        onOpenAuth();
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem 1rem',
+                        borderRadius: '8px',
+                        background: 'linear-gradient(135deg, #6366F1, #8B5CF6)',
+                        border: 'none',
+                        color: '#fff',
+                        fontWeight: 700,
+                        fontSize: '0.85rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      <User size={15} /> Sign In / Demo Stakeholder Roles
+                    </button>
+                  )}
+                </div>
+
+                {/* Company / Workspace Selector */}
+                <div>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.45rem' }}>
+                    Active Company Workspace
+                  </div>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '8px',
+                    padding: '0.55rem 0.75rem',
+                    borderRadius: '8px',
+                    background: 'rgba(255, 255, 255, 0.04)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0 }}>
+                      <Building2 size={16} color="#818CF8" style={{ flexShrink: 0 }} />
+                      <select
+                        value={selectedCompany}
+                        onChange={(e) => {
+                          if (e.target.value === '__ADD_NEW__') {
+                            setIsMobileDrawerOpen(false);
+                            setIsAddCompanyOpen(true);
+                          } else {
+                            setSelectedCompany(e.target.value);
+                          }
+                        }}
+                        style={{
+                          background: 'transparent',
+                          border: 'none',
+                          color: '#fff',
+                          fontSize: '0.82rem',
+                          fontWeight: 700,
+                          width: '100%',
+                          outline: 'none',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {companies.map(c => (
+                          <option key={c.ticker} value={c.ticker} style={{ background: '#0B0F19', color: '#fff' }}>
+                            {c.ticker} - {c.companyName || c.name}
+                          </option>
+                        ))}
+                        <option value="__ADD_NEW__" style={{ background: '#1E1B4B', color: '#A5B4FC', fontWeight: 'bold' }}>
+                          + Add Company / Workspace...
+                        </option>
+                      </select>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setIsMobileDrawerOpen(false);
+                        setIsAddCompanyOpen(true);
+                      }}
+                      style={{
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        background: 'linear-gradient(135deg, #4F46E5, #6366F1)',
+                        border: 'none',
+                        color: '#fff',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '3px',
+                        flexShrink: 0
+                      }}
+                    >
+                      <Plus size={12} /> Add
+                    </button>
+                  </div>
+                </div>
+
+                {/* Stakeholder Engine / Workspace Switcher */}
+                <div>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.45rem' }}>
+                    Switch Operating System
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
+                    {[
+                      { role: 'founder', label: 'Founder OS', tab: 'overview', icon: Sparkles, color: '#818CF8' },
+                      { role: 'investor', label: 'Investor OS', tab: 'investor-portfolio', icon: Briefcase, color: '#34D399' },
+                      { role: 'analyst', label: 'Analyst OS', tab: 'analyst-workspace', icon: BarChart3, color: '#A5B4FC' },
+                      { role: 'advisor', label: 'Advisor OS', tab: 'advisor-workspace', icon: Compass, color: '#FBBF24' },
+                    ].map(r => (
+                      <button
+                        key={r.role}
+                        onClick={() => {
+                          setEngineMode(r.role);
+                          setActiveTab(r.tab);
+                          setIsMobileDrawerOpen(false);
+                        }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          padding: '0.65rem 0.75rem',
+                          borderRadius: '8px',
+                          background: currentRole === r.role ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.02)',
+                          border: currentRole === r.role ? `1px solid ${r.color}` : '1px solid rgba(255, 255, 255, 0.06)',
+                          color: currentRole === r.role ? r.color : 'var(--text-secondary)',
+                          fontSize: '0.78rem',
+                          fontWeight: 700,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <r.icon size={15} style={{ flexShrink: 0 }} />
+                        <span style={{ whiteSpace: 'nowrap' }}>{r.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Workspace Navigation Tabs */}
+                <div>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.45rem' }}>
+                    Workspace Modules ({currentTabs.length})
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                    {currentTabs.map(tab => {
+                      const Icon = tab.icon;
+                      const isActive = activeTab === tab.id;
+                      return (
+                        <button
+                          key={tab.id}
+                          onClick={() => {
+                            setActiveTab(tab.id);
+                            setIsMobileDrawerOpen(false);
+                          }}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '0.75rem 0.9rem',
+                            borderRadius: '8px',
+                            background: isActive ? `${activeThemeColor}18` : 'rgba(255, 255, 255, 0.03)',
+                            border: isActive ? `1px solid ${activeThemeColor}60` : '1px solid rgba(255, 255, 255, 0.05)',
+                            color: isActive ? '#fff' : 'var(--text-secondary)',
+                            fontSize: '0.84rem',
+                            fontWeight: isActive ? 800 : 600,
+                            cursor: 'pointer',
+                            textAlign: 'left',
+                            transition: 'all 0.15s ease'
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
+                            <Icon size={16} color={isActive ? activeThemeColor : 'currentColor'} style={{ flexShrink: 0 }} />
+                            <span>{tab.label}</span>
+                          </div>
+                          {tab.isPro && (
+                            <span style={{ fontSize: '0.65rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(245, 158, 11, 0.18)', color: '#FBBF24', fontWeight: 800 }}>
+                              PRO
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Portal / Gateway entry */}
+                <button
+                  onClick={() => {
+                    setIsMobileDrawerOpen(false);
+                    onOpenPortal();
                   }}
                   style={{
                     width: '100%',
-                    padding: '0.7rem 1rem',
+                    padding: '0.75rem',
                     borderRadius: '8px',
-                    background: 'linear-gradient(135deg, #6366F1, #8B5CF6)',
-                    border: 'none',
-                    color: '#fff',
-                    fontWeight: 700,
-                    fontSize: '0.85rem',
+                    background: 'rgba(255, 255, 255, 0.04)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    color: 'var(--text-secondary)',
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
@@ -649,192 +981,111 @@ export default function TopCommandBar({
                     gap: '6px'
                   }}
                 >
-                  <User size={15} /> Sign In / Demo Stakeholder Roles
+                  <Compass size={14} /> Return to Roles Gateway Portal
                 </button>
-              )}
-            </div>
-
-            {/* Workspace & Role Switcher */}
-            <div style={{ marginBottom: '1.25rem' }}>
-              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.5rem' }}>
-                Active Operating Workspace
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
-                {[
-                  { role: 'founder', label: 'Founder OS', tab: 'overview', icon: Sparkles, color: '#818CF8' },
-                  { role: 'investor', label: 'Investor OS', tab: 'investor-portfolio', icon: Briefcase, color: '#34D399' },
-                  { role: 'analyst', label: 'Analyst OS', tab: 'analyst-workspace', icon: BarChart3, color: '#A5B4FC' },
-                  { role: 'advisor', label: 'Advisor OS', tab: 'advisor-workspace', icon: Compass, color: '#FBBF24' },
-                ].map(r => (
-                  <button
-                    key={r.role}
-                    onClick={() => {
-                      setEngineMode(r.role);
-                      setActiveTab(r.tab);
-                      setIsMobileDrawerOpen(false);
-                    }}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      padding: '0.55rem 0.75rem',
-                      borderRadius: '8px',
-                      background: currentRole === r.role ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.02)',
-                      border: currentRole === r.role ? `1px solid ${r.color}` : '1px solid rgba(255, 255, 255, 0.06)',
-                      color: currentRole === r.role ? r.color : 'var(--text-secondary)',
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <r.icon size={13} />
-                    <span>{r.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Navigation Tabs List */}
-            <div style={{ marginBottom: '1.5rem' }}>
-              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.5rem' }}>
-                Workspace Tabs ({currentTabs.length})
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                {currentTabs.map(tab => {
-                  const Icon = tab.icon;
-                  const isActive = activeTab === tab.id;
-                  return (
-                    <button
-                      key={tab.id}
-                      onClick={() => {
-                        setActiveTab(tab.id);
-                        setIsMobileDrawerOpen(false);
-                      }}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: '0.7rem 0.9rem',
-                        borderRadius: '8px',
-                        background: isActive ? 'rgba(99, 102, 241, 0.15)' : 'rgba(255, 255, 255, 0.03)',
-                        border: isActive ? `1px solid ${activeThemeColor}40` : '1px solid rgba(255, 255, 255, 0.05)',
-                        color: isActive ? '#fff' : 'var(--text-secondary)',
-                        fontSize: '0.84rem',
-                        fontWeight: isActive ? 800 : 600,
-                        cursor: 'pointer',
-                        textAlign: 'left'
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Icon size={16} color={isActive ? activeThemeColor : 'currentColor'} />
-                        <span>{tab.label}</span>
-                      </div>
-                      {tab.isPro && (
-                        <span style={{ fontSize: '0.65rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(245, 158, 11, 0.18)', color: '#FBBF24', fontWeight: 800 }}>
-                          PRO
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Portal / Gateway entry */}
-            <button
-              onClick={() => {
-                setIsMobileDrawerOpen(false);
-                onOpenPortal();
-              }}
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                borderRadius: '8px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                color: 'var(--text-secondary)',
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px'
-              }}
-            >
-              <Compass size={14} /> Return to Roles Gateway Portal
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>,
-      document.body
-    )}
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
 
       {/* Bottom Tier: Role-Specific Navigation Tabs */}
-      <nav className="top-bar-tier-nav" style={{
-        display: 'flex',
-        alignItems: 'center',
-        padding: '0 1.5rem',
-        gap: '0.35rem',
-        overflowX: 'auto',
-        scrollbarWidth: 'none'
-      }}>
-        {currentTabs.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.8rem 1rem',
-                border: 'none',
-                borderRadius: '8px 8px 0 0',
-                background: isActive ? 'rgba(255, 255, 255, 0.05)' : 'transparent',
-                color: isActive ? '#FFFFFF' : '#CBD5E1',
-                fontSize: '0.84rem',
-                fontWeight: isActive ? 800 : 600,
-                cursor: 'pointer',
-                position: 'relative',
-                whiteSpace: 'nowrap',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                if (!isActive) {
-                  e.currentTarget.style.color = '#FFFFFF';
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive) {
-                  e.currentTarget.style.color = '#CBD5E1';
-                  e.currentTarget.style.background = 'transparent';
-                }
-              }}
-            >
-              <Icon size={15} color={isActive ? activeThemeColor : 'currentColor'} />
-              <span>{tab.label}</span>
-              {isActive && (
-                <motion.div
-                  layoutId="activeTabIndicator"
-                  style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    height: '3px',
-                    background: activeThemeColor,
-                    boxShadow: `0 0 12px ${activeThemeColor}, 0 0 4px #FFFFFF`
-                  }}
-                />
-              )}
-            </button>
-          );
-        })}
-      </nav>
+      <div className="top-bar-nav-scroll-container">
+        <nav 
+          ref={navRef}
+          className="top-bar-tier-nav" 
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '0 1.25rem',
+            gap: '0.35rem',
+            overflowX: 'auto',
+            overflowY: 'hidden',
+            WebkitOverflowScrolling: 'touch',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+            flexWrap: 'nowrap',
+            width: '100%',
+            maxWidth: '100%',
+            boxSizing: 'border-box'
+          }}
+        >
+          {currentTabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                data-active={isActive ? 'true' : 'false'}
+                onClick={() => setActiveTab(tab.id)}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  padding: '0.75rem 0.95rem',
+                  border: 'none',
+                  borderRadius: '8px 8px 0 0',
+                  background: isActive ? 'rgba(255, 255, 255, 0.06)' : 'transparent',
+                  color: isActive ? '#FFFFFF' : '#CBD5E1',
+                  fontSize: '0.84rem',
+                  fontWeight: isActive ? 800 : 600,
+                  cursor: 'pointer',
+                  position: 'relative',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                  flex: '0 0 auto',
+                  minWidth: 'max-content',
+                  WebkitTapHighlightColor: 'transparent',
+                  transition: 'all 0.18s ease'
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.color = '#FFFFFF';
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.color = '#CBD5E1';
+                    e.currentTarget.style.background = 'transparent';
+                  }
+                }}
+              >
+                <Icon size={15} color={isActive ? activeThemeColor : 'currentColor'} style={{ flexShrink: 0 }} />
+                <span style={{ whiteSpace: 'nowrap', flexShrink: 0 }}>{tab.label}</span>
+                {tab.isPro && (
+                  <span style={{
+                    fontSize: '0.62rem',
+                    padding: '1px 5px',
+                    borderRadius: '4px',
+                    background: 'rgba(245, 158, 11, 0.18)',
+                    color: '#FBBF24',
+                    fontWeight: 800,
+                    flexShrink: 0
+                  }}>
+                    PRO
+                  </span>
+                )}
+                {isActive && (
+                  <motion.div
+                    layoutId="activeTabIndicator"
+                    style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      height: '3px',
+                      background: activeThemeColor,
+                      boxShadow: `0 0 12px ${activeThemeColor}, 0 0 4px #FFFFFF`
+                    }}
+                  />
+                )}
+              </button>
+            );
+          })}
+        </nav>
+      </div>
 
       {/* Add Company / Workspace Modal (Portaled to document.body to bypass header backdrop-filter containing block) */}
       {typeof document !== 'undefined' && createPortal(
