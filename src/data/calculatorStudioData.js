@@ -20,8 +20,8 @@ export const BUSINESS_CALCULATORS = [
     benchmark: 'Healthy benchmark: LTV should be at least 3× CAC, with payback within 12 months.',
     unit: '$',
     fields: [
-      { id: 'spend', label: 'Sales & Marketing Spend ($)', placeholder: '50000', companyKey: 'monthlyBurn', default: 35000 },
-      { id: 'customers', label: 'New Customers Acquired', placeholder: '150', companyKey: 'customers', default: 120 }
+      { id: 'spend', label: 'Sales & Marketing Acquisition Spend ($)', placeholder: '12000', default: 12000 },
+      { id: 'customers', label: 'New Customers Acquired (This Period)', placeholder: '100', default: 100 }
     ],
     compute: (v) => {
       const spend = Number(v.spend) || 0;
@@ -30,7 +30,7 @@ export const BUSINESS_CALCULATORS = [
       return {
         value: `$${(spend / customers).toFixed(2)}`,
         raw: spend / customers,
-        unit: 'per customer'
+        unit: 'per new customer'
       };
     },
     advanced: [
@@ -39,12 +39,12 @@ export const BUSINESS_CALCULATORS = [
         desc: 'Includes ad spend, team salaries, marketing agency fees, MarTech subscriptions, and allocated overhead.',
         formula: '(AdSpend + Salaries + Agency + MarTech + Overhead) / New Paid Customers',
         inputs: [
-          { id: 'ads', label: 'Paid Ad Spend ($)', default: 15000 },
-          { id: 'salaries', label: 'Team Salaries ($)', default: 12000 },
-          { id: 'agency', label: 'Agency Fees ($)', default: 4000 },
-          { id: 'martech', label: 'MarTech SaaS ($)', default: 2000 },
-          { id: 'overhead', label: 'Overhead ($)', default: 2000 },
-          { id: 'newPaid', label: 'New Paid Customers', default: 120 }
+          { id: 'ads', label: 'Paid Ad Spend ($)', default: 5000 },
+          { id: 'salaries', label: 'Team Salaries ($)', default: 4500 },
+          { id: 'agency', label: 'Agency Fees ($)', default: 1500 },
+          { id: 'martech', label: 'MarTech SaaS ($)', default: 500 },
+          { id: 'overhead', label: 'Overhead ($)', default: 500 },
+          { id: 'newPaid', label: 'New Paid Customers', default: 100 }
         ],
         calc: (v) => {
           const total = (Number(v.ads)||0) + (Number(v.salaries)||0) + (Number(v.agency)||0) + (Number(v.martech)||0) + (Number(v.overhead)||0);
@@ -57,9 +57,9 @@ export const BUSINESS_CALCULATORS = [
         desc: 'The number of months required for a customer to generate enough gross margin to repay their acquisition cost.',
         formula: 'CAC / (ARPU × Gross Margin %)',
         inputs: [
-          { id: 'cacVal', label: 'Acquisition Cost CAC ($)', default: 290 },
-          { id: 'arpu', label: 'Monthly ARPU ($)', default: 150 },
-          { id: 'gm', label: 'Gross Margin (%)', default: 75 }
+          { id: 'cacVal', label: 'Acquisition Cost CAC ($)', default: 120 },
+          { id: 'arpu', label: 'Monthly ARPU ($)', default: 120 },
+          { id: 'gm', label: 'Gross Margin (%)', default: 78 }
         ],
         calc: (v) => {
           const monthlyMargin = (Number(v.arpu)||0) * ((Number(v.gm)||0) / 100);
@@ -80,14 +80,14 @@ export const BUSINESS_CALCULATORS = [
     benchmark: 'Elite B2B SaaS targets > 3.0× LTV:CAC. Consumer subscriptions target > 2.5×.',
     unit: '$',
     fields: [
-      { id: 'avgRevenue', label: 'Avg Monthly Revenue / User ($)', placeholder: '1400', default: 1400 },
-      { id: 'grossMargin', label: 'Gross Margin (%)', placeholder: '72', companyKey: 'grossMargin', default: 72 },
-      { id: 'churn', label: 'Gross Monthly Churn (%)', placeholder: '3.2', default: 3.2 }
+      { id: 'avgRevenue', label: 'Avg Monthly Revenue / User (ARPU $)', placeholder: '120', default: 120 },
+      { id: 'grossMargin', label: 'Gross Margin (%)', placeholder: '78', companyKey: 'grossMargin', default: 78 },
+      { id: 'churn', label: 'Gross Monthly Churn (%)', placeholder: '2.4', companyKey: 'churnRate', default: 2.4 }
     ],
     compute: (v) => {
       const rev = Number(v.avgRevenue) || 0;
-      const gm = (Number(v.grossMargin) || 70) / 100;
-      const churn = (Number(v.churn) || 0) / 100;
+      const gm = (Number(v.grossMargin) || 78) / 100;
+      const churn = (Number(v.churn) || 2.4) / 100;
       if (churn <= 0) return null;
       const ltv = (rev * gm) / churn;
       return {
@@ -102,9 +102,9 @@ export const BUSINESS_CALCULATORS = [
         desc: 'Calculates the net present value of future cash flows over an N-month horizon discounted at annual cost of capital.',
         formula: '∑ [ (ARPU × Gross Margin) / (1 + r)^t ] for t = 1 to N',
         inputs: [
-          { id: 'arpu', label: 'Monthly ARPU ($)', default: 1400 },
-          { id: 'gm', label: 'Gross Margin (%)', default: 72 },
-          { id: 'discount', label: 'Monthly Discount Rate (%)', default: 1.0 },
+          { id: 'arpu', label: 'Monthly ARPU ($)', default: 120 },
+          { id: 'gm', label: 'Gross Margin (%)', default: 78 },
+          { id: 'discount', label: 'Monthly Discount Rate (%)', default: 0.8 },
           { id: 'horizon', label: 'Time Horizon (Months)', default: 24 }
         ],
         calc: (v) => {
@@ -123,8 +123,8 @@ export const BUSINESS_CALCULATORS = [
         desc: 'The ultimate health barometer of unit-level viability and capital return.',
         formula: 'LTV / Fully-Loaded CAC',
         inputs: [
-          { id: 'ltvInput', label: 'Calculated LTV ($)', default: 31500 },
-          { id: 'cacInput', label: 'Calculated CAC ($)', default: 6500 }
+          { id: 'ltvInput', label: 'Calculated LTV ($)', default: 3900 },
+          { id: 'cacInput', label: 'Calculated CAC ($)', default: 120 }
         ],
         calc: (v) => {
           const l = Number(v.ltvInput)||0;
@@ -140,19 +140,28 @@ export const BUSINESS_CALCULATORS = [
     name: 'Cash Runway',
     badge: 'Survival Indicator',
     category: 'Cash & Runway',
-    formula: 'Runway = Total Available Cash / Monthly Net Burn Rate',
-    interpretation: 'The countdown clock until zero cash. Tells you exactly how many months the startup can operate before needing new funding or profitability.',
+    formula: 'Runway = Available Cash / Net Burn (Monthly Burn - Monthly Revenue)',
+    interpretation: 'The countdown clock until zero cash. When monthly revenue exceeds monthly burn, the startup is cash-flow positive.',
     benchmark: 'Safe: 12-18 months. Moderate: 6-12 months. Critical: < 6 months.',
     unit: 'Months',
     fields: [
-      { id: 'cash', label: 'Current Available Cash ($)', placeholder: '165000', companyKey: 'cashAvailable', default: 165000 },
-      { id: 'burn', label: 'Monthly Net Burn ($)', placeholder: '18000', companyKey: 'monthlyBurn', default: 18000 }
+      { id: 'cash', label: 'Current Available Cash ($)', placeholder: '240000', companyKey: 'cashAvailable', default: 240000 },
+      { id: 'burn', label: 'Monthly Gross Burn ($)', placeholder: '18000', companyKey: 'monthlyBurn', default: 18000 },
+      { id: 'revenue', label: 'Monthly Revenue / MRR ($)', placeholder: '28500', companyKey: 'monthlyRevenue', default: 28500 }
     ],
     compute: (v) => {
       const cash = Number(v.cash) || 0;
       const burn = Number(v.burn) || 0;
-      if (burn <= 0) return { value: '∞ Profitable', raw: 999, unit: 'Cash-flow positive' };
-      const months = (cash / burn).toFixed(1);
+      const revenue = Number(v.revenue) || 0;
+      const netBurn = burn - revenue;
+      if (netBurn <= 0) {
+        return {
+          value: 'Profitable / Net Positive',
+          raw: 999,
+          unit: `+$${Math.abs(netBurn).toLocaleString()}/mo net surplus`
+        };
+      }
+      const months = (cash / netBurn).toFixed(1);
       return {
         value: `${months} Months`,
         raw: Number(months),

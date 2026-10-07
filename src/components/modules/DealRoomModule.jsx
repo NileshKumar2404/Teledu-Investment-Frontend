@@ -290,8 +290,10 @@ export default function DealRoomModule({
               border: '1px solid var(--border-subtle)',
               textAlign: 'center'
             }}>
-              <div style={{ fontSize: '1.3rem', fontWeight: 800, color: '#818CF8' }}>$27.3M</div>
-              <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Aggregate Pipeline</div>
+              <div style={{ fontSize: '1.3rem', fontWeight: 800, color: '#818CF8' }}>
+                ${(companies.reduce((sum, c) => sum + (Number(c.fundingRequired) || 0), 0) / 1000000).toFixed(2)}M
+              </div>
+              <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Aggregate Pipeline Ask</div>
             </div>
             <div style={{
               padding: '0.75rem 1.2rem',
@@ -698,7 +700,7 @@ export default function DealRoomModule({
                   title="Express Check Interest / Submit Allocation"
                 >
                   <DollarSign size={15} />
-                  Express Interest ($)
+                  Express Interest / Soft Commit
                 </button>
 
                 <button

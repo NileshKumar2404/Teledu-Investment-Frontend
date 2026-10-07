@@ -1287,7 +1287,7 @@ textarea.input-field {
 .lesson-reader-dialog {
   position: relative;
   width: 100%;
-  max-width: 1150px;
+  max-width: 1360px;
   height: 92vh;
   display: flex;
   flex-direction: column;
@@ -1297,6 +1297,20 @@ textarea.input-field {
   box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.9), 0 0 50px rgba(99, 102, 241, 0.2);
   z-index: 10;
   overflow: hidden;
+}
+
+.lesson-guide-container {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 2rem;
+  align-items: start;
+  width: 100%;
+}
+
+@media (max-width: 1100px) {
+  .lesson-guide-container {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 @media (max-width: 640px) {

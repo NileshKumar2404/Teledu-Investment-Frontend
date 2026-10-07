@@ -8,7 +8,7 @@ import {
 import { api } from '../../api/client';
 import { LEDGER_TRANSACTIONS } from '../../data/investmentData';
 
-export default function LedgerModule({ activeTicker = 'TELEDU' }) {
+export default function LedgerModule({ activeTicker = 'TELEDU', isInvestor = true }) {
   const [transactions, setTransactions] = useState(LEDGER_TRANSACTIONS);
   const [typeFilter, setTypeFilter] = useState('ALL');
   const [showAddModal, setShowAddModal] = useState(false);
@@ -46,8 +46,10 @@ export default function LedgerModule({ activeTicker = 'TELEDU' }) {
     .reduce((sum, t) => sum + Number(t.amount || 0), 0);
 
   const netCashFlow = totalRevenue - totalExpense;
-  const burnRate = totalExpense > 0 ? totalExpense : 18000;
-  const cashRunwayMonths = Number((165000 / (burnRate || 1)).toFixed(1));
+  const isCashFlowPositive = netCashFlow >= 0;
+  const cashAvailable = 240000;
+  const netBurn = totalExpense - totalRevenue;
+  const cashRunwayMonths = isCashFlowPositive ? 'Cash Positive' : (cashAvailable / Math.max(netBurn, 1)).toFixed(1);
 
   const filteredTransactions = transactions.filter(t => {
     if (typeFilter === 'ALL') return true;
@@ -125,26 +127,44 @@ export default function LedgerModule({ activeTicker = 'TELEDU' }) {
           </p>
         </div>
 
-        <button
-          onClick={() => setShowAddModal(true)}
-          style={{
-            display: 'flex',
+        {isInvestor ? (
+          <div style={{
+            display: 'inline-flex',
             alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.8rem 1.4rem',
-            borderRadius: 'var(--radius-md)',
-            background: 'linear-gradient(135deg, #10B981, #059669)',
-            color: '#fff',
-            border: 'none',
-            fontWeight: 700,
-            fontSize: '0.9rem',
-            cursor: 'pointer',
-            boxShadow: '0 4px 14px rgba(16, 185, 129, 0.4)'
-          }}
-        >
-          <Plus size={18} />
-          Record Journal Entry
-        </button>
+            gap: '0.55rem',
+            padding: '0.65rem 1.15rem',
+            borderRadius: 'var(--radius-pill)',
+            background: 'rgba(16, 185, 129, 0.12)',
+            border: '1px solid rgba(16, 185, 129, 0.3)',
+            color: '#34D399',
+            fontSize: '0.82rem',
+            fontWeight: 700
+          }}>
+            <ShieldCheck size={16} />
+            Read-Only Diligence Access (Audited Books)
+          </div>
+        ) : (
+          <button
+            onClick={() => setShowAddModal(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.8rem 1.4rem',
+              borderRadius: 'var(--radius-md)',
+              background: 'linear-gradient(135deg, #10B981, #059669)',
+              color: '#fff',
+              border: 'none',
+              fontWeight: 700,
+              fontSize: '0.9rem',
+              cursor: 'pointer',
+              boxShadow: '0 4px 14px rgba(16, 185, 129, 0.4)'
+            }}
+          >
+            <Plus size={18} />
+            Record Journal Entry
+          </button>
+        )}
       </div>
 
       {/* Financial KPIs */}
@@ -193,12 +213,14 @@ export default function LedgerModule({ activeTicker = 'TELEDU' }) {
         <div style={{ padding: '1.5rem', borderRadius: 'var(--radius-lg)', background: 'var(--surface-card)', border: '1px solid var(--border-subtle)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-muted)' }}>
             <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Cash Runway</span>
-            <Calendar size={18} color="#F59E0B" />
+            <Calendar size={18} color="#10B981" />
           </div>
-          <div style={{ fontSize: '1.85rem', fontWeight: 800, color: '#FBBF24', marginTop: '4px' }}>
-            {cashRunwayMonths} Mo.
+          <div style={{ fontSize: isCashFlowPositive ? '1.5rem' : '1.85rem', fontWeight: 800, color: isCashFlowPositive ? '#10B981' : '#FBBF24', marginTop: '4px' }}>
+            {isCashFlowPositive ? 'Cash Positive' : `${cashRunwayMonths} Mo.`}
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>At current monthly burn</div>
+          <div style={{ fontSize: '0.75rem', color: isCashFlowPositive ? '#34D399' : 'var(--text-muted)', marginTop: '4px' }}>
+            {isCashFlowPositive ? `+$${netCashFlow.toLocaleString()}/mo Net Surplus` : 'At current monthly net burn'}
+          </div>
         </div>
       </div>
 
@@ -262,7 +284,7 @@ export default function LedgerModule({ activeTicker = 'TELEDU' }) {
                 <th style={{ padding: '0.9rem 1rem' }}>Periodicity</th>
                 <th style={{ padding: '0.9rem 1rem' }}>Classification</th>
                 <th style={{ padding: '0.9rem 1rem' }}>Notes & Invoices</th>
-                <th style={{ padding: '0.9rem 1rem', textAlign: 'right' }}>Actions</th>
+                <th style={{ padding: '0.9rem 1rem', textAlign: 'right' }}>Audit Status</th>
               </tr>
             </thead>
             <tbody>
@@ -376,22 +398,22 @@ export default function LedgerModule({ activeTicker = 'TELEDU' }) {
                       {entry.notes || '—'}
                     </td>
 
-                    {/* Delete */}
+                    {/* Audit Status / Immutability Lock */}
                     <td style={{ padding: '1rem', textAlign: 'right' }}>
-                      <button
-                        onClick={() => handleDelete(entry._id)}
-                        title="Delete Entry (requires OWNER role)"
-                        style={{
-                          background: 'transparent',
-                          border: 'none',
-                          color: 'var(--text-muted)',
-                          cursor: 'pointer',
-                          padding: '4px',
-                          borderRadius: 'var(--radius-sm)'
-                        }}
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                      <span style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        padding: '0.2rem 0.55rem',
+                        borderRadius: 'var(--radius-pill)',
+                        background: 'rgba(16, 185, 129, 0.12)',
+                        border: '1px solid rgba(16, 185, 129, 0.25)',
+                        color: '#34D399',
+                        fontSize: '0.72rem',
+                        fontWeight: 700
+                      }}>
+                        <ShieldCheck size={12} /> Audited
+                      </span>
                     </td>
                   </tr>
                 );

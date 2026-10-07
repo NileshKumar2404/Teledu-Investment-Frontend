@@ -262,7 +262,7 @@ export default function TopCommandBar({
                 textTransform: 'uppercase',
                 fontWeight: 700
               }}>
-                Project Alpha Core
+                Venture Intelligence OS
               </div>
             </div>
           </div>
@@ -326,6 +326,11 @@ export default function TopCommandBar({
                   padding: '0.35rem 0.2rem'
                 }}
               >
+                {activeTab === 'investor-portfolio' && (
+                  <option value="ALL_PORTFOLIO" style={{ background: '#0F172A', color: '#34D399', fontWeight: 800 }}>
+                    💼 All Portfolio Holdings (8 Companies)
+                  </option>
+                )}
                 {companies.map(c => (
                   <option key={c.ticker} value={c.ticker} style={{ background: '#0B0F19', color: '#fff' }}>
                     {c.ticker} - {c.companyName || c.name}
@@ -949,8 +954,8 @@ export default function TopCommandBar({
                             <span>{tab.label}</span>
                           </div>
                           {tab.isPro && (
-                            <span style={{ fontSize: '0.65rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(245, 158, 11, 0.18)', color: '#FBBF24', fontWeight: 800 }}>
-                              PRO
+                            <span style={{ fontSize: '0.62rem', padding: '1px 5px', borderRadius: '4px', background: 'rgba(245, 158, 11, 0.18)', color: '#FBBF24', fontWeight: 800 }}>
+                              PILOT PREVIEW
                             </span>
                           )}
                         </button>
@@ -1064,7 +1069,7 @@ export default function TopCommandBar({
                     fontWeight: 800,
                     flexShrink: 0
                   }}>
-                    PRO
+                    PILOT PREVIEW
                   </span>
                 )}
                 {isActive && (

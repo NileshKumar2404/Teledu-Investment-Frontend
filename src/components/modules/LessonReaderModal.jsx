@@ -480,227 +480,460 @@ export default function LessonReaderModal({
 
             {/* TAB 1: DEEP DIVE & FRAMEWORKS */}
             {activeTab === 'guide' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', maxWidth: '1020px' }}>
+              <div className="lesson-guide-container">
+                {/* Left Column: Full Lesson Curriculum Reading */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', minWidth: 0, width: '100%' }}>
 
-                {/* Key Objectives Card */}
-                {lesson.objectives && lesson.objectives.length > 0 && (
-                  <div style={{
-                    background: 'rgba(99, 102, 241, 0.07)',
-                    border: '1px solid rgba(99, 102, 241, 0.25)',
-                    borderRadius: '16px',
-                    padding: '1.25rem 1.5rem'
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.6rem' }}>
-                      <Target size={16} color="#818CF8" />
-                      <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#818CF8', margin: 0, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                        Mastery Learning Objectives
-                      </h4>
-                    </div>
-                    <div className="lesson-reader-quiz-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '0.75rem' }}>
-                      {lesson.objectives.map((obj, i) => (
-                        <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
-                          <Check size={14} color="#10B981" style={{ flexShrink: 0, marginTop: '3px' }} />
-                          <span>{obj}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Section: The Mental Model & Architecture */}
-                {lesson.mentalModel && (
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.6rem' }}>
-                      <Lightbulb size={18} color="#FBBF24" />
-                      <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff', margin: 0 }}>
-                        {lesson.mentalModel.name}
-                      </h3>
-                    </div>
-                    <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 1rem' }}>
-                      {lesson.mentalModel.concept}
-                    </p>
-
-                    {/* ASCII / Visual Flow Diagram Card */}
-                    {lesson.mentalModel.diagram && (
-                      <div style={{
-                        background: '#090D16',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                        borderRadius: '14px',
-                        padding: '1.2rem 1.4rem',
-                        fontFamily: 'monospace',
-                        fontSize: '0.78rem',
-                        color: '#38BDF8',
-                        whiteSpace: 'pre-wrap',
-                        lineHeight: 1.45,
-                        marginBottom: '1.2rem',
-                        overflowX: 'auto'
-                      }}>
-                        {lesson.mentalModel.diagram}
+                  {/* Key Objectives Card */}
+                  {lesson.objectives && lesson.objectives.length > 0 && (
+                    <div id="lesson-sec-objectives" style={{
+                      background: 'rgba(99, 102, 241, 0.07)',
+                      border: '1px solid rgba(99, 102, 241, 0.25)',
+                      borderRadius: '16px',
+                      padding: '1.25rem 1.5rem'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.6rem' }}>
+                        <Target size={16} color="#818CF8" />
+                        <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#818CF8', margin: 0, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                          Mastery Learning Objectives
+                        </h4>
                       </div>
-                    )}
-
-                    {/* Core Principles Bullets */}
-                    {lesson.mentalModel.corePrinciples && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                        {lesson.mentalModel.corePrinciples.map((prin, i) => (
-                          <div key={i} style={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            gap: '10px',
-                            background: 'rgba(255, 255, 255, 0.03)',
-                            border: '1px solid rgba(255, 255, 255, 0.06)',
-                            padding: '0.75rem 1rem',
-                            borderRadius: '10px',
-                            fontSize: '0.84rem'
-                          }}>
-                            <span style={{
-                              fontWeight: 900,
-                              color: '#6366F1',
-                              fontSize: '0.78rem',
-                              padding: '0.15rem 0.45rem',
-                              borderRadius: '4px',
-                              background: 'rgba(99, 102, 241, 0.15)'
-                            }}>
-                              RULE 0{i + 1}
-                            </span>
-                            <span style={{ color: 'var(--text-primary)', lineHeight: 1.45 }}>{prin}</span>
+                      <div className="lesson-reader-quiz-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '0.75rem' }}>
+                        {lesson.objectives.map((obj, i) => (
+                          <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
+                            <Check size={14} color="#10B981" style={{ flexShrink: 0, marginTop: '3px' }} />
+                            <span>{obj}</span>
                           </div>
                         ))}
                       </div>
+                    </div>
+                  )}
+
+                  {/* Section: The Mental Model & Architecture */}
+                  {lesson.mentalModel && (
+                    <div id="lesson-sec-mental-model">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.6rem' }}>
+                        <Lightbulb size={18} color="#FBBF24" />
+                        <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff', margin: 0 }}>
+                          {lesson.mentalModel.name}
+                        </h3>
+                      </div>
+                      <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: '0 0 1rem' }}>
+                        {lesson.mentalModel.concept}
+                      </p>
+
+                      {/* ASCII / Visual Flow Diagram Card */}
+                      {lesson.mentalModel.diagram && (
+                        <div style={{
+                          background: '#090D16',
+                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                          borderRadius: '14px',
+                          padding: '1.2rem 1.4rem',
+                          fontFamily: 'monospace',
+                          fontSize: '0.78rem',
+                          color: '#38BDF8',
+                          whiteSpace: 'pre-wrap',
+                          lineHeight: 1.45,
+                          marginBottom: '1.2rem',
+                          overflowX: 'auto'
+                        }}>
+                          {lesson.mentalModel.diagram}
+                        </div>
+                      )}
+
+                      {/* Core Principles Bullets */}
+                      {lesson.mentalModel.corePrinciples && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                          {lesson.mentalModel.corePrinciples.map((prin, i) => (
+                            <div key={i} style={{
+                              display: 'flex',
+                              alignItems: 'flex-start',
+                              gap: '10px',
+                              background: 'rgba(255, 255, 255, 0.03)',
+                              border: '1px solid rgba(255, 255, 255, 0.06)',
+                              padding: '0.75rem 1rem',
+                              borderRadius: '10px',
+                              fontSize: '0.84rem'
+                            }}>
+                              <span style={{
+                                fontWeight: 900,
+                                color: '#6366F1',
+                                fontSize: '0.78rem',
+                                padding: '0.15rem 0.45rem',
+                                borderRadius: '4px',
+                                background: 'rgba(99, 102, 241, 0.15)'
+                              }}>
+                                RULE 0{i + 1}
+                              </span>
+                              <span style={{ color: 'var(--text-primary)', lineHeight: 1.45 }}>{prin}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Section: Operational & VC Benchmarks */}
+                  {lesson.benchmarks && lesson.benchmarks.length > 0 && (
+                    <div id="lesson-sec-benchmarks">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.8rem' }}>
+                        <TrendingUp size={18} color="#34D399" />
+                        <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff', margin: 0 }}>
+                          Quantitative Benchmarks & Rules of Thumb
+                        </h3>
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+                        {lesson.benchmarks.map((bm, i) => (
+                          <div key={i} style={{
+                            background: 'rgba(16, 185, 129, 0.05)',
+                            border: '1px solid rgba(16, 185, 129, 0.2)',
+                            borderRadius: '14px',
+                            padding: '1.1rem 1.25rem'
+                          }}>
+                            <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>
+                              {bm.metric}
+                            </div>
+                            <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#34D399', marginBottom: '6px', fontFamily: 'var(--font-display)' }}>
+                              {bm.target}
+                            </div>
+                            <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
+                              {bm.description}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Section: Step-by-Step Founder Playbook */}
+                  {lesson.playbook && lesson.playbook.length > 0 && (
+                    <div id="lesson-sec-playbook">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.8rem' }}>
+                        <Compass size={18} color="#818CF8" />
+                        <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff', margin: 0 }}>
+                          Step-by-Step Founder Playbook
+                        </h3>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                        {lesson.playbook.map((step, i) => (
+                          <div key={i} style={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: '1rem',
+                            background: 'rgba(255, 255, 255, 0.03)',
+                            border: '1px solid rgba(255, 255, 255, 0.08)',
+                            borderRadius: '12px',
+                            padding: '1rem 1.2rem'
+                          }}>
+                            <div style={{
+                              width: '28px',
+                              height: '28px',
+                              borderRadius: '50%',
+                              background: 'linear-gradient(135deg, #6366F1, #8B5CF6)',
+                              color: '#fff',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '0.8rem',
+                              fontWeight: 900,
+                              flexShrink: 0
+                            }}>
+                              {step.step || i + 1}
+                            </div>
+                            <div>
+                              <h4 style={{ fontSize: '0.92rem', fontWeight: 800, color: '#fff', margin: '0 0 0.3rem' }}>
+                                {step.title}
+                              </h4>
+                              <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>
+                                {step.description}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Section: Anti-Patterns & Rookie Traps */}
+                  {lesson.antiPatterns && lesson.antiPatterns.length > 0 && (
+                    <div id="lesson-sec-antipatterns">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.8rem' }}>
+                        <AlertTriangle size={18} color="#F43F5E" />
+                        <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff', margin: 0 }}>
+                          Common Anti-Patterns & Costly Mistakes
+                        </h3>
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
+                        {lesson.antiPatterns.map((ap, i) => (
+                          <div key={i} style={{
+                            background: 'rgba(244, 63, 94, 0.05)',
+                            border: '1px solid rgba(244, 63, 94, 0.2)',
+                            borderRadius: '14px',
+                            padding: '1.1rem 1.25rem',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '0.5rem'
+                          }}>
+                            <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#F87171' }}>
+                              ⚠️ {ap.mistake}
+                            </div>
+                            <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
+                              <strong style={{ color: '#fff' }}>Why it fails:</strong> {ap.whyItFails}
+                            </div>
+                            <div style={{
+                              fontSize: '0.78rem',
+                              color: '#34D399',
+                              lineHeight: 1.45,
+                              background: 'rgba(16, 185, 129, 0.08)',
+                              padding: '0.5rem 0.75rem',
+                              borderRadius: '8px',
+                              border: '1px solid rgba(16, 185, 129, 0.2)',
+                              marginTop: '4px'
+                            }}>
+                              <strong>Pro Fix:</strong> {ap.proFix}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Right Column: Interactive Companion Sidebar */}
+                <aside style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                  {/* 1. Lesson Progress Card */}
+                  <div style={{
+                    padding: '1.25rem',
+                    borderRadius: '16px',
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.75rem'
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                        Lesson Overview
+                      </span>
+                      <span style={{
+                        fontSize: '0.7rem',
+                        fontWeight: 800,
+                        color: isCompleted ? '#34D399' : '#818CF8',
+                        background: isCompleted ? 'rgba(16, 185, 129, 0.15)' : 'rgba(99, 102, 241, 0.15)',
+                        padding: '0.15rem 0.55rem',
+                        borderRadius: '999px',
+                        border: isCompleted ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(99, 102, 241, 0.3)'
+                      }}>
+                        {isCompleted ? '✓ Completed' : 'In Progress'}
+                      </span>
+                    </div>
+
+                    <div style={{ fontSize: '1rem', fontWeight: 800, color: '#fff', lineHeight: 1.35 }}>
+                      {lesson.title}
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '1rem', fontSize: '0.76rem', color: 'var(--text-secondary)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <Clock size={13} color="#818CF8" />
+                        <span>{lesson.estimatedMinutes || 20} mins</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <Award size={13} color={getDifficultyColor(lesson.difficulty)} />
+                        <span>{lesson.difficulty}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 2. Jump Table of Contents */}
+                  <div style={{
+                    padding: '1.25rem',
+                    borderRadius: '16px',
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.5rem'
+                  }}>
+                    <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#A5B4FC', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '4px' }}>
+                      Table of Contents
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => document.getElementById('lesson-sec-objectives')?.scrollIntoView({ behavior: 'smooth' })}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: '8px', padding: '0.55rem 0.75rem',
+                        borderRadius: '8px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)',
+                        color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer', textAlign: 'left', width: '100%'
+                      }}
+                    >
+                      <Target size={14} color="#818CF8" />
+                      <span>Learning Objectives ({lesson.objectives?.length || 3})</span>
+                    </button>
+
+                    {lesson.mentalModel && (
+                      <button
+                        type="button"
+                        onClick={() => document.getElementById('lesson-sec-mental-model')?.scrollIntoView({ behavior: 'smooth' })}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: '8px', padding: '0.55rem 0.75rem',
+                          borderRadius: '8px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)',
+                          color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer', textAlign: 'left', width: '100%'
+                        }}
+                      >
+                        <Lightbulb size={14} color="#FBBF24" />
+                        <span>Mental Model & Diagram</span>
+                      </button>
+                    )}
+
+                    {lesson.benchmarks?.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => document.getElementById('lesson-sec-benchmarks')?.scrollIntoView({ behavior: 'smooth' })}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: '8px', padding: '0.55rem 0.75rem',
+                          borderRadius: '8px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)',
+                          color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer', textAlign: 'left', width: '100%'
+                        }}
+                      >
+                        <TrendingUp size={14} color="#34D399" />
+                        <span>VC Benchmarks ({lesson.benchmarks.length})</span>
+                      </button>
+                    )}
+
+                    {lesson.playbook?.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => document.getElementById('lesson-sec-playbook')?.scrollIntoView({ behavior: 'smooth' })}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: '8px', padding: '0.55rem 0.75rem',
+                          borderRadius: '8px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)',
+                          color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer', textAlign: 'left', width: '100%'
+                        }}
+                      >
+                        <Compass size={14} color="#818CF8" />
+                        <span>Step-by-Step Playbook ({lesson.playbook.length})</span>
+                      </button>
+                    )}
+
+                    {lesson.antiPatterns?.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => document.getElementById('lesson-sec-antipatterns')?.scrollIntoView({ behavior: 'smooth' })}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: '8px', padding: '0.55rem 0.75rem',
+                          borderRadius: '8px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)',
+                          color: 'var(--text-secondary)', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer', textAlign: 'left', width: '100%'
+                        }}
+                      >
+                        <AlertTriangle size={14} color="#F43F5E" />
+                        <span>Costly Anti-Patterns ({lesson.antiPatterns.length})</span>
+                      </button>
                     )}
                   </div>
-                )}
 
-                {/* Section: Operational & VC Benchmarks */}
-                {lesson.benchmarks && lesson.benchmarks.length > 0 && (
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.8rem' }}>
-                      <TrendingUp size={18} color="#34D399" />
-                      <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff', margin: 0 }}>
-                        Quantitative Benchmarks & Rules of Thumb
-                      </h3>
-                    </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
-                      {lesson.benchmarks.map((bm, i) => (
-                        <div key={i} style={{
-                          background: 'rgba(16, 185, 129, 0.05)',
-                          border: '1px solid rgba(16, 185, 129, 0.2)',
-                          borderRadius: '14px',
-                          padding: '1.1rem 1.25rem'
-                        }}>
-                          <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>
-                            {bm.metric}
-                          </div>
-                          <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#34D399', marginBottom: '6px', fontFamily: 'var(--font-display)' }}>
-                            {bm.target}
-                          </div>
-                          <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
-                            {bm.description}
-                          </div>
+                  {/* 3. VC Benchmark Target Snapshot Card */}
+                  {lesson.benchmarks?.length > 0 && (
+                    <div style={{
+                      padding: '1.25rem',
+                      borderRadius: '16px',
+                      background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(6, 182, 212, 0.05) 100%)',
+                      border: '1px solid rgba(16, 185, 129, 0.25)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.75rem'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <TrendingUp size={15} color="#34D399" />
+                        <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#34D399', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                          Venture Targets at a Glance
+                        </span>
+                      </div>
+                      {lesson.benchmarks.map((b, i) => (
+                        <div key={i} style={{ borderBottom: i < lesson.benchmarks.length - 1 ? '1px solid rgba(255, 255, 255, 0.06)' : 'none', paddingBottom: i < lesson.benchmarks.length - 1 ? '6px' : '0' }}>
+                          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{b.metric}</div>
+                          <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#FFFFFF', marginTop: '1px' }}>{b.target}</div>
                         </div>
                       ))}
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {/* Section: Step-by-Step Founder Playbook */}
-                {lesson.playbook && lesson.playbook.length > 0 && (
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.8rem' }}>
-                      <Compass size={18} color="#818CF8" />
-                      <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff', margin: 0 }}>
-                        Step-by-Step Founder Playbook
-                      </h3>
+                  {/* 4. Interactive Companion Activities */}
+                  <div style={{
+                    padding: '1.25rem',
+                    borderRadius: '16px',
+                    background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(168, 85, 247, 0.08) 100%)',
+                    border: '1px solid rgba(99, 102, 241, 0.3)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.75rem'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Sparkles size={15} color="#818CF8" />
+                      <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#A5B4FC', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                        Apply to Your Venture
+                      </span>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                      {lesson.playbook.map((step, i) => (
-                        <div key={i} style={{
-                          display: 'flex',
-                          alignItems: 'flex-start',
-                          gap: '1rem',
-                          background: 'rgba(255, 255, 255, 0.03)',
-                          border: '1px solid rgba(255, 255, 255, 0.08)',
-                          borderRadius: '12px',
-                          padding: '1rem 1.2rem'
-                        }}>
-                          <div style={{
-                            width: '28px',
-                            height: '28px',
-                            borderRadius: '50%',
-                            background: 'linear-gradient(135deg, #6366F1, #8B5CF6)',
-                            color: '#fff',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '0.8rem',
-                            fontWeight: 900,
-                            flexShrink: 0
-                          }}>
-                            {step.step || i + 1}
-                          </div>
-                          <div>
-                            <h4 style={{ fontSize: '0.92rem', fontWeight: 800, color: '#fff', margin: '0 0 0.3rem' }}>
-                              {step.title}
-                            </h4>
-                            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>
-                              {step.description}
-                            </p>
-                          </div>
+                    <p style={{ fontSize: '0.78rem', color: '#CBD5E1', margin: 0, lineHeight: 1.45 }}>
+                      Practice with historical cases or complete the founder worksheet to operationalize this lesson.
+                    </p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('worksheet')}
+                        style={{
+                          display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.6rem 0.85rem',
+                          borderRadius: '8px', background: 'rgba(255, 255, 255, 0.06)', border: '1px solid rgba(255, 255, 255, 0.12)',
+                          color: '#FFFFFF', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer'
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <FileText size={13} color="#10B981" />
+                          <span>Founder Worksheet</span>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                        <ArrowRight size={13} color="#818CF8" />
+                      </button>
 
-                {/* Section: Anti-Patterns & Rookie Traps */}
-                {lesson.antiPatterns && lesson.antiPatterns.length > 0 && (
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.8rem' }}>
-                      <AlertTriangle size={18} color="#F43F5E" />
-                      <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff', margin: 0 }}>
-                        Common Anti-Patterns & Costly Mistakes
-                      </h3>
-                    </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
-                      {lesson.antiPatterns.map((ap, i) => (
-                        <div key={i} style={{
-                          background: 'rgba(244, 63, 94, 0.05)',
-                          border: '1px solid rgba(244, 63, 94, 0.2)',
-                          borderRadius: '14px',
-                          padding: '1.1rem 1.25rem',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: '0.5rem'
-                        }}>
-                          <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#F87171' }}>
-                            ⚠️ {ap.mistake}
-                          </div>
-                          <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
-                            <strong style={{ color: '#fff' }}>Why it fails:</strong> {ap.whyItFails}
-                          </div>
-                          <div style={{
-                            fontSize: '0.78rem',
-                            color: '#34D399',
-                            lineHeight: 1.45,
-                            background: 'rgba(16, 185, 129, 0.08)',
-                            padding: '0.5rem 0.75rem',
-                            borderRadius: '8px',
-                            border: '1px solid rgba(16, 185, 129, 0.2)',
-                            marginTop: '4px'
-                          }}>
-                            <strong>Pro Fix:</strong> {ap.proFix}
-                          </div>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('cases')}
+                        style={{
+                          display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.6rem 0.85rem',
+                          borderRadius: '8px', background: 'rgba(255, 255, 255, 0.06)', border: '1px solid rgba(255, 255, 255, 0.12)',
+                          color: '#FFFFFF', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer'
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <Briefcase size={13} color="#818CF8" />
+                          <span>Case Studies ({lesson.caseStudies?.length || 2})</span>
                         </div>
-                      ))}
+                        <ArrowRight size={13} color="#34D399" />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('quiz')}
+                        style={{
+                          display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.6rem 0.85rem',
+                          borderRadius: '8px', background: 'rgba(255, 255, 255, 0.06)', border: '1px solid rgba(255, 255, 255, 0.12)',
+                          color: '#FFFFFF', fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer'
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <HelpCircle size={13} color="#FBBF24" />
+                          <span>Knowledge Check Quiz</span>
+                        </div>
+                        <ArrowRight size={13} color="#FBBF24" />
+                      </button>
                     </div>
                   </div>
-                )}
+                </aside>
               </div>
             )}
 
             {/* TAB 2: REAL-WORLD CASE STUDIES */}
             {activeTab === 'cases' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.6rem', maxWidth: '1020px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.6rem', width: '100%' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.2rem' }}>
                   <Briefcase size={18} color="#818CF8" />
                   <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff', margin: 0 }}>
@@ -774,7 +1007,7 @@ export default function LessonReaderModal({
 
             {/* TAB 3: FOUNDER WORKSHEET */}
             {activeTab === 'worksheet' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', maxWidth: '860px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', width: '100%', maxWidth: '1100px', margin: '0 auto' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                   <div>
                     <div style={{ display: 'center', alignItems: 'center', gap: '8px' }}>
@@ -858,7 +1091,7 @@ export default function LessonReaderModal({
 
             {/* TAB 4: VIDEOS (PREMIUM FEATURE) */}
             {activeTab === 'videos' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', maxWidth: '920px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%', maxWidth: '1100px', margin: '0 auto' }}>
                 {!isSubscribed ? (
                   /* LOCKED PAYWALL STATE FOR UNSUBSCRIBED USERS */
                   <div style={{
@@ -1146,7 +1379,7 @@ export default function LessonReaderModal({
 
             {/* TAB 5: PDFS (PREMIUM FEATURE) */}
             {activeTab === 'pdfs' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', maxWidth: '920px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%', maxWidth: '1100px', margin: '0 auto' }}>
                 {!isSubscribed ? (
                   /* LOCKED PAYWALL STATE FOR UNSUBSCRIBED USERS */
                   <div style={{
@@ -1434,7 +1667,7 @@ export default function LessonReaderModal({
 
             {/* TAB 6: KNOWLEDGE CHECK QUIZ */}
             {activeTab === 'quiz' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.6rem', maxWidth: '860px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.6rem', width: '100%', maxWidth: '1050px', margin: '0 auto' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <HelpCircle size={18} color="#818CF8" />

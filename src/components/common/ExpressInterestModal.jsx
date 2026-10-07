@@ -6,7 +6,7 @@ import {
   ShieldCheck, HelpCircle, Lock, Zap
 } from 'lucide-react';
 
-const CHECK_OPTIONS = [10000, 25000, 50000, 100000, 250000];
+const CHECK_OPTIONS = [50000, 100000, 150000, 250000, 500000];
 
 export default function ExpressInterestModal({
   isOpen,
@@ -36,9 +36,11 @@ export default function ExpressInterestModal({
 
   if (!isOpen || !company) return null;
 
+  const minCheckRequired = company.minInvestment || 50000;
   const effectiveCheck = customCheck ? Number(customCheck) : checkSize;
+  const isBelowMin = effectiveCheck < minCheckRequired;
   const founderName = company.founderName || 'Founder';
-  const founderWhatsApp = company.founderWhatsApp || '+1 (555) 234-5678';
+  const founderWhatsApp = company.founderWhatsApp || '+91 98201 44521';
   const founderEmail = company.founderEmail || `${company.ticker?.toLowerCase() || 'founder'}@startupiq.io`;
 
   // WhatsApp deep link formatting
@@ -151,7 +153,7 @@ export default function ExpressInterestModal({
               fontWeight: 800,
               marginBottom: '5px'
             }}>
-              <DollarSign size={12} /> DIRECT INVESTOR TERM SHEET & INQUIRY
+              <DollarSign size={12} /> EXPRESS INTEREST & SOFT COMMITMENT
             </span>
             <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#fff' }}>
               Express Interest in {company.companyName}
@@ -257,13 +259,18 @@ export default function ExpressInterestModal({
                   width: '100%',
                   padding: '0.6rem 0.8rem',
                   background: 'rgba(15, 23, 42, 0.8)',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  border: isBelowMin ? '1px solid #EF4444' : '1px solid rgba(255, 255, 255, 0.12)',
                   borderRadius: '8px',
                   color: '#fff',
                   fontSize: '0.85rem',
                   outline: 'none'
                 }}
               />
+              {isBelowMin && (
+                <div style={{ color: '#F87171', fontSize: '0.74rem', marginTop: '5px', fontWeight: 600 }}>
+                  ⚠️ Minimum check size for this syndicate round is ${minCheckRequired.toLocaleString()}.
+                </div>
+              )}
             </div>
 
             {/* Syndicate / Investor Role */}
@@ -417,25 +424,37 @@ export default function ExpressInterestModal({
               </button>
               <button
                 type="submit"
-                disabled={submitting}
+                disabled={submitting || isBelowMin}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '7px',
                   padding: '0.7rem 1.4rem',
                   borderRadius: '8px',
-                  background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-                  color: '#fff',
+                  background: isBelowMin ? 'rgba(255, 255, 255, 0.1)' : 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                  color: isBelowMin ? '#64748B' : '#fff',
                   border: 'none',
                   fontWeight: 800,
                   fontSize: '0.85rem',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.35)'
+                  cursor: isBelowMin ? 'not-allowed' : 'pointer',
+                  boxShadow: isBelowMin ? 'none' : '0 4px 14px rgba(16, 185, 129, 0.35)'
                 }}
               >
                 <Send size={15} />
                 Submit ${effectiveCheck.toLocaleString()} Soft Commitment
               </button>
+            </div>
+
+            {/* Regulatory Disclaimer Footnote */}
+            <div style={{
+              fontSize: '0.7rem',
+              color: '#94A3B8',
+              lineHeight: 1.4,
+              textAlign: 'center',
+              borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+              paddingTop: '0.6rem'
+            }}>
+              * Non-binding soft commitment. Final syndicate allocation terms, subscription agreements, and accredited investor verification executed separately.
             </div>
           </form>
         ) : (

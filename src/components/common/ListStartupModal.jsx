@@ -86,7 +86,7 @@ export default function ListStartupModal({
   const defaultFounderName = activeCompany?.founderName || (activeCompany?.founders && activeCompany?.founders[0]?.name) || currentUser?.fullName || 'Zeeshan Khan';
   const defaultFounderRole = (activeCompany?.founders && activeCompany?.founders[0]?.role) || 'Co-Founder & CEO';
   const defaultFounderEmail = activeCompany?.businessEmail || currentUser?.email || 'founder@teledu.io';
-  const defaultFounderPhone = activeCompany?.businessPhone || currentUser?.phone || '+1 (555) 234-5678';
+  const defaultFounderPhone = activeCompany?.businessPhone || currentUser?.phone || '+91 98201 44521';
   const defaultFounderLinkedIn = activeCompany?.founderLinkedIn || 'https://linkedin.com/in/founder-teledu';
 
   // 11-Item Investment Checklist Form State
@@ -103,7 +103,7 @@ export default function ListStartupModal({
     // Item 2: Pitch Deck
     pitchDeckUrl: '',
     pitchDeckFileName: 'Series A Pitch Deck presentation.pdf',
-    pitchDeckFileSize: '4.2 MB',
+    pitchDeckFileSize: '2.4 MB',
     pitchDeckUploaded: true,
 
     // Item 3: Business Model
@@ -179,18 +179,19 @@ export default function ListStartupModal({
   if (!isOpen) return null;
 
   // Calculate Investment Checklist Preparedness (11 points)
+  const hasStartedProfile = Boolean(formData.companyName.trim() && formData.ticker.trim());
   const checklistStatus = {
     companyProfile: Boolean(formData.companyName.trim() && formData.ticker.trim() && formData.tagline.trim()),
-    pitchDeck: Boolean(formData.pitchDeckUploaded || formData.pitchDeckUrl.trim()),
-    businessModel: Boolean(formData.businessModelType && formData.grossMargin > 0),
-    financialStatements: Boolean(formData.currentRevenue > 0 && formData.financialStatementsFileName),
-    financialProjections: Boolean(formData.revenueGrowthRate > 0 && formData.projectedArr3Year > 0),
-    capTable: Boolean(formData.foundersEquityPercent > 0 && formData.capTableFileName),
-    fundingAndUseOfFunds: Boolean(formData.fundingRequired > 0 && formData.equityOffered > 0),
-    companyDocuments: Boolean(formData.cin && formData.companyDocsUploaded),
-    founderKyc: Boolean(formData.founderName.trim() && (formData.founderWhatsApp.trim() || formData.founderEmail.trim())),
-    legalAndTaxDocs: Boolean(formData.taxComplianceStatus && formData.legalTaxDocsUploaded),
-    contractsAndIpDocs: Boolean(formData.ipPatentsSummary && formData.contractsIpUploaded)
+    pitchDeck: Boolean(hasStartedProfile && (formData.pitchDeckUploaded || formData.pitchDeckUrl.trim())),
+    businessModel: Boolean(hasStartedProfile && formData.businessModelType && formData.grossMargin > 0),
+    financialStatements: Boolean(hasStartedProfile && formData.currentRevenue > 0 && formData.financialStatementsFileName),
+    financialProjections: Boolean(hasStartedProfile && formData.revenueGrowthRate > 0 && formData.projectedArr3Year > 0),
+    capTable: Boolean(hasStartedProfile && formData.foundersEquityPercent > 0 && formData.capTableFileName),
+    fundingAndUseOfFunds: Boolean(hasStartedProfile && formData.fundingRequired > 0 && formData.equityOffered > 0),
+    companyDocuments: Boolean(hasStartedProfile && formData.cin && formData.companyDocsUploaded),
+    founderKyc: Boolean(hasStartedProfile && formData.founderName.trim() && (formData.founderWhatsApp.trim() || formData.founderEmail.trim())),
+    legalAndTaxDocs: Boolean(hasStartedProfile && formData.taxComplianceStatus && formData.legalTaxDocsUploaded),
+    contractsAndIpDocs: Boolean(hasStartedProfile && formData.ipPatentsSummary && formData.contractsIpUploaded)
   };
 
   const completedCount = Object.values(checklistStatus).filter(Boolean).length;
@@ -200,23 +201,23 @@ export default function ListStartupModal({
     if (!activeCompany) return;
     setFormData(prev => ({
       ...prev,
-      companyName: activeCompany.companyName || activeCompany.name || prev.companyName || 'AlphaTech Solutions',
-      ticker: (activeCompany.ticker || prev.ticker || 'ALPH').toUpperCase(),
-      sector: activeCompany.sector || prev.sector,
-      stage: activeCompany.stage || prev.stage,
-      tagline: activeCompany.tagline || activeCompany.productsServices || `${activeCompany.companyName || 'Next-gen'} high-growth SaaS platform.`,
-      fundingRequired: Number(activeCompany.fundingRequired) || prev.fundingRequired,
-      valuation: Number(activeCompany.valuation || activeCompany.impliedValuation) || prev.valuation,
-      equityOffered: Number(activeCompany.equityOffered) || prev.equityOffered,
-      minInvestment: Number(activeCompany.minInvestment) || prev.minInvestment,
-      currentRevenue: Number(activeCompany.currentRevenue || (activeCompany.monthlyRevenue ? activeCompany.monthlyRevenue * 12 : 336000)),
-      revenueGrowthRate: Number(activeCompany.growthRate || activeCompany.revenueGrowthRate) || prev.revenueGrowthRate,
+      companyName: activeCompany.companyName || activeCompany.name || prev.companyName || 'Teledu Learning',
+      ticker: (activeCompany.ticker || prev.ticker || 'TELEDU').toUpperCase(),
+      sector: activeCompany.sector || prev.sector || 'EdTech & Education',
+      stage: activeCompany.stage || prev.stage || 'Seed Round',
+      tagline: activeCompany.tagline || activeCompany.productsServices || `${activeCompany.companyName || 'Teledu Learning'} vertical LMS and AI examination platform.`,
+      fundingRequired: Number(activeCompany.fundingRequired) || prev.fundingRequired || 500000,
+      valuation: Number(activeCompany.valuation || activeCompany.impliedValuation) || prev.valuation || 5000000,
+      equityOffered: Number(activeCompany.equityOffered) || prev.equityOffered || 10,
+      minInvestment: Number(activeCompany.minInvestment) || prev.minInvestment || 50000,
+      currentRevenue: Number(activeCompany.currentRevenue || (activeCompany.monthlyRevenue ? activeCompany.monthlyRevenue * 12 : 342000)),
+      revenueGrowthRate: Number(activeCompany.growthRate || activeCompany.revenueGrowthRate) || prev.revenueGrowthRate || 68,
       founderName: activeCompany.founderName || (activeCompany.founders && activeCompany.founders[0]?.name) || prev.founderName || 'Zeeshan Khan',
       founderRole: (activeCompany.founders && activeCompany.founders[0]?.role) || prev.founderRole || 'Co-Founder & CEO',
-      founderEmail: activeCompany.businessEmail || prev.founderEmail || 'founder@teledu.io',
-      founderWhatsApp: activeCompany.businessPhone || prev.founderWhatsApp || '+1 (555) 234-5678',
-      founderLinkedIn: activeCompany.founderLinkedIn || 'https://linkedin.com/in/founder-teledu',
-      pitchDeckUrl: activeCompany.pitchDeckUrl || 'https://teledu.io/pitch.pdf'
+      founderEmail: activeCompany.businessEmail || prev.founderEmail || 'zeeshan@teledu.io',
+      founderWhatsApp: activeCompany.businessPhone || prev.founderWhatsApp || '+91 98201 44521',
+      founderLinkedIn: activeCompany.founderLinkedIn || 'https://linkedin.com/in/zeeshan-teledu',
+      pitchDeckUrl: activeCompany.pitchDeckUrl || 'https://teledu.io/deck.pdf'
     }));
   };
 
@@ -351,7 +352,7 @@ export default function ListStartupModal({
 
       const finalFounderName = formData.founderName.trim() || defaultFounderName || 'Founder & CEO';
       const finalFounderEmail = formData.founderEmail.trim() || defaultFounderEmail || `founder@${cleanTicker.toLowerCase()}.io`;
-      const finalFounderWhatsApp = formData.founderWhatsApp.trim() || defaultFounderPhone || '+1 (555) 234-5678';
+      const finalFounderWhatsApp = formData.founderWhatsApp.trim() || defaultFounderPhone || '+91 98201 44521';
       const finalFounderRole = formData.founderRole.trim() || defaultFounderRole || 'Co-Founder & CEO';
 
       const newDealCompany = {
@@ -376,7 +377,7 @@ export default function ListStartupModal({
         currentSharePrice: askPrice,
         fairSharePrice: fairPrice,
         priceUpsidePercent: 25.0,
-        recommendation: 'STRONG BUY',
+        recommendation: 'HIGH CONVICTION',
         recommendationColorHex: '#10B981',
         tagline: formData.tagline.trim(),
         founderName: finalFounderName,
@@ -642,7 +643,9 @@ export default function ListStartupModal({
                 padding: '0.15rem 0.45rem',
                 borderRadius: '4px',
                 fontWeight: 800,
-                fontSize: '0.7rem'
+                fontSize: '0.7rem',
+                whiteSpace: 'nowrap',
+                flexShrink: 0
               }}>
                 WHY?
               </span>

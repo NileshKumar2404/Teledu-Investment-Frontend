@@ -208,7 +208,7 @@ export default function App() {
             const role = user.onboarding.assignedWorkspace || user.role;
             setEngineMode(role);
             setActiveTab(user.onboarding.assignedTab);
-            if (user.onboarding.routingReason) {
+            if (user.onboarding.routingReason && localStorage.getItem('siq_dismissed_routing_toast') !== 'true') {
               setWelcomeToast({
                 text: user.onboarding.routingReason,
                 role,
@@ -376,7 +376,7 @@ export default function App() {
       case 'curriculum':
         return <LearningModule company={company} currentUser={currentUser} onOpenPricing={() => setIsPricingOpen(true)} />;
       case 'terms':
-        return <TermsLibraryModule onNavigateToPrompt={() => setIsAIOpen(true)} />;
+        return <TermsLibraryModule onNavigateToPrompt={() => setIsAIOpen(true)} onNavigate={setActiveTab} />;
       case 'founder-assessment':
       case 'founderAssessment':
         return (
@@ -594,7 +594,10 @@ export default function App() {
 
             <button
               type="button"
-              onClick={() => setWelcomeToast(null)}
+              onClick={() => {
+                localStorage.setItem('siq_dismissed_routing_toast', 'true');
+                setWelcomeToast(null);
+              }}
               style={{
                 background: 'none',
                 border: 'none',

@@ -11,114 +11,114 @@ import {
 import { api } from '../../api/client';
 
 // ==============================================================
-// DEFAULT / DEMO PROFILE: ALPHATECH SOLUTIONS (from Mobile UI)
+// DEFAULT / DEMO PROFILE: TELEDU LEARNING
 // ==============================================================
 export const ALPHATECH_DEMO_DATA = {
   // Step 1: Company Identity
-  companyName: 'AlphaTech Solutions',
-  ticker: 'ALPH',
-  sector: 'Enterprise AI & Cloud',
-  industry: 'IT & Software',
+  companyName: 'Teledu Learning',
+  ticker: 'TELEDU',
+  sector: 'EdTech & Learning Intelligence',
+  industry: 'Education & Enterprise Upskilling',
   legalStructure: 'Private Limited',
-  foundingYear: 2020,
+  foundingYear: 2022,
   city: 'Bangalore',
   country: 'India',
-  website: 'https://alphatech.ai',
-  businessEmail: 'contact@alphatech.ai',
-  businessPhone: '+91 80 4123 4567',
+  website: 'https://teledu.io',
+  businessEmail: 'founders@teledu.io',
+  businessPhone: '+91 98201 44521',
 
   // Step 2: KYC & Statutory Information
-  gstin: '29AAAAA0000A1Z5',
-  pan: 'ABCDE1234F',
-  cin: 'U72200KA2020PTC123456',
-  registeredOfficeAddress: 'Plot 42, Outer Ring Road, Tech Corridor, Bangalore, Karnataka 560103',
+  gstin: '29AABCT1234F1Z8',
+  pan: 'AABCT1234F',
+  cin: 'U72900KA2022PTC158941',
+  registeredOfficeAddress: 'BHIVE Workspace, 4th Floor, Indiranagar, Bangalore, Karnataka 560038',
   taxStatus: 'Compliant & Active',
 
   // Step 3: Founders & Team
   founders: [
-    { name: 'John Doe', role: 'CEO & Co-Founder', equity: 50, experience: '12+ yrs AI & SaaS', linkedin: 'https://linkedin.com/in/johndoe' },
-    { name: 'Jane Doe', role: 'CTO & Co-Founder', equity: 50, experience: '10+ yrs Cloud Architecture', linkedin: 'https://linkedin.com/in/janedoe' },
+    { name: 'Zeeshan Khan', role: 'CEO & Co-Founder', equity: 45, experience: '8+ yrs EdTech & AI Product', linkedin: 'https://linkedin.com/in/zeeshankhan-teledu' },
+    { name: 'Maryam Akhtar', role: 'CTO & Co-Founder', equity: 35, experience: '7+ yrs Scaled Learning Engines & NLP', linkedin: 'https://linkedin.com/in/maryamakhtar-teledu' },
   ],
-  headcount: 10,
-  businessExperience: '5+ years in Enterprise AI & Cloud Computing',
-  keyAdvisors: 'Dr. R. Raman (Former VP AI at Infosys), Maya Chen (Partner at Ascent Seed Fund)',
+  headcount: 14,
+  businessExperience: '5+ years in Scaled Learning Intelligence & B2B EdTech',
+  keyAdvisors: 'Dr. Ramesh Raman (Former Academic Director, IISc), Victoria Sterling (Angel Partner)',
 
   // Step 4: Business Profile
-  productsServices: 'AI-driven automated document processing and cloud infrastructure intelligence for enterprise banking and healthcare.',
-  operationsDescription: 'SaaS platform hosted across AWS & Azure with enterprise on-premise hybrid deployments. Continuous deployment pipeline with 99.98% SLA.',
-  targetAudience: 'Mid-to-Large scale FinTechs, Enterprise Banks, and InsurTech enterprises needing automated compliance and unstructured data processing.',
-  businessModel: 'B2B SaaS / Subscription',
-  coreMoat: 'Proprietary multi-modal LLM pipeline with domain-specific fine-tuning models and 4 pending patents on data sanitization.',
+  productsServices: 'AI-powered adaptive curriculum personalization and cognitive diagnostic assessment engine for universities and enterprise learning.',
+  operationsDescription: 'Cloud-native multi-tenant platform hosted on AWS Mumbai with offline-first campus sync capabilities. 99.95% uptime SLA.',
+  targetAudience: 'Engineering Universities, Higher Education Colleges, and Enterprise IT Workforce academies across India & Southeast Asia.',
+  businessModel: 'B2B Institutional SaaS + Student Per-Seat Annual Licensing',
+  coreMoat: 'Proprietary adaptive cognitive diagnostic engine with 40,000+ syllabus mastery maps and accredited curriculum alignment models.',
 
-  // Step 5: Financial & Valuation (in millions for large-scale, or raw dollars)
-  currentRevenue: 124.0, // $124.0M
-  monthlyExpenses: 75.0,  // $75.0M
-  assets: 210.0,          // $210.0M
-  liabilities: 45.0,      // $45.0M
-  cashFlow: 32.0,         // $32.0M
-  revenueGrowthRate: 22.5, // 22.5%
-  ebitdaMargin: 24.0,     // 24.0%
-  grossMargin: 65.0,      // 65.0%
-  cashBalance: 46.0,      // $46.0M
-  totalDebt: 18.0,        // $18.0M
-  discountRate: 10.5,     // WACC 10.5%
+  // Step 5: Financial & Valuation (normalized to institutional Seed round)
+  currentRevenue: 0.342,  // $342,000 Annualized ($28.5k MRR)
+  monthlyExpenses: 0.018, // $18,000 / month gross burn
+  assets: 0.85,           // $850,000
+  liabilities: 0.06,      // $60,000
+  cashFlow: 0.126,        // $126,000 Net Annualized Free Cash Flow
+  revenueGrowthRate: 68.0,// 68.0% YoY
+  ebitdaMargin: 36.8,     // 36.8%
+  grossMargin: 78.0,      // 78.0%
+  cashBalance: 0.24,      // $240,000 cash in bank
+  totalDebt: 0.0,         // $0 Debt (Equity financed)
+  discountRate: 10.0,     // WACC 10.0%
   terminalGrowthRate: 3.0,// 3.0%
-  currentSharePrice: 52.0,// $52.0
-  sharesOutstanding: 12.5,// 12.5M
+  currentSharePrice: 50.0,// $50.00
+  sharesOutstanding: 0.1, // 100,000 shares (0.1M)
 
-  // Step 6: Funding & Risk
+  // Step 6: Funding & Risk (Seed Round)
   fundingRequired: 500000,
   equityOffered: 10.0,
   impliedValuation: 5000000,
-  minInvestment: 100000,
-  maxInvestment: 1000000,
+  minInvestment: 50000,
+  maxInvestment: 500000,
   valuationSource: 'FOUNDER_DECLARED',
-  valuationStatus: 'UNVERIFIED',
-  financialRisk: 25,
-  marketRisk: 35,
-  operationalRisk: 30,
-  regulatoryRisk: 85,
-  technologyRisk: 15,
+  valuationStatus: 'VERIFIED',
+  financialRisk: 18,
+  marketRisk: 22,
+  operationalRisk: 20,
+  regulatoryRisk: 15,
+  technologyRisk: 16,
 
   // Step 7: Strategic Analysis
   swot: {
     strengths: [
-      'Proprietary LLM Pipeline with domain fine-tuning',
-      'High Net Dollar Retention (128%)',
-      'Strong Enterprise Sales Force & Fortune 500 pilots'
+      'Proprietary Adaptive Diagnostic Engine with 40k+ learning graphs',
+      'High Net Retention Rate (124% across university accounts)',
+      'Direct contracts with 18 higher education institutions'
     ],
     weaknesses: [
-      'High Customer Acquisition Cost in early enterprise sales',
-      'Heavy dependence on AWS/Azure GPU cloud infrastructure'
+      'Institutional procurement cycles require 45–60 days lead time',
+      'Currently expanding localized regional language support'
     ],
     opportunities: [
-      'Expansion into APAC Enterprise Banking Market',
-      'Vertical SaaS Integrations for Healthcare Claims Processing',
-      'OEM partnerships with Core Banking software vendors'
+      'Expansion into GCC and Southeast Asian engineering universities',
+      'Enterprise Corporate L&D integrations for junior engineer onboarding',
+      'Accredited certification partnerships with global industry councils'
     ],
     threats: [
-      'Rapidly Evolving AI Regulations (EU AI Act & India DPDP)',
-      'Aggressive Big-Tech Hyperscaler commodity pricing'
+      'Legacy LMS vendors attempting shallow AI integrations',
+      'Shifting higher education regulatory guidelines'
     ]
   },
   pestle: {
-    political: 'Favorable digital sovereignty mandates in APAC; increasing regulatory audits.',
-    economic: 'Enterprise IT budgets leaning toward automated efficiency and cost-cutting software.',
-    social: 'Rapid workforce adoption of generative AI copilots in knowledge industries.',
-    technological: 'Exponential improvements in open-weight models reducing training costs.',
-    legal: 'Strict data privacy regulations (GDPR, DPDP Act) requiring local on-prem processing.',
-    environmental: 'High carbon footprint of GPU clusters prioritizing energy-efficient inferencing.'
+    political: 'Favorable National Education Policy (NEP) digital adoption mandates in India.',
+    economic: 'Rising student demand for job-ready technical skills and certified credentials.',
+    social: 'Broad acceptance of self-paced personalized digital learning tools.',
+    technological: 'Rapid advancements in foundational LLMs enabling granular pedagogical feedback.',
+    legal: 'Strict student data privacy protection and digital sovereignty standards.',
+    environmental: 'Zero-paper cloud examinations reducing university campus environmental footprint.'
   },
 
-  // Step 8: Document Vault Baseline
+  // Step 8: Document Vault Baseline (all files under 3 MB limit)
   documents: [
-    { id: 'DOC-1', name: 'Pitch Deck presentation.pdf', type: 'PITCH_DECK', category: 'PITCH_DECK', size: '4.8 MB', date: '2026-09-15', status: 'VERIFIED', mimeType: 'application/pdf', notes: 'Series A Pitch Deck v4.2' },
-    { id: 'DOC-2', name: 'Audited Financial Statements (FY24-25).xlsx', type: 'BALANCE_SHEET', category: 'BALANCE_SHEET', size: '2.4 MB', date: '2026-08-30', status: 'VERIFIED', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', notes: 'Audited by Deloitte & Touche' },
-    { id: 'DOC-3', name: 'GST & Tax Registration Certificate.pdf', type: 'GST_CERTIFICATE', category: 'GST_CERTIFICATE', size: '820 KB', date: '2026-04-10', status: 'VERIFIED', mimeType: 'application/pdf', notes: 'Statutory GST Registration (29AAAAA0000A1Z5)' },
-    { id: 'DOC-4', name: 'Articles of Association (AOA).pdf', type: 'ARTICLES_OF_ASSOCIATION', category: 'ARTICLES_OF_ASSOCIATION', size: '1.6 MB', date: '2026-03-22', status: 'VERIFIED', mimeType: 'application/pdf', notes: 'MCA Corporate AOA Filings' },
-    { id: 'DOC-5', name: 'Certificate of Incorporation (COI).pdf', type: 'CERTIFICATE_OF_INCORPORATION', category: 'CERTIFICATE_OF_INCORPORATION', size: '940 KB', date: '2020-07-14', status: 'VERIFIED', mimeType: 'application/pdf', notes: 'Government of India ROC Incorporation' },
-    { id: 'DOC-6', name: 'Cap Table & Equity Ledger.csv', type: 'CAP_TABLE', category: 'CAP_TABLE', size: '450 KB', date: '2026-09-01', status: 'UPLOADED', mimeType: 'text/csv', notes: 'Fully Diluted Shares & ESOP Pool' },
-    { id: 'DOC-7', name: 'Bank Solvency & Proof of Reserves.pdf', type: 'BANK_STATEMENT', category: 'BANK_STATEMENT', size: '1.1 MB', date: '2026-09-10', status: 'UNDER_REVIEW', mimeType: 'application/pdf', notes: 'HDFC Escrow & Operational Account' }
+    { id: 'DOC-1', name: 'Teledu Seed Pitch Deck presentation.pdf', type: 'PITCH_DECK', category: 'PITCH_DECK', size: '2.4 MB', date: '2026-09-15', status: 'VERIFIED', mimeType: 'application/pdf', notes: 'Seed Pitch Deck v2.4 (Teledu Learning)' },
+    { id: 'DOC-2', name: 'Audited Financial Statements (FY25-26).xlsx', type: 'BALANCE_SHEET', category: 'BALANCE_SHEET', size: '1.8 MB', date: '2026-08-30', status: 'VERIFIED', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', notes: 'Audited Statements (KPMG affiliate)' },
+    { id: 'DOC-3', name: 'GST & Tax Registration Certificate.pdf', type: 'GST_CERTIFICATE', category: 'GST_CERTIFICATE', size: '640 KB', date: '2026-04-10', status: 'VERIFIED', mimeType: 'application/pdf', notes: 'Statutory GST Registration (29AABCT1234F1Z8)' },
+    { id: 'DOC-4', name: 'Articles of Association (AOA).pdf', type: 'ARTICLES_OF_ASSOCIATION', category: 'ARTICLES_OF_ASSOCIATION', size: '1.2 MB', date: '2026-03-22', status: 'VERIFIED', mimeType: 'application/pdf', notes: 'MCA Corporate AOA Filings' },
+    { id: 'DOC-5', name: 'Certificate of Incorporation (COI).pdf', type: 'CERTIFICATE_OF_INCORPORATION', category: 'CERTIFICATE_OF_INCORPORATION', size: '720 KB', date: '2022-07-14', status: 'VERIFIED', mimeType: 'application/pdf', notes: 'Government of India ROC Incorporation' },
+    { id: 'DOC-6', name: 'Cap Table & Equity Ledger.csv', type: 'CAP_TABLE', category: 'CAP_TABLE', size: '320 KB', date: '2026-09-01', status: 'VERIFIED', mimeType: 'text/csv', notes: '100,000 Shares Fully Diluted & ESOP Pool' },
+    { id: 'DOC-7', name: 'Bank Solvency & Proof of Reserves.pdf', type: 'BANK_STATEMENT', category: 'BANK_STATEMENT', size: '980 KB', date: '2026-09-10', status: 'VERIFIED', mimeType: 'application/pdf', notes: 'HDFC Escrow & Operational Account' }
   ]
 };
 

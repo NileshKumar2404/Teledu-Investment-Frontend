@@ -90,13 +90,13 @@ export default function FounderConnectModal({
       if (saved) {
         setMessages(JSON.parse(saved));
       } else {
-        // Initial founder welcome greeting
+        // Initial AI Diligence Twin welcome greeting
         const defaultMessages = [
           {
             id: 'm1',
             sender: 'founder',
-            senderName: founderName,
-            text: `Hello ${investorName}! Thank you for reviewing ${company.companyName} in the Deal Room. We are currently raising our $${(company.fundingRequired || 500000).toLocaleString()} ${company.stage || 'Seed Round'} (${company.equityOffered || 10}% equity at a $${((company.valuation || 5000000) / 1000000).toFixed(1)}M valuation). What questions can I answer on our unit economics, CAC, or growth roadmap?`,
+            senderName: isAITwinMode ? 'Teledu AI Diligence Twin (Teledu Knowledge Base)' : founderName,
+            text: `Hello ${investorName}! This is the Teledu AI Diligence Twin (automated intelligence assistant trained on verified data room documents for ${company.companyName}). We are raising our $${(company.fundingRequired || 500000).toLocaleString()} ${company.stage || 'Seed Round'} (${company.equityOffered || 10}% equity at a $${((company.valuation || 5000000) / 1000000).toFixed(1)}M valuation). What questions can I answer on our unit economics, CAC payback, or growth roadmap?`,
             timestamp: 'Just now'
           }
         ];
@@ -405,7 +405,7 @@ export default function FounderConnectModal({
       const founderMsg = {
         id: `fnd_${Date.now()}`,
         sender: 'founder',
-        senderName: `${founderName} ${isAITwinMode ? '(AI Founder Twin)' : ''}`,
+        senderName: isAITwinMode ? 'Teledu AI Diligence Twin (Teledu Knowledge Base)' : founderName,
         text: founderReplyText,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
@@ -627,7 +627,7 @@ export default function FounderConnectModal({
                 }}
               >
                 <Bot size={13} color={isAITwinMode ? '#818CF8' : '#64748B'} />
-                <span>AI Founder Twin: {isAITwinMode ? 'ON (Instant Q&A)' : 'OFF'}</span>
+                <span>AI Diligence Twin: {isAITwinMode ? 'ON (Data Room Trained)' : 'OFF'}</span>
               </div>
             )}
           </div>
@@ -688,6 +688,23 @@ export default function FounderConnectModal({
           {/* ================= TAB 1: DIRECT DEAL CHAT ================= */}
           {activeTab === 'chat' && (
             <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: '400px' }}>
+              {/* AI Diligence Notice Banner */}
+              <div style={{
+                padding: '0.65rem 1.6rem',
+                background: 'rgba(99, 102, 241, 0.08)',
+                borderBottom: '1px solid rgba(99, 102, 241, 0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '0.74rem',
+                color: '#C7D2FE'
+              }}>
+                <Sparkles size={13} color="#818CF8" style={{ flexShrink: 0 }} />
+                <span>
+                  <strong>Automated AI Diligence Twin:</strong> Answers generated based on verified virtual data room documents for {company.companyName}. For binding allocations, schedule a direct diligence call.
+                </span>
+              </div>
+
               {/* Messages Stream */}
               <div style={{ flex: 1, padding: '1.25rem 1.6rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
                 {messages.map((m) => {
@@ -731,14 +748,22 @@ export default function FounderConnectModal({
                       transition={{ repeat: Infinity, duration: 1 }}
                       style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10B981' }}
                     />
-                    <span>{founderName} {isAITwinMode ? '(AI Twin)' : ''} is reviewing metrics and drafting response...</span>
+                    <span>{isAITwinMode ? 'Teledu AI Diligence Twin' : founderName} is reviewing metrics and drafting response...</span>
                   </div>
                 )}
                 <div ref={messagesEndRef} />
               </div>
 
               {/* Quick Prompt Chips */}
-              <div style={{ padding: '0.5rem 1.6rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)', display: 'flex', gap: '0.5rem', overflowX: 'auto', background: 'rgba(255, 255, 255, 0.015)' }}>
+              <div style={{
+                padding: '0.6rem 1.6rem',
+                borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+                display: 'flex',
+                gap: '0.5rem',
+                flexWrap: 'wrap',
+                alignItems: 'center',
+                background: 'rgba(255, 255, 255, 0.015)'
+              }}>
                 {[
                   `Can you explain your customer CAC and payback period?`,
                   `What are the liquidation preferences on this round?`,
@@ -750,13 +775,13 @@ export default function FounderConnectModal({
                     type="button"
                     onClick={() => handleSendMessage(chip)}
                     style={{
-                      padding: '0.3rem 0.75rem',
+                      padding: '0.35rem 0.75rem',
                       borderRadius: '9999px',
                       background: 'rgba(255, 255, 255, 0.04)',
                       border: '1px solid rgba(255, 255, 255, 0.09)',
                       color: '#CBD5E1',
                       fontSize: '0.72rem',
-                      whiteSpace: 'nowrap',
+                      whiteSpace: 'normal',
                       cursor: 'pointer',
                       transition: 'all 0.15s ease'
                     }}

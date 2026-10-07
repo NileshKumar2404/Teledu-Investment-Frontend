@@ -187,6 +187,31 @@ export default function ActionPlanModule({ company, onUpdateCompany }) {
         </div>
       </div>
 
+      {/* Diagnostic Rationale Callout Banner */}
+      <div style={{
+        padding: '0.9rem 1.4rem',
+        borderRadius: 'var(--radius-lg)',
+        background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(16, 185, 129, 0.08) 100%)',
+        border: '1px solid rgba(99, 102, 241, 0.3)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '0.8rem'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Sparkles size={16} color="#818CF8" style={{ flexShrink: 0 }} />
+          <div>
+            <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#A5B4FC', letterSpacing: '0.03em', textTransform: 'uppercase' }}>
+              Diagnostic Execution Rationale • {company?.companyName || 'Teledu Learning'}
+            </div>
+            <div style={{ fontSize: '0.85rem', color: '#E2E8F0', marginTop: '2px', lineHeight: 1.4 }}>
+              Tasks generated directly from Teledu Learning's unit economics audit: LTV:CAC is institutional-grade at 10.0x ($1,200 LTV vs $120 CAC) with +$10,500/mo net operating cash flow. Milestones focus on marketing channel payback discipline and preparation for institutional Seed closing ($500k target).
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Filter Tabs Bar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255, 255, 255, 0.03)', padding: '0.3rem', borderRadius: '0.75rem', border: '1px solid rgba(255, 255, 255, 0.07)' }}>

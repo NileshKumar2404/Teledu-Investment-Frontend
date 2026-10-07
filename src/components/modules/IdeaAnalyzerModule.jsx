@@ -5,16 +5,16 @@ import GaugeRing from '../common/GaugeRing';
 
 export default function IdeaAnalyzerModule({ company }) {
   const [formData, setFormData] = useState({
-    ideaDescription: "An all-in-one AI operations intelligence OS for early-stage founders to track unit economics and streamline GTM execution.",
-    problemStatement: "Founders spend hundreds of hours wrestling with messy spreadsheets, guessing customer acquisition costs, and missing vital cash runway warnings.",
-    targetCustomer: "Pre-seed and Series A tech founders, solopreneurs, and venture studios globally.",
-    solutionDescription: "A unified dashboard syncing unit economics, 12-month financial forecasting, Strategyzer hypothesis testing, and automated 30-day action plans.",
-    businessModel: "Subscription B2B SaaS with tiered seats for founders and investors.",
-    revenueModel: "$49/month per founder seat or $199/month for venture studio portfolios.",
-    competitors: "Status quo Excel spreadsheets, fragmented Notion templates, and expensive enterprise ERPs.",
-    differentiation: "Pre-built cause-and-effect metric graph, automated health benchmark scoring, and built-in AI prompt engine.",
-    scalabilityPlan: "Pure cloud multi-tenant architecture with zero manual consulting overhead.",
-    timingRationale: "AI automation allows small teams to run institutional-grade financial analysis without hiring a full CFO."
+    ideaDescription: "AI-driven vertical learning management system (LMS) tailored for private coaching institutes, test prep academies, and tuition centres.",
+    problemStatement: "Coaching institutes spend 40+ hours per week manually formatting test papers, evaluating handwritten answers, and tracking fees with fragmented WhatsApp groups.",
+    targetCustomer: "Private coaching centres, competitive exam preparation institutes (JEE/NEET/UPSC), and tuition academies with 50–500 active students.",
+    solutionDescription: "A unified mobile-first operating system offering automated AI question paper generation, handwritten test scanning, live parent progress updates, and automated fee collections.",
+    businessModel: "B2B SaaS annual subscription per academy branch plus 8% marketplace revenue on premium mock test series.",
+    revenueModel: "$120/month base SaaS subscription per branch + $2.50/student/year platform fee.",
+    competitors: "Status quo paper test printouts, legacy desktop accounting software, and generic global LMS tools (Moodle, Google Classroom).",
+    differentiation: "Curriculum-aligned question bank generator, automated WhatsApp parent reports, and integrated offline-online exam grading.",
+    scalabilityPlan: "Multi-tenant cloud architecture with lightweight mobile client apps optimized for low-bandwidth environments.",
+    timingRationale: "Accelerating digitization of private coaching institutes in Tier-2/3 cities and surging parent demand for data-driven exam readiness tracking."
   });
 
   const [result, setResult] = useState(null);
@@ -44,13 +44,13 @@ export default function IdeaAnalyzerModule({ company }) {
             completeness: 82
           },
           strengths: [
-            "Clear, acute problem framing with high emotional and financial pain.",
-            "Strong software scalability leverage with zero manual consulting dependency.",
-            "Defensible differentiation via proprietary metric relationship graph."
+            "Clear, acute operational pain with high administrative time-waste for tuition owners.",
+            "Strong software gross margin leverage (78%) with high customer retention.",
+            "Defensible local curriculum moat and teacher workflow lock-in."
           ],
           risks: [
-            "Competitive alternatives include entrenched manual spreadsheets and Notion templates.",
-            "Needs early customer discovery interviews to confirm willingness to pay $49/mo."
+            "Coaching institutes can be price-sensitive in Tier-3 markets without localized sales reps.",
+            "Needs continuous alignment with updated state and national exam syllabi."
           ]
         });
       }

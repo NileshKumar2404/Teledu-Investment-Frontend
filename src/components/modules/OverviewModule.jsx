@@ -20,25 +20,27 @@ export default function OverviewModule({ onNavigate, company = {}, healthScore =
   const compIndustry = company.industry || 'Technology & Growth';
   const compStage = company.stage || 'Early revenue';
 
-  const mrr = Number(company.monthlyRevenue ?? company.mrr ?? company.currentRevenue ?? 28000);
+  const mrr = Number(company.monthlyRevenue ?? company.mrr ?? company.currentRevenue ?? 28500);
   const arr = mrr * 12;
   const burn = Number(company.monthlyBurn ?? company.monthlyExpenses ?? 18000);
-  const cash = Number(company.cashAvailable ?? company.cashBalance ?? 165000);
-  const runwayMonths = burn > 0 ? (cash / burn).toFixed(1) : '∞';
+  const cash = Number(company.cashAvailable ?? company.cashBalance ?? 240000);
+  const netBurn = burn - mrr;
+  const isCashFlowPositive = netBurn <= 0;
+  const runwayMonths = isCashFlowPositive ? 'Cash Positive' : (burn > 0 ? (cash / netBurn).toFixed(1) : '∞');
   const customers = Number(company.customers ?? 240);
   const cac = Number(company.cac ?? 120);
-  const ltv = Number(company.ltv ?? 560);
-  const ltvCacRatio = cac > 0 ? (ltv / cac).toFixed(2) : '4.66';
-  const grossMargin = Number(company.grossMargin ?? 72);
-  const growthRate = Number(company.growthRate ?? company.revenueGrowthRate ?? 14);
-  const ebitdaMargin = Number(company.ebitdaMargin ?? 24);
-  const currentHealth = healthScore !== undefined && healthScore !== null ? Number(healthScore).toFixed(1) : '84.5';
+  const ltv = Number(company.ltv ?? 1200);
+  const ltvCacRatio = cac > 0 ? (ltv / cac).toFixed(2) : '10.0';
+  const grossMargin = Number(company.grossMargin ?? 78);
+  const growthRate = Number(company.growthRate ?? company.revenueGrowthRate ?? 68);
+  const ebitdaMargin = Number(company.ebitdaMargin ?? 36.8);
+  const currentHealth = healthScore !== undefined && healthScore !== null ? Number(healthScore).toFixed(1) : (company.healthScore ? Number(company.healthScore).toFixed(1) : '82.0');
 
-  // DCF Valuation Multiple based on growth rate
-  const multiple = growthRate >= 30 ? 18 : growthRate >= 15 ? 14 : 10;
-  const dcfValuationNum = (arr * multiple) / 1000000;
-  const dcfFormatted = dcfValuationNum >= 1 ? `$${dcfValuationNum.toFixed(2)}M` : `$${Math.round(arr * multiple / 1000)}K`;
-  const fairSharePrice = (dcfValuationNum * 10).toFixed(2);
+  // Synchronized DCF Valuation ($5.0M Post-Money Baseline for Teledu)
+  const dcfValuationNum = company.valuation ? (Number(company.valuation) / 1000000) : (compTicker === 'TELEDU' ? 5.00 : ((arr * (growthRate >= 30 ? 18 : 14)) / 1000000));
+  const dcfFormatted = `$${dcfValuationNum.toFixed(2)}M`;
+  const totalShares = Number(company.sharesOutstanding || 100000);
+  const fairSharePrice = (company.sharePrice ?? ((dcfValuationNum * 1000000) / totalShares)).toFixed(2);
 
   // Form State for Quick Editing
   const [formData, setFormData] = useState({
@@ -262,31 +264,35 @@ export default function OverviewModule({ onNavigate, company = {}, healthScore =
             <span style={{ fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
               Cash Runway
             </span>
-            <span className={`badge-tag ${Number(runwayMonths) >= 12 ? 'badge-cyan' : Number(runwayMonths) >= 6 ? 'badge-indigo' : 'badge-amber'}`}>
-              {Number(runwayMonths) >= 12 ? 'CASH FLOW SAFE' : Number(runwayMonths) >= 6 ? 'HEALTHY RUNWAY' : 'ACTION REQUIRED'}
+            <span className={`badge-tag ${isCashFlowPositive ? 'badge-success' : Number(runwayMonths) >= 12 ? 'badge-cyan' : Number(runwayMonths) >= 6 ? 'badge-indigo' : 'badge-amber'}`}>
+              {isCashFlowPositive ? 'CASH FLOW POSITIVE' : Number(runwayMonths) >= 12 ? 'CASH FLOW SAFE' : 'ACTION REQUIRED'}
             </span>
           </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--text-primary)', marginTop: '4px' }} className="numeral-mono">
-            {runwayMonths} Months
+          <div style={{ fontSize: isCashFlowPositive ? '1.5rem' : '1.8rem', fontWeight: 900, color: 'var(--text-primary)', marginTop: '4px' }} className="numeral-mono">
+            {isCashFlowPositive ? 'Profitable / Net Positive' : `${runwayMonths} Months`}
           </div>
           <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-            Burn: <strong>${burn.toLocaleString()}/mo</strong> • Cash: <strong>${cash.toLocaleString()}</strong>
+            {isCashFlowPositive ? (
+              <span>MRR: <strong>${mrr.toLocaleString()}</strong> &gt; Burn: <strong>${burn.toLocaleString()}</strong> (+${Math.abs(netBurn).toLocaleString()}/mo)</span>
+            ) : (
+              <span>Net Burn: <strong>${netBurn.toLocaleString()}/mo</strong> • Cash: <strong>${cash.toLocaleString()}</strong></span>
+            )}
           </div>
         </div>
 
-        {/* Deal Recommendation Signal */}
+        {/* Diligence & Fundraise Readiness Signal */}
         <div className="glass-card" style={{ padding: '1.4rem', borderLeft: '4px solid #10B981', background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(13, 19, 36, 0.75))' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-muted)' }}>
             <span style={{ fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              Valuation Signal
+              Fundraise Readiness
             </span>
             <ShieldCheck size={16} color="#10B981" />
           </div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#10B981', marginTop: '4px' }}>
-            {Number(runwayMonths) >= 6 && Number(currentHealth) >= 70 ? 'BUY' : 'ACCUMULATE'}
+          <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#10B981', marginTop: '4px' }}>
+            {Number(currentHealth) >= 75 ? 'Institutional Ready' : 'Growth Optimization'}
           </div>
           <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-            Gordon Growth DCF Valuation Model
+            Seed Stage Score: {currentHealth}/100 • Platform Diligence
           </div>
         </div>
       </div>
@@ -613,6 +619,25 @@ export default function OverviewModule({ onNavigate, company = {}, healthScore =
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Regulatory & Institutional Diligence Disclaimer */}
+      <div style={{
+        margin: '1.2rem 0 0 0',
+        padding: '0.85rem 1.25rem',
+        borderRadius: 'var(--radius-lg)',
+        background: 'rgba(255, 255, 255, 0.02)',
+        border: '1px solid rgba(255, 255, 255, 0.06)',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.65rem',
+        fontSize: '0.74rem',
+        color: 'var(--text-muted)'
+      }}>
+        <ShieldCheck size={16} color="#34D399" style={{ flexShrink: 0 }} />
+        <span>
+          <strong>Diligence & Modeling Disclaimer:</strong> All metrics, valuations, and readiness scores represent internal corporate simulations and educational venture models. StartupIQ does not provide licensed broker-dealer services, financial advisory, or investment recommendations.
+        </span>
       </div>
 
       {/* ============================================================

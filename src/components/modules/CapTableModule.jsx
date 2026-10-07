@@ -144,7 +144,9 @@ export default function CapTableModule({ activeTicker = 'TELEDU' }) {
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#818CF8', marginTop: '4px' }}>
             ${((capData.postMoneyValuation || 5000000) / 1000000).toFixed(2)}M
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>Market capitalization</div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+            Pre-Money: ${(((capData.preMoneyValuation || 4500000)) / 1000000).toFixed(2)}M (Net New Capital: $500k)
+          </div>
         </div>
 
         <div style={{ padding: '1.5rem', borderRadius: 'var(--radius-lg)', background: 'var(--surface-card)', border: '1px solid var(--border-subtle)' }}>
@@ -152,7 +154,9 @@ export default function CapTableModule({ activeTicker = 'TELEDU' }) {
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#F59E0B', marginTop: '4px' }}>
             ${(capData.fundingRequired || 500000).toLocaleString()}
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>For {capData.equityOffered || 10}% equity stake</div>
+          <div style={{ fontSize: '0.75rem', color: '#10B981', fontWeight: 700, marginTop: '4px' }}>
+            For exactly {capData.equityOffered || 10.0}% equity stake (10,000 shares)
+          </div>
         </div>
       </div>
 

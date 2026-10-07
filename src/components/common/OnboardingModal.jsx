@@ -62,7 +62,7 @@ export default function OnboardingModal({
   // Deterministic routing calculation
   const calculateRoute = () => {
     const isBeginner = knowledge === 'beginner' || experience === '0-1' || objective === 'learn';
-    const isExperienced = knowledge === 'advanced' || experience === '3+' || 
+    const isExperienced = knowledge === 'advanced' || ['3-5', '5+', '3+'].includes(experience) || 
       (knowledge === 'intermediate' && experience === '1-3' && ['fundraise', 'cap_table', 'portfolio', 'waterfall', 'screener'].includes(objective));
 
     // 1. ADVISOR (Specific advisory track selected)
@@ -417,7 +417,8 @@ export default function OnboardingModal({
                     {[
                       { id: '0-1', label: '0 – 1 Years', desc: 'First-time founder, student, or aspiring investor exploring early venture concepts' },
                       { id: '1-3', label: '1 – 3 Years', desc: 'Early-stage operational experience, angel backing, or growth-stage involvement' },
-                      { id: '3+', label: '3 – 5+ Years', desc: 'Seasoned serial founder, institutional fund allocator, or executive board advisor' }
+                      { id: '3-5', label: '3 – 5 Years', desc: 'Growth-stage venture experience, fund manager, or multi-round founder' },
+                      { id: '5+', label: '5+ Years', desc: 'Seasoned serial founder, institutional partner, or executive board advisor' }
                     ].map(opt => {
                       const isSelected = experience === opt.id;
                       return (

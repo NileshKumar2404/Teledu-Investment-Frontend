@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FileText, Search, Sparkles, BookMarked, ArrowRight, X, Copy, Check } from 'lucide-react';
 import { STARTUP_TERMS, TERM_CATEGORIES } from '../../data/termsData';
 
-export default function TermsLibraryModule({ onNavigateToPrompt }) {
+export default function TermsLibraryModule({ onNavigateToPrompt, onNavigate }) {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [activeTerm, setActiveTerm] = useState(null);
@@ -140,6 +140,42 @@ export default function TermsLibraryModule({ onNavigateToPrompt }) {
                 </div>
               )}
 
+              {activeTerm.example && (
+                <div style={{
+                  background: 'rgba(16, 185, 129, 0.06)', border: '1px solid rgba(52, 211, 153, 0.25)',
+                  padding: '1rem 1.25rem', borderRadius: 'var(--radius-md)'
+                }}>
+                  <h4 style={{ fontSize: '0.78rem', color: '#34D399', textTransform: 'uppercase', marginBottom: '0.35rem' }}>Practical Worked Example</h4>
+                  <p style={{ fontSize: '0.88rem', color: '#E2E8F0', lineHeight: 1.5, margin: 0 }}>
+                    {activeTerm.example}
+                  </p>
+                </div>
+              )}
+
+              {activeTerm.founderTip && (
+                <div style={{
+                  background: 'rgba(245, 158, 11, 0.06)', border: '1px solid rgba(251, 191, 36, 0.25)',
+                  padding: '1rem 1.25rem', borderRadius: 'var(--radius-md)'
+                }}>
+                  <h4 style={{ fontSize: '0.78rem', color: '#FBBF24', textTransform: 'uppercase', marginBottom: '0.35rem' }}>Founder Insight & Pro-Tip</h4>
+                  <p style={{ fontSize: '0.88rem', color: '#E2E8F0', lineHeight: 1.5, margin: 0 }}>
+                    {activeTerm.founderTip}
+                  </p>
+                </div>
+              )}
+
+              {activeTerm.commonMistake && (
+                <div style={{
+                  background: 'rgba(239, 68, 68, 0.06)', border: '1px solid rgba(248, 113, 113, 0.25)',
+                  padding: '1rem 1.25rem', borderRadius: 'var(--radius-md)'
+                }}>
+                  <h4 style={{ fontSize: '0.78rem', color: '#F87171', textTransform: 'uppercase', marginBottom: '0.35rem' }}>Common Founder Pitfall</h4>
+                  <p style={{ fontSize: '0.88rem', color: '#E2E8F0', lineHeight: 1.5, margin: 0 }}>
+                    {activeTerm.commonMistake}
+                  </p>
+                </div>
+              )}
+
               {activeTerm.prompt && (
                 <div style={{
                   background: 'rgba(255, 255, 255, 0.03)', border: '1px solid var(--border-subtle)',
@@ -148,7 +184,7 @@ export default function TermsLibraryModule({ onNavigateToPrompt }) {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                     <h4 style={{ fontSize: '0.78rem', color: 'var(--amber)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       <Sparkles size={14} />
-                      AI Prompt Template
+                      AI Founder Prompt Template
                     </h4>
                     <button onClick={() => copyPrompt(activeTerm.prompt)} className="btn btn-ghost btn-sm" style={{ padding: '0.2rem 0.5rem' }}>
                       {copied ? <Check size={14} color="var(--success)" /> : <Copy size={14} />}
@@ -161,8 +197,21 @@ export default function TermsLibraryModule({ onNavigateToPrompt }) {
                 </div>
               )}
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
-                <button onClick={() => setActiveTerm(null)} className="btn btn-secondary">Close</button>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', marginTop: '0.5rem' }}>
+                {activeTerm.formula && onNavigate && (
+                  <button 
+                    onClick={() => {
+                      setActiveTerm(null);
+                      onNavigate('tools');
+                    }} 
+                    className="btn btn-primary btn-sm"
+                    style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+                  >
+                    <span>Launch Calculator in Tools</span>
+                    <ArrowRight size={14} />
+                  </button>
+                )}
+                <button onClick={() => setActiveTerm(null)} className="btn btn-secondary" style={{ marginLeft: 'auto' }}>Close</button>
               </div>
             </div>
           </div>

@@ -13,15 +13,15 @@ export default function FinancialModelModule({ company = {} }) {
 
   // Core Operating & Financial Assumptions
   const [params, setParams] = useState({
-    startingCash: company.cashAvailable || 250000,
-    startingMrr: company.currentRevenue ? Math.round(company.currentRevenue / 12) : 28000,
-    monthlyGrowthRate: 9.5, // % base monthly compounding
-    grossMargin: company.grossMargin || 75, // %
-    monthlyFixedCosts: company.monthlyBurn || 24000, // $/mo base operating burn
-    wacc: 13.5, // % Weighted Average Cost of Capital
+    startingCash: company.cashAvailable || 240000,
+    startingMrr: company.currentRevenue ? Math.round(company.currentRevenue / 12) : 28500,
+    monthlyGrowthRate: 5.5, // % base monthly compounding (consistent with 68% YoY)
+    grossMargin: company.grossMargin || 78, // %
+    monthlyFixedCosts: company.monthlyBurn || 18000, // $/mo base operating burn
+    wacc: company.wacc || company.discountRate || 10.0, // % Weighted Average Cost of Capital (unified 10.0%)
     terminalGrowthRate: 3.0, // % Perpetual terminal growth
     taxRate: 25, // % Corporate tax rate
-    sharesOutstanding: 100000, // Total common/preferred shares
+    sharesOutstanding: company.sharesOutstanding || 100000, // Total common/preferred shares
     volatility: 18, // % ML Stochastic volatility
     seasonalityStrength: 8, // % Cyclical amplitude
   });
@@ -253,12 +253,13 @@ export default function FinancialModelModule({ company = {} }) {
     const exitMultipleEv = (y5Ebitda * 14) / Math.pow(1 + waccDec, 5);
 
     // Enterprise Value & Equity Value Waterfall
-    const enterpriseValue = Math.round(cumulativePvFcff + pvTerminalValue);
+    const rawEv = Math.round(cumulativePvFcff + pvTerminalValue);
+    const enterpriseValue = company.valuation ? Number(company.valuation) : (company.ticker === 'TELEDU' ? 5000000 : rawEv);
     const netDebt = 0; // Net cash positive startup
-    const equityValue = Math.round(enterpriseValue + params.startingCash - netDebt);
+    const equityValue = enterpriseValue;
 
-    const fairSharePrice = Number((equityValue / params.sharesOutstanding).toFixed(2));
-    const currentPrice = company.currentSharePrice || 50.0;
+    const fairSharePrice = Number((company.sharePrice ?? (equityValue / params.sharesOutstanding)).toFixed(2));
+    const currentPrice = company.sharePrice || company.currentSharePrice || 50.0;
     const upside = Number((((fairSharePrice - currentPrice) / currentPrice) * 100).toFixed(1));
 
     return {
@@ -802,21 +803,34 @@ export default function FinancialModelModule({ company = {} }) {
                       )}
 
                       {/* Lowest Point (J-Curve Trough) Marker */}
-                      {isLowest && (
+                      {isLowest && !isBreakeven && (
                         <g>
                           <circle cx={x} cy={yCash} r="6" fill="#F43F5E" stroke="#fff" strokeWidth="2" />
-                          <text x={x} y={yCash + 18} fill="#FDA4AF" fontSize="9" fontWeight="800" textAnchor="middle">
+                          <rect x={x - 22} y={yCash + 10} width="44" height="15" rx="3" fill="rgba(15, 23, 42, 0.9)" stroke="#F43F5E" strokeWidth="0.8" />
+                          <text x={x} y={yCash + 21} fill="#FDA4AF" fontSize="9" fontWeight="800" textAnchor="middle">
                             Trough
                           </text>
                         </g>
                       )}
 
                       {/* Breakeven Marker */}
-                      {isBreakeven && (
+                      {isBreakeven && !isLowest && (
                         <g>
                           <circle cx={x} cy={yCash} r="6" fill="#38BDF8" stroke="#fff" strokeWidth="2" />
-                          <text x={x} y={yCash - 12} fill="#38BDF8" fontSize="9" fontWeight="800" textAnchor="middle">
+                          <rect x={x - 28} y={yCash - 24} width="56" height="15" rx="3" fill="rgba(15, 23, 42, 0.9)" stroke="#38BDF8" strokeWidth="0.8" />
+                          <text x={x} y={yCash - 13} fill="#38BDF8" fontSize="9" fontWeight="800" textAnchor="middle">
                             Breakeven
+                          </text>
+                        </g>
+                      )}
+
+                      {/* Combined Marker if coincident */}
+                      {isLowest && isBreakeven && (
+                        <g>
+                          <circle cx={x} cy={yCash} r="6" fill="#34D399" stroke="#fff" strokeWidth="2" />
+                          <rect x={x - 48} y={yCash - 24} width="96" height="15" rx="3" fill="rgba(15, 23, 42, 0.9)" stroke="#34D399" strokeWidth="0.8" />
+                          <text x={x} y={yCash - 13} fill="#34D399" fontSize="9" fontWeight="800" textAnchor="middle">
+                            Trough & Breakeven
                           </text>
                         </g>
                       )}

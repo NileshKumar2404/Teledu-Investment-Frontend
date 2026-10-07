@@ -83,9 +83,23 @@ export default function WatchlistModule({ onSelectCompany }) {
           <h1 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.6rem', letterSpacing: '-0.02em' }}>
             Investor Diligence Watchlist
           </h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6 }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '0.8rem' }}>
             Track target startups through the investment evaluation lifecycle, log due diligence findings, and monitor health score fluctuations prior to term sheet issuance.
           </p>
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '0.4rem 0.8rem',
+            borderRadius: 'var(--radius-sm)',
+            background: 'rgba(255, 255, 255, 0.04)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            fontSize: '0.74rem',
+            color: '#CBD5E1'
+          }}>
+            <ShieldCheck size={13} color="#FBBF24" />
+            <span>Ratings reflect algorithmic diligence scores and founder data room submissions. Non-solicitation notice.</span>
+          </div>
         </div>
 
         {/* Priority Filter */}
@@ -234,7 +248,7 @@ export default function WatchlistModule({ onSelectCompany }) {
                     fontSize: '0.75rem',
                     fontWeight: 700
                   }}>
-                    {comp.recommendation || 'BUY'}
+                    {comp.recommendation || 'HIGH CONVICTION'}
                   </span>
 
                   <button

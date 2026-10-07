@@ -20,20 +20,20 @@ export default function AnalyzeModule({
   };
 
   // ==============================================================
-  // 1) STARTUP HEALTH SCORE LOGIC & STATE (from StartupIQ.html)
+  // 1) STARTUP HEALTH SCORE LOGIC & STATE (Synchronized Teledu Baseline)
   // ==============================================================
   const H_FIELDS = [
-    { id: 'revenue',    label: 'Monthly Revenue',     unit: '$', companyKey: 'monthlyRevenue', default: 336000 },
-    { id: 'mrr',        label: 'MRR',                 unit: '$', companyKey: 'mrr', default: 336000 },
-    { id: 'growth',     label: 'Monthly Growth Rate', unit: '%', companyKey: 'growthRate', default: 14 },
+    { id: 'revenue',    label: 'Monthly Revenue',     unit: '$', companyKey: 'monthlyRevenue', default: 28500 },
+    { id: 'mrr',        label: 'MRR',                 unit: '$', companyKey: 'mrr', default: 28500 },
+    { id: 'growth',     label: 'YoY Growth Rate',     unit: '%', companyKey: 'growthRate', default: 68 },
     { id: 'cac',        label: 'CAC',                 unit: '$', companyKey: 'cac', default: 120 },
-    { id: 'ltv',        label: 'LTV',                 unit: '$', companyKey: 'ltv', default: 560 },
-    { id: 'churn',      label: 'Monthly Churn Rate',  unit: '%', default: 3.2 },
-    { id: 'margin',     label: 'Gross Margin',        unit: '%', companyKey: 'grossMargin', default: 72 },
+    { id: 'ltv',        label: 'LTV',                 unit: '$', companyKey: 'ltv', default: 1200 },
+    { id: 'churn',      label: 'Monthly Churn Rate',  unit: '%', default: 2.4 },
+    { id: 'margin',     label: 'Gross Margin',        unit: '%', companyKey: 'grossMargin', default: 78 },
     { id: 'burn',       label: 'Monthly Burn Rate',   unit: '$', companyKey: 'monthlyBurn', default: 18000 },
-    { id: 'cash',       label: 'Cash Available',      unit: '$', companyKey: 'cashAvailable', default: 165000 },
-    { id: 'runway',     label: 'Runway',              unit: 'mo', default: 9.2 },
-    { id: 'conversion', label: 'Conversion Rate',     unit: '%', default: 4.5 },
+    { id: 'cash',       label: 'Cash Available',      unit: '$', companyKey: 'cashAvailable', default: 240000 },
+    { id: 'runway',     label: 'Runway',              unit: 'mo', default: 24 },
+    { id: 'conversion', label: 'Conversion Rate',     unit: '%', default: 4.8 },
     { id: 'customers',  label: 'Customer Count',      unit: '#', companyKey: 'customers', default: 240 },
   ];
 
@@ -128,10 +128,20 @@ export default function AnalyzeModule({
     }
 
     // 4. Financial Health (runway + margin)
-    let runway = v.runway !== '' && v.runway !== null ? Number(v.runway) : null;
-    if (runway === null && v.cash !== '' && v.burn !== '' && Number(v.burn) > 0) {
-      runway = Number(v.cash) / Number(v.burn);
+    const mrrVal = Number(v.mrr || v.revenue || 0);
+    const burnVal = Number(v.burn || 0);
+    const netBurn = burnVal - mrrVal;
+    const isNetPositive = netBurn <= 0;
+
+    let runway = null;
+    if (isNetPositive) {
+      runway = 24; // Positive operational cash flow
+    } else if (v.cash !== '' && netBurn > 0) {
+      runway = Number(v.cash) / netBurn;
+    } else if (v.runway !== '' && v.runway !== null && !isNaN(Number(v.runway))) {
+      runway = Number(v.runway);
     }
+
     const finParts = [];
     if (runway !== null) finParts.push(lerpTable(runway, [[0, 8], [3, 30], [6, 50], [12, 72], [18, 86], [24, 94]]));
     if (v.margin !== '' && v.margin !== null) finParts.push(lerpTable(Number(v.margin), [[0, 10], [30, 45], [50, 65], [70, 82], [80, 92], [90, 96]]));
@@ -141,8 +151,12 @@ export default function AnalyzeModule({
         key: 'fin',
         name: 'Financial Health',
         score: clamp(s, 0, 100),
-        exp: `Based on ${runway ? `~${runway.toFixed(1)} months of cash runway` : ''} ${v.margin ? `and ${v.margin}% gross margin` : ''}. ${runway && runway < 6 ? 'Short runway limits strategic flexibility and deal leverage.' : 'This provides adequate runway to hit milestones before raising your next round.'}`,
-        rec: runway && runway < 6 ? 'Extend runway toward a specific milestone, or begin raising from a position of strength.' : 'Keep recalculating as burn changes, and protect gross margin as headcount expands.'
+        exp: isNetPositive 
+          ? `Cash-flow positive: MRR ($${mrrVal.toLocaleString()}) covers gross burn ($${burnVal.toLocaleString()}). Positive monthly operational surplus.`
+          : `Based on ${runway ? `~${runway.toFixed(1)} months of cash runway` : ''} ${v.margin ? `and ${v.margin}% gross margin` : ''}. ${runway && runway < 6 ? 'Short runway limits strategic flexibility and deal leverage.' : 'This provides adequate runway to hit milestones before raising your next round.'}`,
+        rec: isNetPositive 
+          ? 'Reinvest monthly operational surplus into high-ROI expansion channels while maintaining gross margin discipline.'
+          : (runway && runway < 6 ? 'Extend runway toward a specific milestone, or begin raising from a position of strength.' : 'Keep recalculating as burn changes, and protect gross margin as headcount expands.')
       });
     }
 
@@ -167,10 +181,12 @@ export default function AnalyzeModule({
     const mrr = Number(v.mrr) || 0;
     const growth = Number(v.growth) || 0;
     if (burn > 0 && mrr > 0 && growth > 0) {
-      const netNew = mrr * (growth / 100);
+      // Convert YoY growth rate to monthly net-new or direct monthly growth
+      const monthlyGrowthPct = growth > 25 ? (growth / 12) : growth;
+      const netNew = mrr * (monthlyGrowthPct / 100);
       const bm = burn / Math.max(netNew, 1);
-      opScore = lerpTable(bm, [[0.5, 95], [1, 85], [1.5, 72], [2, 58], [3, 40], [5, 20], [10, 8]]);
-      opExp = `Your burn multiple is about ${bm.toFixed(1)}x — spending approximately $${bm.toFixed(2)} to generate $1.00 of net-new monthly recurring revenue.`;
+      opScore = lerpTable(bm, [[0.5, 95], [1, 85], [1.5, 75], [2, 62], [3, 45], [5, 25], [10, 8]]);
+      opExp = `Your burn multiple is about ${bm.toFixed(1)}x — spending approximately $${bm.toFixed(2)} to generate $1.00 of net-new recurring revenue.`;
       opRec = bm <= 2.0 ? 'Efficient. Capital deployment converts well into recurring ARR.' : 'Tighten discretionary spend or increase acquisition efficiency — a high burn multiple is costly to sustain.';
     } else if (runway !== null) {
       opScore = lerpTable(runway, [[0, 10], [3, 32], [6, 52], [12, 72], [18, 88]]);

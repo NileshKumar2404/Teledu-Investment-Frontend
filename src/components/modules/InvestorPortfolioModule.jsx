@@ -246,7 +246,7 @@ export default function InvestorPortfolioModule({ onSelectCompany, onAddCompany 
           gap: '0.5rem'
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-muted)' }}>
-            <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Deal Status</span>
+            <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Portfolio Status</span>
             <Briefcase size={18} color="#C084FC" />
           </div>
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'baseline', marginTop: '0.2rem' }}>
@@ -258,15 +258,18 @@ export default function InvestorPortfolioModule({ onSelectCompany, onAddCompany 
               <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#60A5FA' }}>{portfolio.exitedInvestments || 2}</div>
               <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Exited</div>
             </div>
-            <div>
+            <div style={{ borderLeft: '1px solid var(--border-subtle)', paddingLeft: '0.8rem' }}>
               <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#F59E0B' }}>{portfolio.pendingInvestments || 1}</div>
-              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Pending</div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>In Diligence</div>
             </div>
+          </div>
+          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+            8 Invested Holdings (6 Active, 2 Exited) • 1 In Diligence
           </div>
         </div>
       </div>
 
-      {/* Sector Allocation Breakdown */}
+      {/* Sector Allocation Breakdown (Dynamically Computed from Active Holdings) */}
       <div style={{
         padding: '1.8rem',
         borderRadius: 'var(--radius-xl)',
@@ -276,50 +279,54 @@ export default function InvestorPortfolioModule({ onSelectCompany, onAddCompany 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem' }}>
           <div>
             <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)' }}>Sector Capital Allocation</h3>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Portfolio diversification across emerging venture sectors</p>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Dynamic portfolio diversification across actual held startup investments</p>
           </div>
-          <span style={{ fontSize: '0.8rem', color: 'var(--accent)', fontWeight: 600 }}>8 Portfolio Companies</span>
+          <span style={{ fontSize: '0.8rem', color: 'var(--accent)', fontWeight: 600 }}>{investments.length} Active & Exited Holdings</span>
         </div>
 
-        {/* Progress Bar visual */}
-        <div style={{
-          height: '12px',
-          borderRadius: 'var(--radius-pill)',
-          background: 'rgba(255, 255, 255, 0.06)',
-          display: 'flex',
-          overflow: 'hidden',
-          marginBottom: '1rem'
-        }}>
-          <div style={{ width: '32%', background: '#6366F1' }} title="EdTech & Learning (32%)" />
-          <div style={{ width: '28%', background: '#10B981' }} title="AI & Enterprise Cloud (28%)" />
-          <div style={{ width: '18%', background: '#F59E0B' }} title="HealthTech & Diagnostics (18%)" />
-          <div style={{ width: '14%', background: '#EC4899' }} title="FinTech & Cross-Border (14%)" />
-          <div style={{ width: '8%', background: '#06B6D4' }} title="CleanTech & Energy (8%)" />
-        </div>
+        {/* Dynamic Progress Bar visual */}
+        {(() => {
+          const totalVal = investments.reduce((sum, inv) => sum + (inv.currentValue || inv.amount || 0), 0) || 1;
+          const sectorMap = {};
+          investments.forEach(inv => {
+            const sec = inv.companyId?.sector || 'Technology & Growth';
+            sectorMap[sec] = (sectorMap[sec] || 0) + (inv.currentValue || inv.amount || 0);
+          });
+          const colors = ['#6366F1', '#10B981', '#F59E0B', '#EC4899', '#06B6D4', '#8B5CF6'];
+          const sectors = Object.entries(sectorMap).map(([sector, val], idx) => ({
+            sector,
+            val,
+            pct: Math.round((val / totalVal) * 100),
+            color: colors[idx % colors.length]
+          })).sort((a, b) => b.pct - a.pct);
 
-        {/* Legend */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.2rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#6366F1' }} />
-            EdTech (32%)
-          </span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#10B981' }} />
-            Enterprise AI (28%)
-          </span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#F59E0B' }} />
-            HealthTech (18%)
-          </span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#EC4899' }} />
-            FinTech (14%)
-          </span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#06B6D4' }} />
-            CleanTech (8%)
-          </span>
-        </div>
+          return (
+            <>
+              <div style={{
+                height: '12px',
+                borderRadius: 'var(--radius-pill)',
+                background: 'rgba(255, 255, 255, 0.06)',
+                display: 'flex',
+                overflow: 'hidden',
+                marginBottom: '1rem'
+              }}>
+                {sectors.map(s => (
+                  <div key={s.sector} style={{ width: `${s.pct}%`, background: s.color }} title={`${s.sector} (${s.pct}%)`} />
+                ))}
+              </div>
+
+              {/* Dynamic Legend */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.2rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                {sectors.map(s => (
+                  <span key={s.sector} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ width: 10, height: 10, borderRadius: '50%', background: s.color }} />
+                    {s.sector} ({s.pct}%)
+                  </span>
+                ))}
+              </div>
+            </>
+          );
+        })()}
       </div>
 
       {/* Portfolio Holdings Table */}
@@ -343,7 +350,7 @@ export default function InvestorPortfolioModule({ onSelectCompany, onAddCompany 
               Portfolio Holdings & Stakes
             </h3>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              Real-time fair value and cap table ownership tracked against active valuation models
+              Mark-to-market valuation (as of Q3 2026, tracked against latest priced funding round and 409A appraisals)
             </p>
           </div>
 

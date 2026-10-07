@@ -523,7 +523,18 @@ export default function DataRoomModule({ activeTicker = 'TELEDU' }) {
                 <div style={{ fontSize: '0.72rem', color: 'var(--accent)', fontWeight: 700, letterSpacing: '0.04em' }}>
                   {fileCategory.replace(/_/g, ' ')}
                 </div>
-                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '4px', wordBreak: 'break-all' }}>
+                <h3 
+                  title={fileName}
+                  style={{ 
+                    fontSize: '1.05rem', 
+                    fontWeight: 700, 
+                    color: 'var(--text-primary)', 
+                    marginTop: '4px', 
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
                   {fileName}
                 </h3>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
